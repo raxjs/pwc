@@ -1,3 +1,3 @@
-const { getPrettierConfig } = require('@iceworks/spec');
+const { getPrettierConfig } = require('@appworks/spec');
 
-module.exports = getPrettierConfig('rax');
+module.exports = getPrettierConfig('common');

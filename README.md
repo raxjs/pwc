@@ -1,3 +1,5 @@
-## Rax Next
+## PWC
+
+Progressive Web Component.
 
 > ⚠️ DO NOT USE. STILL WORK IN PROGRESS.

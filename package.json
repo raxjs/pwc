@@ -2,7 +2,7 @@
   "workspaces": [
     "packages/*"
   ],
-  "name": "rax-next-project",
+  "name": "pwc-project",
   "private": true,
   "scripts": {
     "preinstall": "npx only-allow pnpm",
