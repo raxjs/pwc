@@ -32,8 +32,7 @@ coverage
 
 # Packages
 packages/*/lib/
+packages/*/es/
 
-# temp folder .ice
-examples/*/.rax
 
 build

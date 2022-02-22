@@ -8,12 +8,12 @@ class CustomElement extends HTMLElement {
   };
   connectedCallback() {
     console.log('connected');
-  };
+  }
   _onClick() {
     this.data.name = 'Solo';
-    console.log(this.data.count)
-    this.data.count = this.data.count + 1;
-  };
+    console.log(this.data.count);
+    this.data.count += 1;
+  }
   render() {
     const { data, _onClick } = this;
     const { name, count } = data;
@@ -39,5 +39,4 @@ class ChildElement extends HTMLElement {
 
 window.customElements.define('child-element', ChildElement);
 window.customElements.define('custom-element', CustomElement);
-
 

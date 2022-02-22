@@ -5,10 +5,7 @@ const NativeElement = window.HTMLElement;
 const TEXT_PLACEHOLDER = '__r_t__';
 
 class HTMLElement extends NativeElement {
-  renderCallbacks = []
-  constructor() {
-    super();
-  }
+  renderCallbacks = [];
   createTextBinding(text) {
     return {
       type: 'text',
@@ -22,8 +19,8 @@ class HTMLElement extends NativeElement {
       {
         acceptNode(node) {
           return node.data && node.data.includes(TEXT_PLACEHOLDER);
-        }
-      }
+        },
+      },
     );
   }
   connectedCallback() {
