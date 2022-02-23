@@ -1,22 +1,16 @@
 # 忽略目录
-scripts/
 build/
-test/
-tests/
 node_modules/
+es/
+lib/
 dist/
-out/
 
-# node 覆盖率文件
 coverage/
+commitlint.config.js
 
-# 忽略测试文件
 __tests__/
-/packages/*/lib/
 
-# 忽略第三方包
-/vendor/loader.js
+.eslintrc.js
 
-# 忽略文件
 **/*-min.js
 **/*.min.js

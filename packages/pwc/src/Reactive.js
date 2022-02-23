@@ -4,7 +4,7 @@ export default class Reactive {
   }
   createProxy(data) {
     if (typeof data === 'object' && data.toString() === '[object Object]') {
-      for (let k in data) {
+      for (const k in data) {
         if (typeof data[k] === 'object') {
           this.defineObjectReactive(data, k, data[k]);
         } else {
@@ -13,7 +13,7 @@ export default class Reactive {
       }
     }
   }
-  defineObjectReactive() {
+  defineObjectReactive(obj, key, value) {
     // 递归
     this.createProxy(value);
     obj[key] = new Proxy(value, {
