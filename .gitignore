@@ -19,6 +19,7 @@ coverage
 *.lcov
 
 # Others
+.swc
 .npm
 .eslintcache
 .idea
@@ -33,6 +34,3 @@ coverage
 # Packages
 packages/*/lib/
 packages/*/es/
-
-
-build

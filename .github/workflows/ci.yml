@@ -30,3 +30,4 @@ jobs:
         version: 6.25.0
     - run: npm run setup
     - run: npm run lint
+    - run: npm run test

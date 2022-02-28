@@ -1,6 +1,3 @@
 {
-  "include": ["scripts", "packages"],
-  "compilerOptions": {
-    "esModuleInterop": true
-  }
+  "include": ["packages"]
 }
