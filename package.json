@@ -7,7 +7,7 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "setup": "npm run clean && pnpm install --reporter=append-only",
-    "clean": "rm -rf node_modules packages/*/lib packages/*/es",
+    "clean": "rm -rf **/node_modules packages/*/lib packages/*/es",
     "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx ./",
     "lint:fix": "npm run lint -- --fix",
     "lint:diff": "esno ./scripts/lint-diff.ts",
