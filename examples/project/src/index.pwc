@@ -1,0 +1,24 @@
+<template>
+  <div class="content" @click={{onClick}}>Hello World!</div>
+</template>
+
+<script>
+export default class Component extends HTMLElement {
+  constructor() {
+    const box = document.createElement('div');
+    box.className = 'content';
+    box.innerText = 'hahaha';
+    this.appendChild(box);
+  }
+  #name = 'pwc'
+  onClick() {
+    console.log(123);
+  }
+}
+</script>
+
+<style>
+.content {
+  color: blue;
+}
+</style>

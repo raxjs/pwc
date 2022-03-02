@@ -1,0 +1,9 @@
+{
+  "name": "project",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "rollup -c -w",
+    "build": "rollup -c",
+    "serve": "sirv public --no-clear"
+  }
+}
