@@ -12,12 +12,12 @@ class CustomElement extends HTMLElement {
   }
   get template() {
     return [
-      ['<!--?pwc_placeholder--><div>', ' - ', '</div>'],
+      ['<!--?pwc_p--><div>', ' - ', '<child-element></child-element></div>'],
       [
         {
-          type: 'attr',
-          __events: {
-            click: this.onClick,
+          onclick: {
+            handler: this.onClick,
+            type: 'capture',
           },
         },
         this.text,
@@ -27,4 +27,19 @@ class CustomElement extends HTMLElement {
   }
 }
 
+class Child extends HTMLElement {
+  name = 'Child';
+  connectedCallback() {
+    super.connectedCallback();
+    console.log('connected');
+  }
+  onClick() {
+    console.log('click!!!');
+  }
+  get template() {
+    return [['<div>', '</div>'], [this.name]];
+  }
+}
+
 window.customElements.define('custom-element', CustomElement);
+window.customElements.define('child-element', Child);

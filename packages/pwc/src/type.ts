@@ -5,6 +5,10 @@ export interface BaseElementType {
   adoptedCallback?: () => void;
 }
 
+export type ElementTemplate = [] | [string[]] | [string[], any[]];
+
 export interface CustomHTMLBaseElement extends HTMLBaseElement {
-  template?: [] | [any[]] | [any[], any[]];
+  template?: ElementTemplate;
+  shadowOptions: ShadowRootInit;
 }
+
