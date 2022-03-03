@@ -1,13 +1,13 @@
-import type { CustomHTMLBaseElement } from '../type';
-import BaseElement from './BaseElement';
-
-export default (definition) => {
+export default (definition, BaseElement) => {
   return class extends definition {
     #instance;
     constructor(...args) {
       super();
       // Init base element instance
-      this.#instance = new BaseElement((this as unknown) as CustomHTMLBaseElement, ...args);
+      this.#instance = new BaseElement();
+
+      // Bind element to instance
+      this.#instance.el = this;
     }
     connectedCallback(...args) {
       this.#instance.connectedCallback(...args);

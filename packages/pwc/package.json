@@ -26,6 +26,6 @@
       "npm": ">=3.0.0"
     },
     "exports": {
-      "./HTMLElement": "./src/elements/HTMLElement.ts"
+      "./HTMLElement": "./src/elements/native/HTMLElement.ts"
     }
   }

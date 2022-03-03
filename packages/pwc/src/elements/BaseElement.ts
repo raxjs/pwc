@@ -2,13 +2,9 @@ import type { BaseElementType, CustomHTMLBaseElement, ElementTemplate } from '..
 import { TEXT_COMMENT_DATA, PWC_PREFIX, PLACEHOLDER_COMMENT_DATA } from '../constants';
 import { hasOwnProperty } from '../utils';
 
-const defaultShadowOptions: ShadowRootInit = {
-  mode: 'open',
-};
-
 export default class BaseElement implements BaseElementType {
   // Custom element self instance
-  #el: CustomHTMLBaseElement;
+  el: CustomHTMLBaseElement;
 
   // Component initial state
   #initialized = false;
@@ -16,24 +12,16 @@ export default class BaseElement implements BaseElementType {
   #fragment: Node;
   // Template info
   #template: ElementTemplate;
-  // Shadow root
-  #root: ShadowRoot;
-  constructor(el: CustomHTMLBaseElement, ...args: any[]) {
-    this.#el = el;
-
-    // Attach shadow root
-    // this.#root = el.attachShadow(el.shadowOptions || defaultShadowOptions);
-  }
 
   // Custom element native lifecycle
   connectedCallback() {
     if (!this.#initialized) {
-      this.#template = this.#el.template || [];
+      this.#template = this.el.template || [];
       const [strings = [], values = []] = this.#template;
 
       this.#fragment = this.#createTemplate(strings);
       this.#associateTplAndValue(this.#fragment, values);
-      this.#el.appendChild(this.#fragment);
+      this.el.appendChild(this.#fragment);
     }
     this.#initialized = true;
   }
