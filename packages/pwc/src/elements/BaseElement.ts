@@ -44,6 +44,7 @@ export default class BaseElement implements BaseElementType {
   // Extension methods
   #createTemplate(strings: string[]) {
     const template = document.createElement('template');
+
     template.innerHTML = strings.join(`<!--${TEXT_COMMENT_DATA}-->`);
 
     return template.content.cloneNode(true);
@@ -89,5 +90,4 @@ export default class BaseElement implements BaseElementType {
       index++;
     }
   }
-  #commitValues(values) {}
 }

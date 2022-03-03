@@ -37,7 +37,7 @@ class Child extends HTMLElement {
     console.log('click!!!');
   }
   get template() {
-    return [['<div>', '</div>'], [this.name]];
+    return [[], [this.name]];
   }
 }
 

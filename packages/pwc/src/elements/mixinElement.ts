@@ -1,5 +1,5 @@
-import type { CustomHTMLBaseElement } from './type';
-import BaseElement from './elements/BaseElement';
+import type { CustomHTMLBaseElement } from '../type';
+import BaseElement from './BaseElement';
 
 export default (definition) => {
   return class extends definition {
