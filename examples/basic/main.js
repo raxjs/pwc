@@ -5,14 +5,13 @@ class CustomElement extends HTMLElement {
   name = 'jack';
   connectedCallback() {
     super.connectedCallback();
-    console.log('connected');
   }
   onClick() {
     console.log('click!!!');
   }
   get template() {
     return [
-      '<!--?pwc_p--><div><!--?pwc_t--> - <!--?pwc_t--></div>',
+      '<!--?pwc_p--><div><!--?pwc_t--> - <!--?pwc_t--><child-element/></div>',
       [
         {
           onclick: {

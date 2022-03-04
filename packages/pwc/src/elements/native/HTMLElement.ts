@@ -1,5 +1,4 @@
 import overrideElementDefine from '../overrideElementDefine';
-import mixinElement from '../mixinElement';
-import BaseElement from '../BaseElement';
+import reactiveElementFactory from '../reactiveElementFactory';
 
-overrideElementDefine(mixinElement(HTMLElement, BaseElement));
+overrideElementDefine(reactiveElementFactory(HTMLElement));
