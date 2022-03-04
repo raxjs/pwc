@@ -17,9 +17,9 @@ export default class BaseElement implements BaseElementType {
   connectedCallback() {
     if (!this.#initialized) {
       this.#template = this.el.template || [];
-      const [strings = [], values = []] = this.#template;
+      const [template, values = []] = this.#template;
 
-      this.#fragment = this.#createTemplate(strings);
+      this.#fragment = this.#createTemplate(template);
       this.#associateTplAndValue(this.#fragment, values);
       this.el.appendChild(this.#fragment);
     }
@@ -30,10 +30,10 @@ export default class BaseElement implements BaseElementType {
   adoptedCallback() {}
 
   // Extension methods
-  #createTemplate(strings: string[]) {
+  #createTemplate(source: string): Node {
     const template = document.createElement('template');
 
-    template.innerHTML = strings.join(`<!--${TEXT_COMMENT_DATA}-->`);
+    template.innerHTML = source;
 
     return template.content.cloneNode(true);
   }

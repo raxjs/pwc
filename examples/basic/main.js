@@ -12,7 +12,7 @@ class CustomElement extends HTMLElement {
   }
   get template() {
     return [
-      ['<!--?pwc_p--><div>', ' - ', '<child-element></child-element></div>'],
+      '<!--?pwc_p--><div><!--?pwc_t--> - <!--?pwc_t--></div>',
       [
         {
           onclick: {
@@ -37,7 +37,7 @@ class Child extends HTMLElement {
     console.log('click!!!');
   }
   get template() {
-    return [['<div>', '</div>'], [this.name]];
+    return ['<div><!--?pwc_t--></div>', [this.name]];
   }
 }
 
