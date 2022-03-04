@@ -9,6 +9,7 @@ class CustomElement extends HTMLElement {
   onClick() {
     console.log('click!!!');
   }
+  // <div @click={{onClick}}>{{text}} - {{name}} <child-element/></div>
   get template() {
     return [
       '<!--?pwc_p--><div><!--?pwc_t--> - <!--?pwc_t--><child-element/></div>',

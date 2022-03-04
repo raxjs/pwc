@@ -2,8 +2,8 @@ import type { ElementTemplate } from '../type';
 import { TEXT_COMMENT_DATA, PWC_PREFIX, PLACEHOLDER_COMMENT_DATA } from '../constants';
 import { hasOwnProperty } from '../utils';
 
-export default (definition) => {
-  return class extends definition {
+export default (Definition) => {
+  return class extends Definition {
     // Component initial state
     #initialized = false;
     // The root fragment
@@ -20,6 +20,7 @@ export default (definition) => {
         const [template, values = []] = this.#template;
 
         this.#fragment = this.#createTemplate(template);
+        // TODO: rename?
         this.#associateTplAndValue(this.#fragment, values);
         this.appendChild(this.#fragment);
       }
@@ -33,6 +34,7 @@ export default (definition) => {
     #createTemplate(source: string): Node {
       const template = document.createElement('template');
 
+      // TODO: xss
       template.innerHTML = source;
 
       return template.content.cloneNode(true);
