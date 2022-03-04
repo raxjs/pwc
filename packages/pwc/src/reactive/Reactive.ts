@@ -35,7 +35,6 @@ export default class Reactive {
       set: (newValue) => {
         if (value === newValue) return;
         value = newValue;
-        this.updater();
       },
     });
   }
