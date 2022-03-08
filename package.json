@@ -12,7 +12,9 @@
     "lint:fix": "npm run lint -- --fix",
     "lint:diff": "esno ./scripts/lint-diff.ts",
     "test": "jest --forceExit --ci",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "start-bench": "cd benchmarks && npm install --registry=https://registry.npmmirror.com && npm start",
+    "bench": "cd benchmarks/webdriver-ts && npm install --registry=https://registry.npmmirror.com && npm run bench"
   },
   "husky": {
     "hooks": {

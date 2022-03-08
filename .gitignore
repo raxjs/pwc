@@ -34,3 +34,6 @@ coverage
 # Packages
 packages/*/lib/
 packages/*/es/
+
+# Dist
+dist/
