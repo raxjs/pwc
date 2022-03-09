@@ -5,6 +5,7 @@ import { LighthouseData } from "./benchmarksWebdriver";
 
 export interface JSONResult {
   framework: string;
+  keyed: boolean;
   benchmark: string;
   type: string;
   min: number;
@@ -67,6 +68,7 @@ export interface FrameworkData {
   name: string;
   fullNameWithKeyedAndVersion: string;
   uri: string;
+  keyed: boolean;
   useShadowRoot: boolean;
   useRowShadowRoot: boolean;
   shadowRootName: string | undefined;
@@ -79,12 +81,14 @@ interface Options {
   useShadowRoot?: boolean;
 }
 
+type KeyedType = "keyed" | "non-keyed";
 
-function computeHash(directory: string) {
-  return "/" + directory;
+function computeHash(keyedType: KeyedType, directory: string) {
+  return keyedType + "/" + directory;
 }
 
 export interface FrameworkId {
+  keyedType: KeyedType;
   directory: string;
   issues: number[];
 }
@@ -92,6 +96,7 @@ export interface FrameworkId {
 abstract class FrameworkVersionInformationValid implements FrameworkId {
   public url: string;
   constructor(
+    public keyedType: KeyedType,
     public directory: string,
     customURL: string | undefined,
     public useShadowRoot: boolean,
@@ -100,13 +105,15 @@ abstract class FrameworkVersionInformationValid implements FrameworkId {
     public buttonsInShadowRoot: boolean,
     public issues: number[]
   ) {
+    this.keyedType = keyedType;
     this.directory = directory;
-    this.url = "frameworks/" + directory + (customURL ? customURL : "");
+    this.url = "frameworks/" + keyedType + "/" + directory + (customURL ? customURL : "");
   }
 }
 
 export class FrameworkVersionInformationDynamic extends FrameworkVersionInformationValid {
   constructor(
+    keyedType: KeyedType,
     directory: string,
     public packageNames: string[],
     customURL: string | undefined,
@@ -116,12 +123,13 @@ export class FrameworkVersionInformationDynamic extends FrameworkVersionInformat
     public buttonsInShadowRoot: boolean,
     issues: number[]
   ) {
-    super(directory, customURL, useShadowRoot, useRowShadowRoot, shadowRootName, buttonsInShadowRoot, issues);
+    super(keyedType, directory, customURL, useShadowRoot, useRowShadowRoot, shadowRootName, buttonsInShadowRoot, issues);
   }
 }
 
 export class FrameworkVersionInformationStatic extends FrameworkVersionInformationValid {
   constructor(
+    keyedType: KeyedType,
     directory: string,
     public frameworkVersion: string,
     customURL: string | undefined,
@@ -131,13 +139,14 @@ export class FrameworkVersionInformationStatic extends FrameworkVersionInformati
     public buttonsInShadowRoot: boolean,
     issues: number[]
   ) {
-    super(directory, customURL, useShadowRoot, useRowShadowRoot, shadowRootName, buttonsInShadowRoot, issues);
+    super(keyedType, directory, customURL, useShadowRoot, useRowShadowRoot, shadowRootName, buttonsInShadowRoot, issues);
   }
   getFrameworkData(): FrameworkData {
     return {
       name: this.directory,
-      fullNameWithKeyedAndVersion: this.directory + (this.frameworkVersion ? "-v" + this.frameworkVersion : ""),
+      fullNameWithKeyedAndVersion: this.directory + (this.frameworkVersion ? "-v" + this.frameworkVersion : "") + "-" + this.keyedType,
       uri: this.url,
+      keyed: this.keyedType === "keyed",
       useShadowRoot: this.useShadowRoot,
       useRowShadowRoot: this.useRowShadowRoot,
       shadowRootName: this.shadowRootName,
@@ -149,7 +158,7 @@ export class FrameworkVersionInformationStatic extends FrameworkVersionInformati
 
 export class FrameworkVersionInformationError implements FrameworkId {
   public issues: [];
-  constructor(public directory: string, public error: string) {}
+  constructor(public keyedType: KeyedType, public directory: string, public error: string) {}
 }
 
 export type FrameworkVersionInformation =
@@ -181,9 +190,18 @@ export interface IMatchPredicate {
 const matchAll: IMatchPredicate = (frameworkDirectory: string) => true;
 
 async function loadFrameworkInfo(pathInFrameworksDir: string): Promise<FrameworkVersionInformation> {
-  const directory = pathInFrameworksDir.replace('/', '');
-
-  const frameworkPath = path.join(__dirname, "../../frameworks", pathInFrameworksDir);
+  let keyedType: KeyedType;
+  let directory: string;
+  if (pathInFrameworksDir.startsWith("keyed")) {
+    keyedType = "keyed";
+    directory = pathInFrameworksDir.substring(6);
+  } else if (pathInFrameworksDir.startsWith("non-keyed")) {
+    keyedType = "non-keyed";
+    directory = pathInFrameworksDir.substring(10);
+  } else {
+    throw "pathInFrameworksDir must start with keyed or non-keyed, but is " + pathInFrameworksDir;
+  }
+  const frameworkPath = path.resolve("..", "frameworks", pathInFrameworksDir);
   const packageJSONPath = path.resolve(frameworkPath, "package.json");
 
   const distDir = path.resolve(frameworkPath, "dist");
@@ -191,7 +209,7 @@ async function loadFrameworkInfo(pathInFrameworksDir: string): Promise<Framework
     const files = fs.readdirSync(distDir);
     const gzFiles = files.filter((file) => path.extname(file).toLowerCase() === ".gz");
     if (gzFiles.length > 0) {
-      return new FrameworkVersionInformationError(directory, `Found gzipped files in "${pathInFrameworksDir}/dist".`);
+      return new FrameworkVersionInformationError(keyedType, directory, `Found gzipped files in "${pathInFrameworksDir}/dist".`);
     }
   }
 
@@ -200,6 +218,7 @@ async function loadFrameworkInfo(pathInFrameworksDir: string): Promise<Framework
     if (packageJSON["js-framework-benchmark"]) {
       if (packageJSON["js-framework-benchmark"]["frameworkVersionFromPackage"]) {
         return new FrameworkVersionInformationDynamic(
+          keyedType,
           directory,
           packageJSON["js-framework-benchmark"]["frameworkVersionFromPackage"].split(":"),
           packageJSON["js-framework-benchmark"]["customURL"],
@@ -211,6 +230,7 @@ async function loadFrameworkInfo(pathInFrameworksDir: string): Promise<Framework
         );
       } else if (typeof packageJSON["js-framework-benchmark"]["frameworkVersion"] === "string") {
         return new FrameworkVersionInformationStatic(
+          keyedType,
           directory,
           packageJSON["js-framework-benchmark"]["frameworkVersion"],
           packageJSON["js-framework-benchmark"]["customURL"],
@@ -222,30 +242,33 @@ async function loadFrameworkInfo(pathInFrameworksDir: string): Promise<Framework
         );
       } else {
         return new FrameworkVersionInformationError(
+          keyedType,
           directory,
           "package.json must contain a 'frameworkVersionFromPackage' or 'frameworkVersion' in the 'js-framework-benchmark'.property"
         );
       }
     } else {
-      return new FrameworkVersionInformationError(directory, "package.json must contain a 'js-framework-benchmark' property");
+      return new FrameworkVersionInformationError(keyedType, directory, "package.json must contain a 'js-framework-benchmark' property");
     }
   } else {
-    return new FrameworkVersionInformationError(directory, "No package.json found");
+    return new FrameworkVersionInformationError(keyedType, directory, "No package.json found");
   }
 }
 
 export async function loadFrameworkVersionInformation(matchPredicate: IMatchPredicate = matchAll): Promise<FrameworkVersionInformation[]> {
   let results = new Array<Promise<FrameworkVersionInformation>>();
   let frameworksPath = path.resolve("..", "frameworks");
-  let directories = fs.readdirSync(frameworksPath);
+  ["keyed", "non-keyed"].forEach((keyedType: KeyedType) => {
+    let directories = fs.readdirSync(path.resolve(frameworksPath, keyedType));
 
-  for (let directory of directories) {
-    let pathInFrameworksDir = "/" + directory;
-    if (matchPredicate(pathInFrameworksDir)) {
-      let fi = loadFrameworkInfo(pathInFrameworksDir);
-      if (fi != null) results.push(fi);
+    for (let directory of directories) {
+      let pathInFrameworksDir = keyedType + "/" + directory;
+      if (matchPredicate(pathInFrameworksDir)) {
+        let fi = loadFrameworkInfo(pathInFrameworksDir);
+        if (fi != null) results.push(fi);
+      }
     }
-  }
+  });
   return await Promise.all(results);
 }
 
@@ -264,8 +287,9 @@ export class PackageVersionInformationResult {
   getFrameworkData(): FrameworkData {
     return {
       name: this.framework.directory,
-      fullNameWithKeyedAndVersion: this.framework.directory + "-v" + this.getVersionName(),
+      fullNameWithKeyedAndVersion: this.framework.directory + "-v" + this.getVersionName() + "-" + this.framework.keyedType,
       uri: this.framework.url,
+      keyed: this.framework.keyedType === "keyed",
       useShadowRoot: this.framework.useShadowRoot,
       useRowShadowRoot: this.framework.useRowShadowRoot,
       shadowRootName: this.framework.shadowRootName,
@@ -278,9 +302,9 @@ export class PackageVersionInformationResult {
 export async function determineInstalledVersions(framework: FrameworkVersionInformationDynamic): Promise<PackageVersionInformationResult> {
   let versions = new PackageVersionInformationResult(framework);
   try {
-    console.log(`http://localhost:${config.PORT}/frameworks/${framework.directory}/package-lock.json`);
+    console.log(`http://localhost:${config.PORT}/frameworks/${framework.keyedType}/${framework.directory}/package-lock.json`);
     let packageLock: any = (
-      await axios.get(`http://localhost:${config.PORT}/frameworks/${framework.directory}/package-lock.json`)
+      await axios.get(`http://localhost:${config.PORT}/frameworks/${framework.keyedType}/${framework.directory}/package-lock.json`)
     ).data;
     for (let packageName of framework.packageNames) {
       if (packageLock.dependencies[packageName]) {
@@ -294,7 +318,7 @@ export async function determineInstalledVersions(framework: FrameworkVersionInfo
       console.log("Can't load package-lock.json via http. Make sure the http-server is running on port 8080");
       throw "Can't load package-lock.json via http. Make sure the http-server is running on port 8080";
     } else if (err.response && err.response.status === 404) {
-      console.log(`package-lock.json not found for /${framework.directory}`);
+      console.log(`package-lock.json not found for ${framework.keyedType}/${framework.directory}`);
       versions.add(new PackageVersionInformationErrorNoPackageJSONLock());
     } else {
       console.log("err", err);
@@ -315,7 +339,7 @@ export async function initializeFrameworks(matchPredicate: IMatchPredicate = mat
       frameworks.push(frameworkVersionInformation.getFrameworkData());
     } else {
       console.log(
-        `WARNING: Ignoring package ${frameworkVersionInformation.directory}: ${frameworkVersionInformation.error}`
+        `WARNING: Ignoring package ${frameworkVersionInformation.keyedType}/${frameworkVersionInformation.directory}: ${frameworkVersionInformation.error}`
       );
       frameworks.push(null);
     }

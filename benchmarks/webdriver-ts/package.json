@@ -4,10 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "bench": "cross-env LANG=\"en_US.UTF-8\" esno src/benchmarkRunner.ts",
-    "results": "esno src/createResultJS.ts && cd .. && cd webdriver-ts-results && npm run build-prod",
-    "index": "esno src/createIndex.ts",
-    "isKeyed": "cross-env LANG=\"en_US.UTF-8\" esno src/isKeyed.ts"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsbench": "cross-env LANG=\"en_US.UTF-8\" ts-node src/benchmarkRunner.ts",
+    "bench": "cross-env LANG=\"en_US.UTF-8\" node dist/benchmarkRunner.js",
+    "compile": "tsc",
+    "results": "ts-node src/createResultJS.ts && cd .. && cd webdriver-ts-results && npm run build-prod",
+    "index": "ts-node src/createIndex.ts",
+    "isKeyed": "cross-env LANG=\"en_US.UTF-8\" ts-node src/isKeyed.ts"
   },
   "author": "",
   "license": "Apache-2.0",
@@ -20,7 +23,8 @@
     "@types/yargs": "17.0.9",
     "dockerode": "^3.3.1",
     "rimraf": "^3.0.2",
-    "esno": "^0.14.1"
+    "ts-node": "10.6.0",
+    "typescript": "4.6.2"
   },
   "dependencies": {
     "axios": "^0.26.0",

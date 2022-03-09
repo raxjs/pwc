@@ -10,11 +10,11 @@ export interface Result<T> {
   results: T[];
   benchmark: BenchmarkPuppeteer | BenchmarkWebdriver;
 }
-
 export function writeResults<T>(config: typeof defaultConfig, res: Result<T>) {
   if (!config.WRITE_RESULTS) return;
   let benchmark = res.benchmark;
   let framework = res.framework.name;
+  let keyed = res.framework.keyed;
   let type = null;
 
   switch (benchmark.type) {
@@ -39,6 +39,7 @@ export function writeResults<T>(config: typeof defaultConfig, res: Result<T>) {
     );
     let result: JSONResult = {
       framework: res.framework.fullNameWithKeyedAndVersion,
+      keyed: keyed,
       benchmark: resultKind.id,
       type: type,
       min: s.min(),

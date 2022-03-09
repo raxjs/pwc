@@ -123,26 +123,36 @@ window.nonKeyedDetector_storeTr = function() {
 window.nonKeyedDetector_reset();
 `;
 
-function isKeyedRun(result: any): boolean {
+function isKeyedRun(result: any, shouldBeKeyed: boolean): boolean {
   let r = result.tradded >= 1000 && result.trremoved >= 1000;
-  if (!r) {
+  if (r && !shouldBeKeyed) {
+    console.log(
+      `Non-keyed test for create rows failed. Expected that TRs should be recycled, but there were ${result.tradded} added TRs and ${result.trremoved} were removed`
+    );
+  } else if (!r && shouldBeKeyed) {
     console.log(
       `Keyed test for create rows failed. Expected that 1000 TRs should be removed and added, but there were ${result.tradded} added TRs and ${result.trremoved} were removed`
     );
   }
   return r;
 }
-function isKeyedRemove(result: any): boolean {
+function isKeyedRemove(result: any, shouldBeKeyed: boolean): boolean {
   let r = result.removedStoredTr;
-  if (!r) {
+  if (r && !shouldBeKeyed) {
+    console.log(`Note: Non-keyed test for remove is acutally keyed. Expected that the dom node for the 2nd row would NOT be removed, but it was.`);
+  } else if (!r && shouldBeKeyed) {
     console.log(`Keyed test for remove failed. Expected that the dom node for the 2nd row would be removed, but it wasn't`);
   }
   return r;
 }
-function isKeyedSwapRow(result: any): boolean {
+function isKeyedSwapRow(result: any, shouldBeKeyed: boolean): boolean {
   //  console.log("isKeyedSwapRow", result);
-  let r = result.tradded > 0 && result.trremoved > 0 && (result.newNodes == 0);
-  if (!r) {
+  let r = result.tradded > 0 && result.trremoved > 0 && (!shouldBeKeyed || result.newNodes == 0);
+  if (r && !shouldBeKeyed) {
+    console.log(
+      `Non-keyed test for swap failed. Expected than no TRs are added or removed, but there were ${result.tradded} added and ${result.trremoved} removed`
+    );
+  } else if (!r && shouldBeKeyed) {
     if (result.newNodes > 0) {
       console.log(`Keyed test for swap failed. Swap must add the TRs that it removed, but there were ${result.newNodes} new nodes`);
     } else {
@@ -275,14 +285,14 @@ async function runBench(frameworkNames: string[]) {
       await clickElementById(driver, "swaprows", true);
       await testTextContains(driver, "//tbody/tr[2]/td[1]", "999", config.TIMEOUT, false);
       let res = await driver.executeScript("return nonKeyedDetector_result()");
-      let keyedSwap = isKeyedSwapRow(res);
+      let keyedSwap = isKeyedSwapRow(res, framework.keyed);
       // run
       await driver.executeScript("nonKeyedDetector_storeTr()");
       await driver.executeScript("window.nonKeyedDetector_reset()");
       await clickElementById(driver, "run", true);
       await testTextContains(driver, "//tbody/tr[1000]/td[1]", "2000", config.TIMEOUT, false);
       res = await driver.executeScript("return nonKeyedDetector_result()");
-      let keyedRun = isKeyedRun(res);
+      let keyedRun = isKeyedRun(res, framework.keyed);
       // remove
       await driver.executeScript("nonKeyedDetector_storeTr()");
       let text = await getTextByXPath(driver, `//tbody/tr[2]/td[2]/a`, false);
@@ -290,7 +300,7 @@ async function runBench(frameworkNames: string[]) {
       await clickElementByXPath(driver, `//tbody/tr[2]/td[3]/a/span[1]`, false);
       await testTextNotContained(driver, `//tbody/tr[2]/td[2]/a`, text, config.TIMEOUT, false);
       res = await driver.executeScript("return nonKeyedDetector_result()");
-      let keyedRemove = isKeyedRemove(res);
+      let keyedRemove = isKeyedRemove(res, framework.keyed);
       let keyed = keyedRemove && keyedRun && keyedSwap;
       console.log(
         framework.fullNameWithKeyedAndVersion +
@@ -305,6 +315,10 @@ async function runBench(frameworkNames: string[]) {
           (keyed ? "keyed" : "non-keyed") +
           " in the results"
       );
+      if (framework.keyed !== keyed) {
+        console.log("ERROR: Framework " + framework.fullNameWithKeyedAndVersion + " is not correctly categorized");
+        allCorrect = false;
+      }
     } catch (e) {
       console.log("ERROR running " + runFrameworks[i].fullNameWithKeyedAndVersion, e);
       allCorrect = false;

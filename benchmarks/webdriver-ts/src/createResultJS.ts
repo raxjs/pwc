@@ -84,9 +84,10 @@ async function main() {
         f.issues && f.issues.length > 0
           ? {
               name: f.fullNameWithKeyedAndVersion,
+              keyed: f.keyed,
               issues: f.issues,
             }
-          : { name: f.fullNameWithKeyedAndVersion }
+          : { name: f.fullNameWithKeyedAndVersion, keyed: f.keyed }
       )
     ) +
     ";\n";

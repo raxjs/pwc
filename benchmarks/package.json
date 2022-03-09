@@ -1,9 +1,0 @@
-{
-  "name": "pwc-benchmark",
-  "scripts": {
-    "start": "ws -c lws.config.js --static.maxage 1 -d ."
-  },
-  "dependencies": {
-    "local-web-server": "4.1.0"
-  }
-}

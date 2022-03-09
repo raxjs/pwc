@@ -1,6 +1,6 @@
 import { fork } from "child_process";
 import * as fs from "fs";
-import yargs from "yargs";
+import * as yargs from "yargs";
 import { BenchmarkInfo, BenchmarkType } from "./benchmarksGeneric";
 import { BenchmarkPuppeteer, benchmarksPuppeteer } from "./benchmarksPuppeteer";
 import { benchmarksWebdriver, BenchmarkWebdriver, LighthouseData } from "./benchmarksWebdriver";
@@ -14,7 +14,7 @@ function forkAndCallBenchmark(
 ): Promise<ErrorAndWarning> {
   return new Promise((resolve, reject) => {
     const forked = fork(
-      benchmark.type == BenchmarkType.MEM ? "src/forkedBenchmarkRunnerPuppeteer.ts" : "src/forkedBenchmarkRunnerWebdriver.ts"
+      benchmark.type == BenchmarkType.MEM ? "dist/forkedBenchmarkRunnerPuppeteer.js" : "dist/forkedBenchmarkRunnerWebdriver.js"
     );
     if (config.LOG_DETAILS) console.log("FORKING:  forked child process");
     forked.send({
@@ -101,7 +101,7 @@ async function runBenchmakLoop(
     });
     return { errors, warnings };
     // } else {
-    //     return executeBenchmark(frameworks, frameworkName, benchmarkName, benchmarkOptions);
+    //     return executeBenchmark(frameworks, keyed, frameworkName, benchmarkName, benchmarkOptions);
   }
 }
 
@@ -180,8 +180,8 @@ async function runBench(runFrameworks: FrameworkData[], benchmarkNames: string[]
 }
 
 // FIXME: Clean up args.
-// What works: npm run bench react, npm run bench -- react, npm run bench -- react --count 1 --benchmark 01_
-// What doesn't work (react becomes an element of argument benchmark): npm run bench -- --count 1 --benchmark 01_ react
+// What works: npm run bench keyed/react, npm run bench -- keyed/react, npm run bench -- keyed/react --count 1 --benchmark 01_
+// What doesn't work (keyed/react becomes an element of argument benchmark): npm run bench -- --count 1 --benchmark 01_ keyed/react
 
 let args: any = yargs(process.argv)
   .usage(
@@ -206,6 +206,7 @@ async function main() {
     frameworkArgument.length == 0 || frameworkArgument.some((arg: string) => arg == directoryName);
   runFrameworks = await initializeFrameworks(matchesDirectoryArg);
 
+  console.log("ARGS.smotest", args.smoketest)
   if (args.smoketest) {
     config.WRITE_RESULTS = false;
     config.NUM_ITERATIONS_FOR_BENCHMARK_CPU = 1;
@@ -215,10 +216,14 @@ async function main() {
     config.EXIT_ON_ERROR = true;
     console.log('Using smoketest config ', JSON.stringify(config));
   }
-
+    
   if (!fs.existsSync(config.RESULTS_DIRECTORY)) fs.mkdirSync(config.RESULTS_DIRECTORY);
 
-  return runBench(runFrameworks, runBenchmarks);
+  if (args.help) {
+    yargs.showHelp();
+  } else {
+    return runBench(runFrameworks, runBenchmarks);
+  }
 }
 
 main()

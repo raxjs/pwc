@@ -23,6 +23,7 @@ var extensions = [
 ];
 
 module.exports = [{
+  mode: 'production',
 	cache: cache,
 	module: {
 		rules: loaders
@@ -58,5 +59,5 @@ module.exports = [{
             inlineSource: '.js$' // embed all javascript and css inline
 		}),
     new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/main/])
-      ]  
+      ]
 }];

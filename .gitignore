@@ -3,9 +3,6 @@
 node_modules
 jspm_packages
 
-package-lock.json
-yarn.lock
-
 # Logs
 logs
 *.log
@@ -37,3 +34,4 @@ packages/*/es/
 
 # Dist
 dist/
+!**/frameworks/**/dist
