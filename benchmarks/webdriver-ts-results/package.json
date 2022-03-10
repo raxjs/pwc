@@ -19,14 +19,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "lint": "eslint './src/**/*.{ts,tsx}'",
-    "build-prod": "rimraf dist && webpack --env prod -c webpack.config.js && rimraf table.html && rimraf \"BoxPlotTable*.js\" && cpx dist/table.html . && cpx \"dist/BoxPlotTable*.js\" ."
-  },
-  "eslintConfig": {
-    "extends": "react-app"
+    "save-last-result": "esno ../../scripts/benchmarks/saveLastResult.ts",
+    "build": "rimraf dist && npm install --registry=https://registry.npmmirror.com && webpack --env prod -c webpack.config.js"
   },
   "browserslist": {
     "production": [
@@ -43,7 +38,6 @@
   "devDependencies": {
     "@types/react-redux": "^7.1.9",
     "cpx": "1.5.0",
-    "cross-env": "7.0.2",
     "eslint-plugin-react-hooks": "^4.2.0",
     "html-webpack-plugin": "^4.5.0",
     "inline-chunk-html-plugin": "^1.1.1",

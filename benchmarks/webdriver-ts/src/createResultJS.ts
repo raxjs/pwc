@@ -1,7 +1,6 @@
 import * as _ from "lodash";
 import * as fs from "fs";
 import { JSONResult, config, FrameworkData, initializeFrameworks } from "./common";
-import * as yargs from "yargs";
 import { BenchmarkInfo, BenchmarkType, fileName } from "./benchmarksGeneric";
 import { benchmarksPuppeteer } from "./benchmarksPuppeteer";
 import { benchmarksWebdriver } from "./benchmarksWebdriver";
