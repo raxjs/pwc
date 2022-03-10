@@ -7,7 +7,7 @@ function main() {
   });
 
   // Run benchmark cases
-  execSync('cd benchmarks/webdriver-ts && npm install --registry=https://registry.npmmirror.com && npm run bench', {
+  execSync('cd benchmarks/webdriver-ts && npm install --registry=https://registry.npmmirror.com && npm run compile && npm run bench', {
     stdio: 'inherit',
   });
 
