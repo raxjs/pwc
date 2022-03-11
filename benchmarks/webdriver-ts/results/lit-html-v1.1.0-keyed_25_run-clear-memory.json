@@ -1,0 +1,1 @@
+{"framework":"lit-html-v1.1.0-keyed","keyed":true,"benchmark":"25_run-clear-memory","type":"memory","min":1.21063232421875,"max":1.21063232421875,"mean":1.21063232421875,"median":1.21063232421875,"geometricMean":1.21063232421875,"standardDeviation":null,"values":[1.21063232421875]}

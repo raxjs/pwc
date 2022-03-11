@@ -1,0 +1,1 @@
+{"framework":"vue-v3.2.26-keyed","keyed":true,"benchmark":"08_create1k-after1k_x2","type":"cpu","min":91.873,"max":104.031,"mean":98.05499999999999,"median":97.25049999999999,"geometricMean":97.97859028394045,"standardDeviation":4.077708179848088,"values":[91.873,92.863,96.204,96.388,96.91,97.591,99.951,102.048,102.691,104.031]}
