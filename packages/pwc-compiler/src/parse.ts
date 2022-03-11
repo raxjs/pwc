@@ -11,6 +11,7 @@ export interface SFCBlock {
 
 export interface SFCTemplateBlock extends SFCBlock {
   type: 'template';
+  ast: ElementNode;
 }
 
 export interface SFCScriptBlock extends SFCBlock {
@@ -132,7 +133,12 @@ export function parse(source: string, {
     styles: null,
   };
 
-  const dom = parse5.parseFragment(source, { sourceCodeLocationInfo: true });
+  let dom;
+  try {
+    dom = parse5.parseFragment(source, { sourceCodeLocationInfo: true });
+  } catch (e) {
+    throw new Error();
+  }
 
   for (const node of dom.childNodes) {
     if (node.nodeName === 'script') {
@@ -144,7 +150,9 @@ export function parse(source: string, {
       descriptor.styles = styleBlock;
     }
     if (node.nodeName === 'template') {
+      node.childNodes = node.content.childNodes;
       const templateBlock = createBlock(node, source) as SFCTemplateBlock;
+      templateBlock.ast = node;
       descriptor.template = templateBlock;
     }
   }

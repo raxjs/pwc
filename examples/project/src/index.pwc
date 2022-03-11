@@ -1,5 +1,11 @@
 <template>
-  <div class="content" @click={{onClick}}>Hello World!</div>
+  <div class="content" name={{name}} @click.capture={{onClick456}}>
+    Hello World!
+    123
+    {{title}}
+    <img src={{source}} />
+    <hr />
+  </div>
 </template>
 
 <script>
@@ -19,6 +25,6 @@ export default class Component extends HTMLElement {
 
 <style>
 .content {
-  color: blue;
+  color: red;
 }
 </style>

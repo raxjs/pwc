@@ -10,10 +10,25 @@ var app = (function () {
       box.innerText = 'hahaha';
       this.appendChild(box);
     }
-    #name = 'pwc'
+
+    #name = 'pwc';
+
     onClick() {
       console.log(123);
     }
+
+    get template() {
+      return ["\n  <!--?pwc_p--><div class=\"content\">\n    Hello World!\n    123\n    <!--?pwc_t-->\n    <!--?pwc_p--><img>\n    <hr>\n  </div>\n", [{
+        name: this["name"],
+        onclick: {
+          handler: this["onClick456"],
+          type: "capture"
+        }
+      }, this["title"], {
+        src: this["source"]
+      }]];
+    }
+
   }
 
   return Component;

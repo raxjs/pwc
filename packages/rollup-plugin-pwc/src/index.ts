@@ -45,16 +45,20 @@ export default function PluginPWC(options: Options): Plugin {
       const filename = path.relative(process.cwd(), id);
 
       const compiled = compile(code, { filename });
+      console.log('🚀 ~ file: index.ts ~ line 48 ~ transform ~ compiled', compiled);
 
       if (emitCSS && compiled.styles) {
         const fname = id.replace(new RegExp(`\\${extension}$`), '.css');
-        compiled.script += `\nimport ${JSON.stringify(fname)};\n`;
+        compiled.script.code += `\nimport ${JSON.stringify(fname)};\n`;
         cacheEmit.set(fname, compiled.styles);
       }
+
       const result = {
-        code: compiled.script,
-        map: null,
+        code: compiled.script.code,
+        map: compiled.script.map,
       };
+      console.log('code', compiled.script.code);
+      console.log('map', compiled.script.map);
       return result;
     },
   };

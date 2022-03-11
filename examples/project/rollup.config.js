@@ -1,8 +1,9 @@
-import commonjs from '@rollup/plugin-commonjs';
-import resolve from '@rollup/plugin-node-resolve';
-import livereload from 'rollup-plugin-livereload';
-import css from 'rollup-plugin-css-only';
-import pwc from 'rollup-plugin-pwc';
+const commonjs = require('@rollup/plugin-commonjs');
+const { nodeResolve } = require('@rollup/plugin-node-resolve');
+const livereload = require('rollup-plugin-livereload');
+const css = require('rollup-plugin-css-only');
+const pwc = require('rollup-plugin-pwc');
+
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -27,7 +28,7 @@ function serve() {
   };
 }
 
-export default {
+module.exports = {
   input: 'src/index.pwc',
   output: {
     file: 'public/build/index.js',
@@ -37,7 +38,7 @@ export default {
   plugins: [
     pwc({ emitCSS: true }),
     css({ output: 'index.css' }),
-    resolve({
+    nodeResolve({
       browser: true,
       dedupe: ['pwc'],
     }),
