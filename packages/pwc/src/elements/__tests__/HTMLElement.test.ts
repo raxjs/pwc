@@ -1,4 +1,5 @@
 import '../native/HTMLElement';
+import { reactive } from '../../decorators';
 
 function getSimpleCustomElement() {
   return class CustomElement extends HTMLElement {
@@ -13,7 +14,7 @@ function getSimpleCustomElement() {
         [
           {
             onclick: {
-              handler: this.onClick,
+              handler: this.onClick.bind(this),
             },
           },
           this.text,
@@ -39,12 +40,53 @@ function getNestedCustomElement() {
         [
           {
             onclick: {
-              handler: this.onClick,
+              handler: this.onClick.bind(this),
             },
           },
           this.text,
           this.#title,
           this.name,
+        ],
+      ];
+    }
+  };
+}
+
+function getReactiveCustomElement() {
+  return class CustomElement extends HTMLElement {
+    text: string;
+    className: string;
+    data: {
+      [key: string]: any
+    };
+    changedClassName: boolean = false;
+
+    constructor() {
+      super();
+      reactive.call(this, 'data', {
+        name: 'jack',
+      });
+      reactive.call(this, 'text', 'hello');
+      reactive.call(this, 'className', 'red');
+    }
+    onClick() {
+      this.data.name += '!';
+      this.text += '?';
+      this.className = this.changedClassName ? 'red' : 'green';
+      this.changedClassName = !this.changedClassName;
+    }
+    get template() {
+      return [
+        '<!--?pwc_p--><div id="reactive-container"><!--?pwc_t--> - <!--?pwc_t--></div>',
+        [
+          {
+            class: this.className,
+            onclick: {
+              handler: this.onClick.bind(this),
+            },
+          },
+          this.text,
+          this.data.name
         ],
       ];
     }
@@ -78,5 +120,17 @@ describe('Render HTMLElement', () => {
     const container = document.getElementById('nested-container');
     container.click();
     expect(mockClick).toBeCalled();
+  });
+
+  it('should render reactive element', () => {
+    const CustomElement = getReactiveCustomElement();
+    window.customElements.define('custom-reactive-element', CustomElement);
+    const element = document.createElement('custom-reactive-element');
+    document.body.appendChild(element);
+    expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="reactive-container" class="red">hello<!--?pwc_t--> - jack<!--?pwc_t--></div>');
+
+    const container = document.getElementById('reactive-container');
+    container.click();
+    expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="reactive-container" class="green">hello?<!--?pwc_t--> - jack!<!--?pwc_t--></div>');
   });
 });
