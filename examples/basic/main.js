@@ -1,42 +1,45 @@
-import '../../packages/rax/src/elements/HTMLElement';
-import { html, bindTextNode, bindEvent } from '../../packages/rax/src/html';
+import 'pwc/HTMLElement';
 
 class CustomElement extends HTMLElement {
-  data = {
-    name: 'Jack',
-    count: 0,
-  };
+  text = 'hello';
+  name = 'jack';
   connectedCallback() {
+    super.connectedCallback();
+  }
+  onClick() {
+    console.log('click!!!');
+  }
+  // <div @click={{onClick}}>{{text}} - {{name}} <child-element/></div>
+  get template() {
+    return [
+      '<!--?pwc_p--><div><!--?pwc_t--> - <!--?pwc_t--><child-element/></div>',
+      [
+        {
+          onclick: {
+            handler: this.onClick,
+            type: 'capture',
+          },
+        },
+        this.text,
+        this.name,
+      ],
+    ];
+  }
+}
+
+class Child extends HTMLElement {
+  name = 'Child';
+  connectedCallback() {
+    super.connectedCallback();
     console.log('connected');
   }
-  _onClick() {
-    this.data.name = 'Solo';
-    console.log(this.data.count);
-    this.data.count += 1;
+  onClick() {
+    console.log('click!!!');
   }
-  render() {
-    const { data, _onClick } = this;
-    const { name, count } = data;
-    // <h1>{{name}}</h1>
-    // <button @click=${_onClick}></button>
-    return html`
-      <h1>Hi ${bindTextNode(name)}!</h1>
-      <button id="button" ${bindEvent.call(this, 'button', { type: 'click', fn: _onClick })}>
-        Click Count: ${bindTextNode(count)}
-      </button>
-      <slot></slot>
-    `;
+  get template() {
+    return ['<div><!--?pwc_t--></div>', [this.name]];
   }
 }
 
-class ChildElement extends HTMLElement {
-  render() {
-    // <h1>{{this.name}}</h1>
-    // <button @click=${this._onClick}></button>
-    return html`<div>Child</div> `;
-  }
-}
-
-window.customElements.define('child-element', ChildElement);
 window.customElements.define('custom-element', CustomElement);
-
+window.customElements.define('child-element', Child);

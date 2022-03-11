@@ -9,4 +9,5 @@ module.exports = {
   roots: ['<rootDir>/packages'],
   testPathIgnorePatterns: ['/node_modules/', '/lib/', '/es/', '/dist/'],
   testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
+  testEnvironment: 'jsdom',
 };
