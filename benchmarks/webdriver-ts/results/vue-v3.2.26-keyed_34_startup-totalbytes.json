@@ -1,0 +1,1 @@
+{"framework":"vue-v3.2.26-keyed","keyed":true,"benchmark":"34_startup-totalbytes","type":"startup","min":195.306640625,"max":195.306640625,"mean":195.306640625,"median":195.306640625,"geometricMean":195.306640625,"standardDeviation":0,"values":[195.306640625,195.306640625,195.306640625,195.306640625]}

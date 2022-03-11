@@ -8,7 +8,7 @@
     "tsbench": "cross-env LANG=\"en_US.UTF-8\" ts-node src/benchmarkRunner.ts",
     "bench": "cross-env LANG=\"en_US.UTF-8\" node dist/benchmarkRunner.js",
     "compile": "tsc",
-    "results": "ts-node src/createResultJS.ts && cd .. && cd webdriver-ts-results && npm run save-last-result && npm run build",
+    "results": "ts-node src/createResultJS.ts && cd .. && cd webdriver-ts-results && npm run move-result && npm run build",
     "index": "ts-node src/createIndex.ts",
     "isKeyed": "cross-env LANG=\"en_US.UTF-8\" ts-node src/isKeyed.ts"
   },

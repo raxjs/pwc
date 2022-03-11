@@ -1,0 +1,1 @@
+{"framework":"react-v16.8.6-non-keyed","keyed":false,"benchmark":"34_startup-totalbytes","type":"startup","min":261.34375,"max":261.34375,"mean":261.34375,"median":261.34375,"geometricMean":261.34375,"standardDeviation":0,"values":[261.34375,261.34375,261.34375,261.34375]}

@@ -1,1 +1,1 @@
-{"framework":"lit-v2.1.1-keyed","keyed":true,"benchmark":"25_run-clear-memory","type":"memory","min":1.1107711791992188,"max":1.1107711791992188,"mean":1.1107711791992188,"median":1.1107711791992188,"geometricMean":1.1107711791992188,"standardDeviation":null,"values":[1.1107711791992188]}
+{"framework":"lit-v2.1.1-keyed","keyed":true,"benchmark":"25_run-clear-memory","type":"memory","min":1.274688720703125,"max":1.274688720703125,"mean":1.274688720703125,"median":1.274688720703125,"geometricMean":1.274688720703125,"standardDeviation":null,"values":[1.274688720703125]}

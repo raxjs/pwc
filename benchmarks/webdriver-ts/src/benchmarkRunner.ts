@@ -136,7 +136,7 @@ async function runBench(runFrameworks: FrameworkData[], benchmarkNames: string[]
     port: config.PORT.toFixed(),
     remoteDebuggingPort: config.REMOTE_DEBUGGING_PORT,
     chromePort: config.CHROME_PORT,
-    headless: args.headless,
+    headless: args.headless || true,
     chromeBinaryPath: args.chromeBinary,
     numIterationsForCPUBenchmarks: config.NUM_ITERATIONS_FOR_BENCHMARK_CPU + config.NUM_ITERATIONS_FOR_BENCHMARK_CPU_DROP_SLOWEST_COUNT,
     numIterationsForMemBenchmarks: config.NUM_ITERATIONS_FOR_BENCHMARK_MEM,
@@ -216,7 +216,7 @@ async function main() {
     config.EXIT_ON_ERROR = true;
     console.log('Using smoketest config ', JSON.stringify(config));
   }
-    
+
   if (!fs.existsSync(config.RESULTS_DIRECTORY)) fs.mkdirSync(config.RESULTS_DIRECTORY);
 
   if (args.help) {
