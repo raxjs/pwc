@@ -1,0 +1,1 @@
+{"framework":"lit-html-v1.1.0-non-keyed","keyed":false,"benchmark":"34_startup-totalbytes","type":"startup","min":154.470703125,"max":154.470703125,"mean":154.470703125,"median":154.470703125,"geometricMean":154.470703125,"standardDeviation":0,"values":[154.470703125,154.470703125,154.470703125,154.470703125]}

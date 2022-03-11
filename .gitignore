@@ -2,8 +2,6 @@
 # Dependencies
 node_modules
 jspm_packages
-
-package-lock.json
 yarn.lock
 
 # Logs
@@ -34,3 +32,7 @@ coverage
 # Packages
 packages/*/lib/
 packages/*/es/
+
+# Dist
+dist/
+!**/frameworks/**/dist

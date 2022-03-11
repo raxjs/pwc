@@ -1,0 +1,1 @@
+{"framework":"react-v16.8.6-non-keyed","keyed":false,"benchmark":"25_run-clear-memory","type":"memory","min":2.519073486328125,"max":2.519073486328125,"mean":2.519073486328125,"median":2.519073486328125,"geometricMean":2.519073486328125,"standardDeviation":null,"values":[2.519073486328125]}
