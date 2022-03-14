@@ -1,4 +1,3 @@
-# 忽略目录
 build/
 node_modules/
 es/
@@ -9,8 +8,11 @@ coverage/
 commitlint.config.js
 
 __tests__/
+benchmarks/
 
 .eslintrc.js
 
 **/*-min.js
 **/*.min.js
+
+

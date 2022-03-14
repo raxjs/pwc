@@ -1,7 +1,6 @@
 {
-  "files": [],
-  "references": [
-    { "path": "packages/pwc-compiler" },
-    { "path": "packages/rollup-plugin-pwc" }
-  ]
+  "compilerOptions": {
+    "target": "ES2015",
+    "moduleResolution": "node"
+  }
 }
