@@ -1,6 +1,12 @@
-export function reactive(prop: string, initialValue) {
-  this.createReactiveProperty(prop, initialValue);
-}
-
-export function attribute(attr: string) {
+export function reactive(value, { kind, name }) {
+  if (kind === 'accessor') {
+    return {
+      set(val) {
+        this.createReactiveProperty(name, val);
+      },
+      get() {
+        return this.getRawValue(name);
+      },
+    };
+  }
 }

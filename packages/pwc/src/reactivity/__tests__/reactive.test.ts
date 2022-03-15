@@ -1,4 +1,4 @@
-import { ReactiveProperty } from '../ReactiveProperty';
+import { Reactive } from '../reactive';
 
 let isUpdating = false;
 
@@ -14,7 +14,7 @@ const mockElement = {
 
 describe('Create a reactive property', () => {
   it('A primitive property should request a update', () => {
-    const reactive = new ReactiveProperty(mockElement);
+    const reactive = new Reactive(mockElement);
     reactive.createReactiveProperty('name', 'Jack');
 
     isUpdating = false;
@@ -23,7 +23,7 @@ describe('Create a reactive property', () => {
     expect(isUpdating).toBe(true);
   });
   it('A object property should request a update', () => {
-    const reactive = new ReactiveProperty(mockElement);
+    const reactive = new Reactive(mockElement);
     reactive.createReactiveProperty('data', {
       name: 'Jack'
     });
@@ -34,7 +34,7 @@ describe('Create a reactive property', () => {
     expect(isUpdating).toBe(true);
   });
   it('A array property should request a update', () => {
-    const reactive = new ReactiveProperty(mockElement);
+    const reactive = new Reactive(mockElement);
     reactive.createReactiveProperty('arr', [0]);
 
     isUpdating = false;

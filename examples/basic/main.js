@@ -3,14 +3,21 @@ import { reactive } from 'pwc/decorators';
 
 class CustomElement extends HTMLElement {
   changedClassName = false;
+  @reactive accessor data = {
+    name: 'jack',
+  };
+  
+  @reactive accessor text = 'hello';
+  @reactive accessor className = 'red';
+
 
   constructor() {
     super();
-    reactive.call(this, 'data', {
-      name: 'jack',
-    });
-    reactive.call(this, 'text', 'hello');
-    reactive.call(this, 'className', 'red');
+    // reactive.call(this, 'data', {
+    //   name: 'jack',
+    // });
+    // reactive.call(this, 'text', 'hello');
+    // reactive.call(this, 'className', 'red');
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -23,8 +30,9 @@ class CustomElement extends HTMLElement {
   onClick() {
     this.data.name += '!';
     this.text += '?';
-    this.className = this.changedClassName ? 'red' : 'green';
+    // this.className = this.changedClassName ? 'red' : 'green';
     this.changedClassName = !this.changedClassName;
+    // this.names.push('Tom');
   }
   // <div class={{className}} @click={{onClick}} >{{text}} - {{name}} <child-element name={{name}}/></div>
   get template() {
@@ -50,6 +58,7 @@ class CustomElement extends HTMLElement {
 
 
 class Child extends HTMLElement {
+  privatename = 'Child';
   attributeChangedCallback(name, oldValue, newValue) {
     console.log('attributeChangedCallback', name, oldValue, newValue);
   }
