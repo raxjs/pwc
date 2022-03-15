@@ -1,4 +1,5 @@
-import { hasOwnProperty, isEvent } from '../utils';
+import hasOwnProperty from '../hasOwnProperty';
+import isEvent from './isEvent';
 import type { Attrs } from '../type';
 
 export default function setAttribute(element: Element, attrs: Attrs) {
