@@ -5,10 +5,13 @@ export interface BaseElementType {
   adoptedCallback?: () => void;
 }
 
-export type ElementTemplate = [] | [string] | [string, any[]];
+export type Attrs = Record<string, any>;
+
+export type TemplateValue = Attrs | string;
+
+export type ElementTemplate = [] | [string] | [string, TemplateValue[]];
 
 export interface CustomHTMLBaseElement extends HTMLBaseElement {
   template?: ElementTemplate;
   shadowOptions: ShadowRootInit;
 }
-

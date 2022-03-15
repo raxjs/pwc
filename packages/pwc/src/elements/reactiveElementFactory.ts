@@ -1,6 +1,6 @@
-import type { ElementTemplate } from '../type';
+import type { Attrs, ElementTemplate, TemplateValue } from '../type';
 import { TEXT_COMMENT_DATA, PWC_PREFIX, PLACEHOLDER_COMMENT_DATA } from '../constants';
-import { hasOwnProperty } from '../utils';
+import setAttribute from './setAttribute';
 
 export default (Definition) => {
   return class extends Definition {
@@ -16,11 +16,15 @@ export default (Definition) => {
     // Custom element native lifecycle
     connectedCallback() {
       if (!this.#initialized) {
+        if (this.__init_task__) {
+          this.__init_task__();
+        }
         this.#template = this.template || [];
         const [template, values = []] = this.#template;
 
         this.#fragment = this.#createTemplate(template);
         // TODO: rename?
+        // @ts-ignore
         this.#associateTplAndValue(this.#fragment, values);
         this.appendChild(this.#fragment);
       }
@@ -39,7 +43,7 @@ export default (Definition) => {
 
       return template.content.cloneNode(true);
     }
-    #associateTplAndValue(fragment: Node, values) {
+    #associateTplAndValue(fragment: Node, values: TemplateValue[]) {
       const nodeIterator = document.createNodeIterator(fragment, NodeFilter.SHOW_COMMENT, {
         acceptNode(node) {
           if ((node as Comment).data?.includes(PWC_PREFIX)) {
@@ -54,26 +58,19 @@ export default (Definition) => {
       while ((currentComment = nodeIterator.nextNode())) {
         // Insert dynamic text node
         if ((currentComment as Comment).data === TEXT_COMMENT_DATA) {
-          const textNode = document.createTextNode(values[index]);
+          const textNode = document.createTextNode(values[index] as string);
           currentComment.parentNode.insertBefore(textNode, currentComment);
         } else if ((currentComment as Comment).data === PLACEHOLDER_COMMENT_DATA) {
           // Set dynamic attribute and property
           const targetElement = currentComment.nextSibling as Element;
           const dynamicValue = values[index];
-          for (const attrName in dynamicValue) {
-            if (hasOwnProperty(dynamicValue, attrName)) {
-              // When attribute name startWith on, it should be an event
-              if (attrName.startsWith('on')) {
-                const { handler, type } = dynamicValue[attrName];
-                // If type is capture, the event should be trigger when capture stage
-                targetElement.addEventListener(attrName.slice(2), handler, type === 'capture');
-              } else if (attrName in targetElement) {
-                // Verify that there is a target property on the node
-                targetElement[attrName] = dynamicValue[attrName];
-              } else {
-                targetElement.setAttribute(attrName, dynamicValue[attrName]);
-              }
-            }
+          // TODO Dev env check
+          // Check target element whether custom element
+          if (customElements.get(targetElement.localName)) {
+            // @ts-ignore
+            targetElement.__init_task__ = setAttribute.bind(null, targetElement, dynamicValue);
+          } else {
+            setAttribute(targetElement, dynamicValue as Attrs);
           }
         }
 
