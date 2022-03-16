@@ -16,60 +16,62 @@ describe('Set element attribute/property/event handler', () => {
   });
 
   it('should set attribute and event handler at built-in element', () => {
-    let child1ClickState: string = 'unchanged';
-    let child2ClickState: string = 'unchanged';
-    // Child1 element
-    const child1ClickHandler = jest.fn().mockImplementation(() => {
-      child1ClickState = 'child1 clicked';
+    let parent1ClickState: string = 'unchanged';
+    let parent2ClickState: string = 'unchanged';
+    // Parent1 element
+    const parent1ClickHandler = jest.fn().mockImplementation(() => {
+      parent1ClickState = 'parent1 clicked';
     });
-    const child1Attrs = {
+    const parent1Attrs = {
       class: 'container',
       onclick: {
-        handler: child1ClickHandler,
+        handler: parent1ClickHandler,
       },
     };
-    const child1 = document.createElement('div');
-    setAttribute(child1, child1Attrs);
+    const parent1 = document.createElement('div');
+    setAttribute(parent1, parent1Attrs);
 
-    // Child2 element
-    const child2ClickHandler = jest.fn().mockImplementation(() => {
-      child2ClickState = 'child2 clicked';
+    // Parent2 element
+    const parent2ClickHandler = jest.fn().mockImplementation(() => {
+      parent2ClickState = 'parent2 clicked';
     });
-    const child2Attrs = {
+    const parent2Attrs = {
       class: 'container',
       onclick: {
-        handler: child2ClickHandler,
+        handler: parent2ClickHandler,
         capture: true,
       },
     };
-    const child2 = document.createElement('div');
-    setAttribute(child2, child2Attrs);
+    const parent2 = document.createElement('div');
+    setAttribute(parent2, parent2Attrs);
 
-    const parentClickHandler = jest.fn().mockImplementation(() => {
-      child1ClickState = 'parent clicked';
-      child2ClickState = 'parent clicked';
+    const childClickHandler = jest.fn().mockImplementation(() => {
+      parent1ClickState = 'child clicked';
+      parent2ClickState = 'child clicked';
     });
-    const parentAttrs = {
+    const childAttrs = {
       onclick: {
-        handler: parentClickHandler,
+        handler: childClickHandler,
       },
     };
-    const parent = document.createElement('div');
-    setAttribute(parent, parentAttrs);
+    const child = document.createElement('div');
+    setAttribute(child, childAttrs);
 
-    parent.appendChild(child1);
-    parent.appendChild(child2);
-    document.body.appendChild(parent);
+    document.body.appendChild(parent1);
+    document.body.appendChild(parent2);
 
-    child1.click();
-    expect(child1ClickState).toEqual('parent clicked');
-    expect(child1ClickHandler).toBeCalled();
-    expect(parentClickHandler).toBeCalledTimes(1);
+    parent1.appendChild(child);
+    child.click();
+    expect(parent1ClickState).toEqual('parent1 clicked');
+    expect(parent1ClickHandler).toBeCalled();
+    expect(childClickHandler).toBeCalledTimes(1);
 
-    child2.click();
-    expect(child2ClickState).toEqual('child2 clicked');
-    expect(child2ClickHandler).toBeCalled();
-    expect(parentClickHandler).toBeCalledTimes(2);
+    parent1.removeChild(child);
+    parent2.appendChild(child);
+    child.click();
+    expect(parent2ClickState).toEqual('child clicked');
+    expect(parent2ClickHandler).toBeCalled();
+    expect(childClickHandler).toBeCalledTimes(2);
   });
 
   it('should set attribute and property at custom element', () => {
