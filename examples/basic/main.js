@@ -13,11 +13,9 @@ class CustomElement extends HTMLElement {
 
   constructor() {
     super();
-    // reactive.call(this, 'data', {
-    //   name: 'jack',
-    // });
-    // reactive.call(this, 'text', 'hello');
-    // reactive.call(this, 'className', 'red');
+    this.data = { name: 'jack' };
+    this.text = 'hello';
+    this.className = 'red';
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
