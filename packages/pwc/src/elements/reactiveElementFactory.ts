@@ -20,7 +20,7 @@ export default (Definition) => {
           this.__init_task__();
         }
         this.#template = this.template || [];
-        const [template, values = []] = this.#template;
+        const [template = '', values = []] = this.#template;
 
         this.#fragment = this.#createTemplate(template);
         // TODO: rename?

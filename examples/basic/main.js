@@ -17,7 +17,7 @@ class CustomElement extends HTMLElement {
         {
           onclick: {
             handler: this.onClick,
-            type: 'capture',
+            capture: true,
           },
         },
         this.text,
