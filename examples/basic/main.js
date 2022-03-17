@@ -3,12 +3,13 @@ import { reactive } from 'pwc/decorators';
 
 class CustomElement extends HTMLElement {
   changedClassName = false;
-  @reactive accessor data = {
+
+  @reactive data = {
     name: 'jack',
   };
-  
-  @reactive accessor text = 'hello';
-  @reactive accessor className = 'red';
+
+  @reactive text = 'hello';
+  @reactive className = 'red';
 
 
   constructor() {
