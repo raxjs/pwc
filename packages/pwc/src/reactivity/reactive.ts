@@ -19,15 +19,14 @@ export class Reactive implements ReactiveType {
   }
 
   createReactiveProperty(prop: string, initialValue: any) {
-    if (typeof initialValue === 'object') {
-      const key = Reactive.getKey(prop);
-      this[key] = new Proxy(initialValue, this.#proxyHandler);
-    }
-    this.requestUpdate();
-  }
-
-  getRawValue(prop: string) {
     const key = Reactive.getKey(prop);
-    return this[key][ReactiveFlags.RAW];
+
+    if (typeof initialValue === 'object') {
+      this.#element[key] = new Proxy(initialValue, this.#proxyHandler);
+    } else {
+      this.#element[key] = initialValue;
+    }
+
+    this.requestUpdate();
   }
 }

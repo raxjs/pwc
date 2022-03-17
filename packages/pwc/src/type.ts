@@ -18,9 +18,6 @@ export interface ReactiveType {
   // Create a reactive property
   createReactiveProperty: (property: string, initialValue: any) => void;
 
-  // Get the raw value of a reactive property
-  getRawValue: (property: string) => unknown;
-
   // The reactive property if changed will request a update
   requestUpdate: () => void;
 

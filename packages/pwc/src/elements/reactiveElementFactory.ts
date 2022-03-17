@@ -101,9 +101,5 @@ export default (Definition) => {
     createReactiveProperty(prop: string, initialValue: any) {
       this.#reactive.createReactiveProperty(prop, initialValue);
     }
-
-    getReactiveValue(prop: string) {
-      return this.#reactive.getRawValue(prop);
-    }
   };
 };

@@ -33,7 +33,7 @@ function createSetter(trigger) {
     }
 
     // Ignore the array.length changes
-    if (isArray(target) && key !== 'length') {
+    if (!isArray(target) || key !== 'length') {
       trigger();
     }
 
