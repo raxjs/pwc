@@ -4,7 +4,7 @@ import swc from 'rollup-plugin-swc';
 import type { DistTaskOptions } from '../type';
 
 export default function getBaseConfig(options: DistTaskOptions): RollupOptions {
-  const { input, output, format = 'umd', plugins = [] } = options;
+  const { input, output, format = 'umd', plugins = [], esTarget = 'es5' } = options;
 
   return {
     input: input,
@@ -23,7 +23,7 @@ export default function getBaseConfig(options: DistTaskOptions): RollupOptions {
           parser: {
             syntax: 'typescript',
           },
-          target: 'es5',
+          target: esTarget,
         },
       }),
       ...plugins

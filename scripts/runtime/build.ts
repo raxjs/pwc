@@ -1,6 +1,7 @@
 import { rollup } from 'rollup';
 import { join } from 'path';
-import { gzipSize } from 'gzip-size';
+import chalk from 'chalk';
+import { gzipSizeFromFileSync } from 'gzip-size';
 import getBuildConfig from './rollup/config.build';
 import type { DistTaskOptions } from './type';
 
@@ -30,6 +31,19 @@ function main() {
     output: join(PWC_CORE_OUTPUT_DIR, 'pwc.min.js'),
     minify: true,
   });
+  // dist esnext
+  buildDist({
+    input: PWC_CORE_INPUT,
+    output: join(PWC_CORE_OUTPUT_DIR, 'pwc.esnext.js'),
+    esTarget: 'es2022',
+  });
+  // dist minified es2022
+  buildDist({
+    input: PWC_CORE_INPUT,
+    output: join(PWC_CORE_OUTPUT_DIR, 'pwc.esnext.min.js'),
+    minify: true,
+    esTarget: 'es2022',
+  });
   // esm
   buildESM();
   // esnext
@@ -37,6 +51,7 @@ function main() {
 }
 
 async function buildDist(options: DistTaskOptions) {
+  const { output: file } = options;
   let bundle;
   let buildFailed = false;
   try {
@@ -49,8 +64,15 @@ async function buildDist(options: DistTaskOptions) {
   }
   if (bundle) {
     await bundle.write({
-      file: options.output,
+      file,
     });
+    if (options.minify) {
+      const size = gzipSizeFromFileSync(file, {
+        level: 6,
+      });
+
+      console.log(file, `${chalk.green((size / 1024).toPrecision(8) + 'KiB')} (Gzipped)`);
+    }
     // closes the bundle
     await bundle.close();
   }
