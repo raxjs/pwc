@@ -1,22 +1,27 @@
 import 'pwc/HTMLElement';
-import { reactive } from 'pwc/decorators';
+import { legacyReactive } from 'pwc/decorators';
 
 class CustomElement extends HTMLElement {
   changedClassName = false;
 
-  @reactive data = {
-    name: 'jack',
-  };
+  // @reactive data = {
+  //   name: 'jack',
+  // };
 
-  @reactive text = 'hello';
-  @reactive className = 'red';
+  // @reactive text = 'hello';
+  // @reactive className = 'red';
 
 
   constructor() {
     super();
-    this.data = { name: 'jack' };
-    this.text = 'hello';
-    this.className = 'red';
+    // this.data = { name: 'jack' };
+    // this.text = 'hello';
+    // this.className = 'red';
+    legacyReactive.call(this, 'data', {
+      name: 'jack',
+    });
+    legacyReactive.call(this, 'text', 'hello');
+    legacyReactive.call(this, 'className', 'red');
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -27,9 +32,10 @@ class CustomElement extends HTMLElement {
     super.connectedCallback();
   }
   onClick() {
+    // console.log(this.data);
     this.data.name += '!';
     this.text += '?';
-    // this.className = this.changedClassName ? 'red' : 'green';
+    this.className = this.changedClassName ? 'red' : 'green';
     this.changedClassName = !this.changedClassName;
     // this.names.push('Tom');
   }

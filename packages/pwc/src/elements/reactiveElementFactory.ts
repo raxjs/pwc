@@ -98,8 +98,12 @@ export default (Definition) => {
       }, 0);
     }
 
-    createReactiveProperty(prop: string, initialValue: any) {
-      this.#reactive.createReactiveProperty(prop, initialValue);
+    getReactiveValue(prop: string): unknown {
+      return this.#reactive.getReactiveValue(prop);
+    }
+
+    setReactiveValue(prop: string, val: unknown) {
+      this.#reactive.setReactiveValue(prop, val);
     }
   };
 };

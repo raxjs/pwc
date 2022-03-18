@@ -1,14 +1,24 @@
-import { Reactive } from '../reactivity/reactive';
-
 export function reactive(value, { kind, name }) {
   if (kind === 'accessor') {
     return {
       get() {
-        return this[Reactive.getKey(name)];
+        return this.getReactiveValue(name);
       },
       set(val) {
-        this.createReactiveProperty(name, val);
+        this.setReactiveValue(name, val);
       },
     };
   }
+}
+export function legacyReactive(name, initialValue) {
+  this.setReactiveValue(name, initialValue);
+
+  Object.defineProperty(this.constructor.prototype, name, {
+    set(val) {
+      this.setReactiveValue(name, val);
+    },
+    get() {
+      return this.getReactiveValue(name);
+    },
+  });
 }

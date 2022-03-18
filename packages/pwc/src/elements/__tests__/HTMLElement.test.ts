@@ -1,5 +1,17 @@
 import '../native/HTMLElement';
-import { reactive } from '../../decorators';
+
+function legacyReactive(name, initialValue) {
+  this.setReactiveValue(name, initialValue);
+
+  Object.defineProperty(this.constructor.prototype, name, {
+    set(val) {
+      this.setReactiveValue(name, val);
+    },
+    get() {
+      return this.getReactiveValue(name);
+    },
+  });
+}
 
 function getSimpleCustomElement() {
   return class CustomElement extends HTMLElement {
@@ -63,11 +75,11 @@ function getReactiveCustomElement() {
 
     constructor() {
       super();
-      reactive.call(this, 'data', {
+      legacyReactive.call(this, 'data', {
         name: 'jack',
       });
-      reactive.call(this, 'text', 'hello');
-      reactive.call(this, 'className', 'red');
+      legacyReactive.call(this, 'text', 'hello');
+      legacyReactive.call(this, 'className', 'red');
     }
     onClick() {
       this.data.name += '!';
@@ -122,7 +134,7 @@ describe('Render HTMLElement', () => {
     expect(mockClick).toBeCalled();
   });
 
-  it('should render reactive element', () => {
+  it('should render reactive element', async () => {
     const CustomElement = getReactiveCustomElement();
     window.customElements.define('custom-reactive-element', CustomElement);
     const element = document.createElement('custom-reactive-element');
@@ -131,6 +143,8 @@ describe('Render HTMLElement', () => {
 
     const container = document.getElementById('reactive-container');
     container.click();
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
     expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="reactive-container" class="green">hello?<!--?pwc_t--> - jack!<!--?pwc_t--></div>');
   });
 });

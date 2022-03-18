@@ -15,8 +15,9 @@ export interface CustomHTMLBaseElement extends HTMLBaseElement {
 
 // TODO rename
 export interface ReactiveType {
-  // Create a reactive property
-  createReactiveProperty: (property: string, initialValue: any) => void;
+  setReactiveValue: (prop: string, val: unknown) => void;
+
+  getReactiveValue: (prop: string) => unknown;
 
   // The reactive property if changed will request a update
   requestUpdate: () => void;

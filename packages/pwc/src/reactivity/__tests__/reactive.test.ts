@@ -1,45 +1,43 @@
 import { Reactive } from '../reactive';
-
-let isUpdating = false;
-
-const mockElement = {
-  data: {
-  },
-  name: '',
-  arr: [],
-  requestUpdate: () => {
-    isUpdating = true;
+class MockElement {
+  isUpdating: boolean = false;
+  reactive = new Reactive(this);
+  constructor(initialValue) {
+    this.reactive.setReactiveValue('data', initialValue);
+    this.isUpdating = false;
+  }
+  set data(val) {
+    this.reactive.setReactiveValue('data', val);
+  }
+  get data() {
+    return this.reactive.getReactiveValue('data');
+  }
+  requestUpdate() {
+    this.isUpdating = true;
   }
 }
 
+
+
 describe('Create a reactive property', () => {
   it('A primitive property should request a update', () => {
-    const reactive = new Reactive(mockElement);
-    reactive.createReactiveProperty('name', 'Jack');
-
-    isUpdating = false;
-    mockElement.name = 'Tom';
-
-    expect(isUpdating).toBe(true);
+    const element = new MockElement('Jack');
+    expect(element.isUpdating).toBe(false);
+    element.data = 'Tom';
+    expect(element.isUpdating).toBe(true);
   });
   it('A object property should request a update', () => {
-    const reactive = new Reactive(mockElement);
-    reactive.createReactiveProperty('data', {
+    const element = new MockElement({
       name: 'Jack'
     });
-
-    isUpdating = false;
-    mockElement.data['name'] = 'Tom';
-
-    expect(isUpdating).toBe(true);
+    expect(element.isUpdating).toBe(false);
+    element.data.name = 'Tom';
+    expect(element.isUpdating).toBe(true);
   });
   it('A array property should request a update', () => {
-    const reactive = new Reactive(mockElement);
-    reactive.createReactiveProperty('arr', [0]);
-
-    isUpdating = false;
-    mockElement.arr.push(1);
-
-    expect(isUpdating).toBe(true);
+    const element = new MockElement(['Jack']);
+    expect(element.isUpdating).toBe(false);
+    element.data.push('Tom')
+    expect(element.isUpdating).toBe(true);
   });
 })
