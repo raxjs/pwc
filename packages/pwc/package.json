@@ -25,6 +25,9 @@
       "node": ">=12.22.0",
       "npm": ">=3.0.0"
     },
+    "dependencies": {
+      "@swc/helpers": "^0.3.8"
+    },
     "exports": {
       "./elements": "./src/elements/native/index.ts"
     }
