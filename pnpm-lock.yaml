@@ -932,6 +932,16 @@ packages:
       '@babel/helper-plugin-utils': 7.16.7
     dev: false
 
+  /@babel/plugin-syntax-jsx/7.16.7_@babel+core@7.17.5:
+    resolution: {integrity: sha512-Esxmk7YjA8QysKeT3VhTXvF6y77f/a91SIs4pWb4H2eWGQkCKFgQaG6hdoEVZtGsrAcb2K5BW66XsOErD4WU3Q==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.17.5
+      '@babel/helper-plugin-utils': 7.16.7
+    dev: false
+
   /@babel/plugin-syntax-logical-assignment-operators/7.10.4_@babel+core@7.17.5:
     resolution: {integrity: sha512-d8waShlpFDinQ5MtvGU9xDAOzKH47+FFoney2baFIoMr952hKOLp1HR7VszoZvOsV/4+RRszNY7D17ba0te0ig==}
     peerDependencies:
@@ -3949,8 +3959,8 @@ packages:
     requiresBuild: true
     optional: true
 
-  /esbuild-linux-32/0.14.23:
-    resolution: {integrity: sha512-37R/WMkQyUfNhbH7aJrr1uCjDVdnPeTHGeDhZPUNhfoHV0lQuZNCKuNnDvlH/u/nwIYZNdVvz1Igv5rY/zfrzQ==}
+  /esbuild-linux-32/0.14.27:
+    resolution: {integrity: sha512-qhNYIcT+EsYSBClZ5QhLzFzV5iVsP1YsITqblSaztr3+ZJUI+GoK8aXHyzKd7/CKKuK93cxEMJPpfi1dfsOfdw==}
     engines: {node: '>=12'}
     cpu: [ia32]
     os: [linux]
@@ -4002,6 +4012,15 @@ packages:
 
   /esbuild-linux-arm64/0.14.23:
     resolution: {integrity: sha512-c4MLOIByNHR55n3KoYf9hYDfBRghMjOiHLaoYLhkQkIabb452RWi+HsNgB41sUpSlOAqfpqKPFNg7VrxL3UX9g==}
+    engines: {node: '>=12'}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /esbuild-linux-arm64/0.14.27:
+    resolution: {integrity: sha512-no6Mi17eV2tHlJnqBHRLekpZ2/VYx+NfGxKcBE/2xOMYwctsanCaXxw4zapvNrGE9X38vefVXLz6YCF8b1EHiQ==}
     engines: {node: '>=12'}
     cpu: [arm64]
     os: [linux]
