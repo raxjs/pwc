@@ -1,3 +1,3 @@
-export default function hasOwnProperty(target, key) {
+export function hasOwnProperty(target, key) {
   return Object.prototype.hasOwnProperty.call(target, key);
 }

@@ -1,4 +1,4 @@
-import type { Attrs, ElementTemplate, TemplateValue } from '../type';
+import type { Attributes, ElementTemplate, TemplateValue } from '../type';
 import { TEXT_COMMENT_DATA, PWC_PREFIX, PLACEHOLDER_COMMENT_DATA } from '../constants';
 import setAttribute from './setAttribute';
 
@@ -70,7 +70,7 @@ export default (Definition) => {
             // @ts-ignore
             targetElement.__init_task__ = setAttribute.bind(null, targetElement, dynamicValue);
           } else {
-            setAttribute(targetElement, dynamicValue as Attrs);
+            setAttribute(targetElement, dynamicValue as Attributes);
           }
         }
 

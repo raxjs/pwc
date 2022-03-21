@@ -5,9 +5,9 @@ export interface BaseElementType {
   adoptedCallback?: () => void;
 }
 
-export type Attrs = Record<string, any>;
+export type Attributes = Record<string, any>;
 
-export type TemplateValue = Attrs | string;
+export type TemplateValue = Attributes | string;
 
 export type ElementTemplate = [] | [string] | [string, TemplateValue[]];
 
