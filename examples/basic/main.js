@@ -1,4 +1,4 @@
-import 'pwc/elements';
+import 'pwc';
 
 class CustomElement extends HTMLElement {
   text = 'hello';

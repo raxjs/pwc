@@ -4,7 +4,7 @@
   "author": "Rax Team",
   "homepage": "https://github.com/raxjs/pwc#readme",
   "license": "MIT",
-  "main": "src/index.js",
+  "main": "es/index.js",
   "files": [
     "es/",
     "lib/",
@@ -17,7 +17,8 @@
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
-    "build": "pkg-cli build"
+    "build": "pkg-cli build",
+    "start": "pkg-cli start"
   },
   "bugs": {
     "url": "https://github.com/raxjs/pwc/issues"
@@ -32,9 +33,12 @@
     "regenerator-runtime": "^0.13.9"
   },
   "exports": {
-    "./elements": "./src/elements/native/index.ts"
+    "es": "./es/index.js",
+    "esnext": "./esnext/index.js",
+    "default": "./es/index.js"
   },
   "devDependencies": {
     "@ice/pkg-cli": "^1.0.0-beta.2"
-  }
+  },
+  "sideEffects": ["elements/native"]
 }
