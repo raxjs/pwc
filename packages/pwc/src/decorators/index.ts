@@ -1,4 +1,4 @@
-export function reactive(value, { kind, name }) {
+export function reactive(value, { kind, name, addInitializer }) {
   if (kind === 'accessor') {
     return {
       get() {
@@ -6,6 +6,10 @@ export function reactive(value, { kind, name }) {
       },
       set(val) {
         this.setReactiveValue(name, val);
+      },
+      init(initialValue) {
+        this.setReactiveValue(name, initialValue);
+        return initialValue;
       },
     };
   }
