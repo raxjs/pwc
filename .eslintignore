@@ -16,4 +16,6 @@ benchmarks/
 **/*-min.js
 **/*.min.js
 
+examples/
+scripts/
 

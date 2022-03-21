@@ -10,15 +10,15 @@ export function isPrimitive(value: unknown) {
   return value === null || (typeof value !== 'object' && typeof value !== 'function');
 }
 
-export function is(x, y): boolean {
+export function is(prev, curr): boolean {
   // SameValue algorithm
-  if (x === y) {
+  if (prev === curr) {
     // Steps 1-5, 7-10
     // Steps 6.b-6.e: +0 != -0
-    return x !== 0 || 1 / x === 1 / y;
+    return prev !== 0 || 1 / prev === 1 / curr;
   } else {
     // Step 6.a: NaN == NaN
-    return x !== x && y !== y; // eslint-disable-line no-self-compare
+    return prev !== prev && curr !== curr; // eslint-disable-line no-self-compare
   }
 }
 
@@ -41,11 +41,11 @@ export function shallowEqual(valueA: any, valueB: any) {
     return false;
   }
 
-  for (let i = 0; i < keysA.length; i++) {
-    const key = keysA[i];
-    if (!hasOwnProperty(valueB, key) || !isEventName(key) || !is(valueA[key], valueB[key])) {
+  for (const val of keysA) {
+    if (!hasOwnProperty(valueB, val) || !isEventName(val) || !is(valueA[val], valueB[val])) {
       return false;
     }
   }
+
   return true;
 }
