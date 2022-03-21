@@ -6,7 +6,6 @@ export interface PWCElement {
   adoptedCallback?: () => void;
 }
 
-
 export type ElementTemplate = [] | [string] | [string, any[]];
 
 export interface CustomHTMLBaseElement extends HTMLBaseElement {
@@ -22,5 +21,4 @@ export interface ReactiveType {
 
   // The reactive property if changed will request a update
   requestUpdate: () => void;
-
 }

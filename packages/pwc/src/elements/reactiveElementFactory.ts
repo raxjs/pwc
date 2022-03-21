@@ -21,12 +21,10 @@ export default (Definition) => {
     #childNodes: ChildElement[];
     // Reactive instance
     #reactive: Reactive = new Reactive(this);
-    // Update Timer
-    #updateTimer: ReturnType<typeof setTimeout>;
     // update job
     updateJob: SchedulerJob = {
       uid: this.uid,
-      run: this.#performUpdate
+      run: this.#performUpdate.bind(this)
     };
 
     // Custom element native lifecycle
@@ -101,12 +99,6 @@ export default (Definition) => {
 
     requestUpdate(): void {
       queueJob(this.updateJob);
-      // if (this.#updateTimer) {
-      //   clearTimeout(this.#updateTimer);
-      // }
-      // this.#updateTimer = setTimeout(() => {
-      //   this.#performUpdate();
-      // }, 0);
     }
 
     getReactiveValue(prop: string): unknown {

@@ -3,7 +3,7 @@ export interface SchedulerJob {
   run: () => void;
 }
 
-const queue: SchedulerJob[] = [];
+let queue: SchedulerJob[] = [];
 let isFlushing: boolean = false;
 let isFlushingPending: boolean = false;
 const resolvedPromise: Promise<any> = Promise.resolve();
@@ -28,6 +28,7 @@ export function queueJob(job: SchedulerJob) {
 function queueFlush() {
   if (!isFlushing && !isFlushingPending) {
     isFlushingPending = true;
+    console.log('queueFlush')
     currentFlushPromise = resolvedPromise.then(flushJobs);
   }
 }
@@ -45,7 +46,8 @@ function flushJobs() {
     }
   } finally {
     isFlushing = false;
-    currentFlushPromise = null; 
+    currentFlushPromise = null;
+    queue = [];
   }
 }
 
