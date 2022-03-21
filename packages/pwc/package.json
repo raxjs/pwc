@@ -1,31 +1,44 @@
 {
-    "name": "pwc",
-    "version": "1.0.0",
-    "author": "Rax Team",
-    "homepage": "https://github.com/raxjs/pwc#readme",
-    "license": "MIT",
-    "main": "src/index.js",
-    "files": [
-      "es/",
-      "lib/",
-      "dist/",
-      "README.md"
-    ],
-    "repository": {
-      "type": "git",
-      "url": "git+https://github.com/raxjs/pwc.git"
-    },
-    "scripts": {
-      "test": "echo \"Error: run tests from root\" && exit 1"
-    },
-    "bugs": {
-      "url": "https://github.com/raxjs/pwc/issues"
-    },
-    "engines": {
-      "node": ">=12.22.0",
-      "npm": ">=3.0.0"
-    },
-    "exports": {
-      "./HTMLElement": "./src/elements/native/HTMLElement.ts"
-    }
-  }
+  "name": "pwc",
+  "version": "1.0.0",
+  "author": "Rax Team",
+  "homepage": "https://github.com/raxjs/pwc#readme",
+  "license": "MIT",
+  "main": "es/index.js",
+  "files": [
+    "es/",
+    "lib/",
+    "dist/",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raxjs/pwc.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "build": "pkg-cli build",
+    "start": "pkg-cli start"
+  },
+  "bugs": {
+    "url": "https://github.com/raxjs/pwc/issues"
+  },
+  "engines": {
+    "node": ">=12.22.0",
+    "npm": ">=3.0.0"
+  },
+  "dependencies": {
+    "@swc/helpers": "^0.3.8",
+    "core-js": "^3.21.1",
+    "regenerator-runtime": "^0.13.9"
+  },
+  "exports": {
+    "es": "./es/index.js",
+    "esnext": "./esnext/index.js",
+    "default": "./es/index.js"
+  },
+  "devDependencies": {
+    "@ice/pkg-cli": "^1.0.0-beta.2"
+  },
+  "sideEffects": ["elements/native"]
+}
