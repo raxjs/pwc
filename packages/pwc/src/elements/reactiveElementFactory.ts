@@ -1,7 +1,8 @@
 import type { ElementTemplate, BaseElementType } from '../type';
 import { TEXT_COMMENT_DATA, PWC_PREFIX, PLACEHOLDER_COMMENT_DATA } from '../constants';
 import { Reactive } from '../reactivity/reactive';
-import { AttributedElement, ChildElement, TextElement } from './childElement';
+import type { ChildElement } from './childElement';
+import { AttributedElement, TextElement } from './childElement';
 import { shallowEqual } from '../utils';
 
 export default (Definition) => {

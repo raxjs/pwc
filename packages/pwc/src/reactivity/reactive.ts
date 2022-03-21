@@ -1,5 +1,5 @@
 import { ReactiveFlags } from '../constants';
-import { ReactiveType } from '../type';
+import type { ReactiveType } from '../type';
 import { getProxyHandler } from './handler';
 
 export class Reactive implements ReactiveType {
