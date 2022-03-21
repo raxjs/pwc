@@ -1,4 +1,4 @@
-import 'pwc';
+import { legacyReactive } from 'pwc';
 
 class CustomElement extends HTMLElement {
   changedClassName = false;
@@ -16,11 +16,11 @@ class CustomElement extends HTMLElement {
     // this.data = { name: 'jack' };
     // this.text = 'hello';
     // this.className = 'red';
-    // legacyReactive.call(this, 'data', {
-    //   name: 'jack',
-    // });
-    // legacyReactive.call(this, 'text', 'hello');
-    // legacyReactive.call(this, 'className', 'red');
+    legacyReactive.call(this, 'data', {
+      name: 'jack',
+    });
+    legacyReactive.call(this, 'text', 'hello');
+    legacyReactive.call(this, 'className', 'red');
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
