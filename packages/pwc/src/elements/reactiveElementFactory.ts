@@ -81,9 +81,9 @@ export default (Definition) => {
       // While template strings is constant with prev ones,
       // it should just update node values and attributes
       if (oldStrings === strings) {
-        for (let i = 0; i < oldValues.length; i++) {
-          if (!shallowEqual(oldValues[i], values[i])) {
-            this.#childNodes[i].commitValue(values[i]);
+        for (let index = 0; index < oldValues.length; index++) {
+          if (!shallowEqual(oldValues[index], values[index])) {
+            this.#childNodes[index].commitValue(values[index]);
           }
         }
       }
