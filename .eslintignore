@@ -2,6 +2,7 @@ build/
 node_modules/
 es/
 lib/
+esnext/
 dist/
 
 coverage/
@@ -15,4 +16,6 @@ benchmarks/
 **/*-min.js
 **/*.min.js
 
+examples/
+scripts/
 

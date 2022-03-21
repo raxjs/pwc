@@ -1,27 +1,28 @@
-import 'pwc/HTMLElement';
-import { legacyReactive } from 'pwc/decorators';
+import { reactive } from 'pwc';
 
 class CustomElement extends HTMLElement {
   changedClassName = false;
 
-  // @reactive data = {
-  //   name: 'jack',
-  // };
+  @reactive
+  accessor data = {
+    name: 'jack',
+  };
 
-  // @reactive text = 'hello';
-  // @reactive className = 'red';
-
+  @reactive
+  accessor text = 'hello';
+  @reactive
+  accessor className = 'red';
 
   constructor() {
     super();
     // this.data = { name: 'jack' };
     // this.text = 'hello';
     // this.className = 'red';
-    legacyReactive.call(this, 'data', {
-      name: 'jack',
-    });
-    legacyReactive.call(this, 'text', 'hello');
-    legacyReactive.call(this, 'className', 'red');
+    // legacyReactive.call(this, 'data', {
+    //   name: 'jack',
+    // });
+    // legacyReactive.call(this, 'text', 'hello');
+    // legacyReactive.call(this, 'className', 'red');
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
