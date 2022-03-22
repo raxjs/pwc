@@ -1,4 +1,5 @@
-export interface BaseElementType {
+export interface PWCElement {
+  uid: number;
   connectedCallback?: () => void;
   disconnectedCallback?: () => void;
   attributeChangedCallback?: (name: string, oldValue: any, newValue: any) => void;
@@ -11,4 +12,3 @@ export interface CustomHTMLBaseElement extends HTMLBaseElement {
   template?: ElementTemplate;
   shadowOptions: ShadowRootInit;
 }
-
