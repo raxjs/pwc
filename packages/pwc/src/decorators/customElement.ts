@@ -1,7 +1,7 @@
 export function customElement(name: string) {
   return (value, { addInitializer }) => {
-    addInitializer(function() {
+    addInitializer(function () {
       customElements.define(name, this);
     });
-  }
+  };
 }
