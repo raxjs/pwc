@@ -1,8 +1,8 @@
 import type { ElementTemplate, PWCElement } from '../type';
 import { TEXT_COMMENT_DATA, PWC_PREFIX, PLACEHOLDER_COMMENT_DATA } from '../constants';
 import { Reactive } from '../reactivity/reactive';
-import type { ChildElement } from './childElement';
-import { AttributedElement, TextElement } from './childElement';
+import type { ReactiveNode } from './reactiveNode';
+import { AttributedNode, TextNode } from './reactiveNode';
 import { shallowEqual } from '../utils';
 import type { SchedulerJob } from './sheduler';
 import { queueJob } from './sheduler';
@@ -18,8 +18,8 @@ export default (Definition) => {
     #fragment: Node;
     // Template info
     #currentTemplate: ElementTemplate;
-    // Comment nodes
-    #childNodes: ChildElement[];
+    // Reactive nodes
+    #reactiveNodes: ReactiveNode[];
     // Reactive instance
     #reactive: Reactive = new Reactive(this);
     // update job
@@ -35,8 +35,8 @@ export default (Definition) => {
         const [template, values = []] = this.#currentTemplate;
 
         this.#fragment = this.#createTemplate(template);
-        // TODO: rename?
-        this.#associateTplAndValue(this.#fragment, values);
+
+        this.#initRenderTemplate(this.#fragment, values);
         this.appendChild(this.#fragment);
       }
       this.#initialized = true;
@@ -55,7 +55,7 @@ export default (Definition) => {
       return template.content.cloneNode(true);
     }
 
-    #associateTplAndValue(fragment: Node, values) {
+    #initRenderTemplate(fragment: Node, values) {
       const nodeIterator = document.createNodeIterator(fragment, NodeFilter.SHOW_COMMENT, {
         acceptNode(node) {
           if ((node as Comment).data?.includes(PWC_PREFIX)) {
@@ -66,16 +66,16 @@ export default (Definition) => {
       });
       let currentComment: Node;
       let index = 0;
-      this.#childNodes = [];
+      this.#reactiveNodes = [];
 
       while ((currentComment = nodeIterator.nextNode())) {
         // Insert dynamic text node
         if ((currentComment as Comment).data === TEXT_COMMENT_DATA) {
-          const textElement = new TextElement(currentComment as Comment, values[index]);
-          this.#childNodes.push(textElement);
+          const textElement = new TextNode(currentComment as Comment, values[index]);
+          this.#reactiveNodes.push(textElement);
         } else if ((currentComment as Comment).data === PLACEHOLDER_COMMENT_DATA) {
-          const attributedElement = new AttributedElement(currentComment as Comment, values[index]);
-          this.#childNodes.push(attributedElement);
+          const attributedElement = new AttributedNode(currentComment as Comment, values[index]);
+          this.#reactiveNodes.push(attributedElement);
         }
 
         index++;
@@ -91,7 +91,7 @@ export default (Definition) => {
       if (oldStrings === strings) {
         for (let index = 0; index < oldValues.length; index++) {
           if (!shallowEqual(oldValues[index], values[index])) {
-            this.#childNodes[index].commitValue(values[index]);
+            this.#reactiveNodes[index].commitValue(values[index]);
           }
         }
       }

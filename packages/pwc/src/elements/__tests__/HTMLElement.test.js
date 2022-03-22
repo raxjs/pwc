@@ -1,5 +1,6 @@
 import '../native/HTMLElement';
 import { reactive } from '../../decorators/reactive';
+import { nextTick } from '../sheduler';
 
 function getSimpleCustomElement() {
   return class CustomElement extends HTMLElement {
@@ -122,16 +123,13 @@ describe('Render HTMLElement', () => {
     window.customElements.define('custom-reactive-element', CustomElement);
     const element = document.createElement('custom-reactive-element');
     document.body.appendChild(element);
-    expect(element.innerHTML).toEqual(
-      '<!--?pwc_p--><div id="reactive-container" class="red">hello<!--?pwc_t--> - Jack<!--?pwc_t--></div>',
-    );
+    expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="reactive-container" class="red">hello<!--?pwc_t--> - jack<!--?pwc_t--></div>');
 
     const container = document.getElementById('reactive-container');
     container.click();
 
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    expect(element.innerHTML).toEqual(
-      '<!--?pwc_p--><div id="reactive-container" class="green">hello?<!--?pwc_t--> - Jack!<!--?pwc_t--></div>',
-    );
+    nextTick(() => {
+      expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="reactive-container" class="green">hello?<!--?pwc_t--> - jack!<!--?pwc_t--></div>');
+    });
   });
 });

@@ -12,13 +12,3 @@ export interface CustomHTMLBaseElement extends HTMLBaseElement {
   template?: ElementTemplate;
   shadowOptions: ShadowRootInit;
 }
-
-// TODO rename
-export interface ReactiveType {
-  setReactiveValue: (prop: string, val: unknown) => void;
-
-  getReactiveValue: (prop: string) => unknown;
-
-  // The reactive property if changed will request a update
-  requestUpdate: () => void;
-}

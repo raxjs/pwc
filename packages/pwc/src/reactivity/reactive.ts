@@ -1,5 +1,13 @@
-import type { ReactiveType } from '../type';
 import { getProxyHandler } from './handler';
+
+interface ReactiveType {
+  setReactiveValue: (prop: string, val: unknown) => void;
+
+  getReactiveValue: (prop: string) => unknown;
+
+  // The reactive property if changed will request a update
+  requestUpdate: () => void;
+}
 
 export class Reactive implements ReactiveType {
   static getKey(key: string): string {
