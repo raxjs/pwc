@@ -51,6 +51,7 @@ importers:
       '@babel/core': ^7.17.8
       '@babel/plugin-proposal-class-properties': ^7.0.0
       '@babel/plugin-proposal-decorators': ^7.0.0
+      '@babel/plugin-proposal-private-methods': ^7.16.11
       '@babel/preset-env': ^7.16.11
       '@babel/runtime': ^7.17.8
       pwc: workspace:*
@@ -63,6 +64,7 @@ importers:
       '@babel/core': 7.17.8
       '@babel/plugin-proposal-class-properties': 7.16.7_@babel+core@7.17.8
       '@babel/plugin-proposal-decorators': 7.17.8_@babel+core@7.17.8
+      '@babel/plugin-proposal-private-methods': 7.16.11_@babel+core@7.17.8
       '@babel/preset-env': 7.16.11_@babel+core@7.17.8
       '@babel/runtime': 7.17.8
       rollup: 2.68.0
