@@ -61,7 +61,7 @@ function getReactiveCustomElement() {
     accessor className = 'red';
     @reactive
     accessor data = {
-      name: 'Jack',
+      name: 'jack',
     };
     changedClassName = false;
 
