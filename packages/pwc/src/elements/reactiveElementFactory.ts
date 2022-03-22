@@ -4,7 +4,6 @@ import { Reactive } from '../reactivity/reactive';
 import type { ReactiveNode } from './reactiveNode';
 import { AttributedNode, TextNode } from './reactiveNode';
 import { shallowEqual, generateUid } from '../utils';
-import type { SchedulerJob } from './sheduler';
 import { queueJob } from './sheduler';
 
 export default (Definition) => {
@@ -20,11 +19,6 @@ export default (Definition) => {
     #reactiveNodes: ReactiveNode[];
     // Reactive instance
     #reactive: Reactive = new Reactive(this);
-    // Update job
-    #updateJob: SchedulerJob = {
-      uid: this.#uid,
-      run: this.#performUpdate.bind(this),
-    };
 
     // Custom element native lifecycle
     connectedCallback() {
@@ -100,7 +94,10 @@ export default (Definition) => {
     }
 
     requestUpdate(): void {
-      queueJob(this.#updateJob);
+      queueJob({
+        uid: this.#uid,
+        run: this.#performUpdate.bind(this),
+      });
     }
 
     getReactiveValue(prop: string): unknown {
