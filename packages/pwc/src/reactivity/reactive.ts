@@ -1,4 +1,3 @@
-import { ReactiveFlags } from '../constants';
 import type { ReactiveType } from '../type';
 import { getProxyHandler } from './handler';
 

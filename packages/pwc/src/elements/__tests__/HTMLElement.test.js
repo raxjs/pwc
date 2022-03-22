@@ -1,17 +1,5 @@
 import '../native/HTMLElement';
-
-function legacyReactive(name, initialValue) {
-  this.setReactiveValue(name, initialValue);
-
-  Object.defineProperty(this.constructor.prototype, name, {
-    set(val) {
-      this.setReactiveValue(name, val);
-    },
-    get() {
-      return this.getReactiveValue(name);
-    },
-  });
-}
+import { reactive } from '../../decorators/reactive';
 
 function getSimpleCustomElement() {
   return class CustomElement extends HTMLElement {
@@ -66,21 +54,16 @@ function getNestedCustomElement() {
 
 function getReactiveCustomElement() {
   return class CustomElement extends HTMLElement {
-    text: string;
-    className: string;
-    data: {
-      [key: string]: any
+    @reactive
+    accessor text = 'hello';
+    @reactive
+    accessor className = 'red';
+    @reactive
+    accessor data = {
+      name: 'Jack',
     };
-    changedClassName: boolean = false;
+    changedClassName = false;
 
-    constructor() {
-      super();
-      legacyReactive.call(this, 'data', {
-        name: 'jack',
-      });
-      legacyReactive.call(this, 'text', 'hello');
-      legacyReactive.call(this, 'className', 'red');
-    }
     onClick() {
       this.data.name += '!';
       this.text += '?';
@@ -98,7 +81,7 @@ function getReactiveCustomElement() {
             },
           },
           this.text,
-          this.data.name
+          this.data.name,
         ],
       ];
     }
@@ -139,12 +122,16 @@ describe('Render HTMLElement', () => {
     window.customElements.define('custom-reactive-element', CustomElement);
     const element = document.createElement('custom-reactive-element');
     document.body.appendChild(element);
-    expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="reactive-container" class="red">hello<!--?pwc_t--> - jack<!--?pwc_t--></div>');
+    expect(element.innerHTML).toEqual(
+      '<!--?pwc_p--><div id="reactive-container" class="red">hello<!--?pwc_t--> - Jack<!--?pwc_t--></div>',
+    );
 
     const container = document.getElementById('reactive-container');
     container.click();
 
     await new Promise((resolve) => setTimeout(resolve, 100));
-    expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="reactive-container" class="green">hello?<!--?pwc_t--> - jack!<!--?pwc_t--></div>');
+    expect(element.innerHTML).toEqual(
+      '<!--?pwc_p--><div id="reactive-container" class="green">hello?<!--?pwc_t--> - Jack!<!--?pwc_t--></div>',
+    );
   });
 });

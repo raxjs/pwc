@@ -1,12 +1,17 @@
-import type { ElementTemplate, BaseElementType } from '../type';
+import type { ElementTemplate, PWCElement } from '../type';
 import { TEXT_COMMENT_DATA, PWC_PREFIX, PLACEHOLDER_COMMENT_DATA } from '../constants';
 import { Reactive } from '../reactivity/reactive';
 import type { ChildElement } from './childElement';
 import { AttributedElement, TextElement } from './childElement';
 import { shallowEqual } from '../utils';
+import type { SchedulerJob } from './sheduler';
+import { queueJob } from './sheduler';
+
+let uid = 0;
 
 export default (Definition) => {
-  return class extends Definition implements BaseElementType {
+  return class extends Definition implements PWCElement {
+    uid: number = uid++;
     // Component initial state
     #initialized = false;
     // The root fragment
@@ -17,8 +22,11 @@ export default (Definition) => {
     #childNodes: ChildElement[];
     // Reactive instance
     #reactive: Reactive = new Reactive(this);
-    // Update Timer
-    #updateTimer: ReturnType<typeof setTimeout>;
+    // update job
+    updateJob: SchedulerJob = {
+      uid: this.uid,
+      run: this.#performUpdate.bind(this),
+    };
 
     // Custom element native lifecycle
     connectedCallback() {
@@ -91,12 +99,7 @@ export default (Definition) => {
     }
 
     requestUpdate(): void {
-      if (this.#updateTimer) {
-        clearTimeout(this.#updateTimer);
-      }
-      this.#updateTimer = setTimeout(() => {
-        this.#performUpdate();
-      }, 0);
+      queueJob(this.updateJob);
     }
 
     getReactiveValue(prop: string): unknown {

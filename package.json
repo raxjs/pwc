@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "setup": "npm run clean && pnpm install --reporter=append-only",
+    "setup": "npm run clean && pnpm install --reporter=append-only  --registry=https://registry.npmjs.org/",
     "clean": "rm -rf ./**/node_modules && npm run clean:result",
     "clean:result": "rm -rf ./packages/*/lib ./packages/*/es ./packages/*/esnext ./packages/*/dist",
     "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx ./",
@@ -27,6 +27,12 @@
   },
   "dependencies": {
     "@applint/spec": "^1.2.0",
+    "@babel/core": "^7.17.8",
+    "@babel/plugin-proposal-class-properties": "^7.0.0",
+    "@babel/plugin-proposal-class-static-block": "^7.17.6",
+    "@babel/plugin-proposal-decorators": "^7.0.0",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-typescript": "^7.16.7",
     "@commitlint/cli": "^13.0.0",
     "@swc/core": "^1.2.146",
     "@swc/jest": "^0.2.20",
@@ -45,12 +51,6 @@
     "local-web-server": "^4.1.0",
     "prettier": "^2.6.0",
     "stylelint": "^14.0.0",
-    "typescript": "^4.0.0",
-    "@babel/core": "^7.17.8",
-    "@babel/plugin-proposal-class-properties": "^7.0.0",
-    "@babel/plugin-proposal-decorators": "^7.0.0",
-    "@babel/preset-env": "^7.16.11",
-    "@babel/plugin-proposal-class-static-block": "^7.17.6",
-    "@babel/preset-typescript": "^7.16.7"
+    "typescript": "^4.0.0"
   }
 }
