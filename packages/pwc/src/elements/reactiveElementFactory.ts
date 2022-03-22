@@ -23,7 +23,6 @@ export default (Definition) => {
     // Custom element native lifecycle
     connectedCallback() {
       if (!this.#initialized) {
-        console.log('this.__init_task__ ====> ', this.__init_task__);
         if (this.__init_task__) {
           this.__init_task__();
         }
