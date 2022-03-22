@@ -1,5 +1,6 @@
-import { reactive } from 'pwc';
+import { reactive, customElement } from 'pwc';
 
+@customElement('custom-element')
 class CustomElement extends HTMLElement {
   changedClassName = false;
 
@@ -77,5 +78,4 @@ class Child extends HTMLElement {
   }
 }
 
-window.customElements.define('custom-element', CustomElement);
 window.customElements.define('child-element', Child);

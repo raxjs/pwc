@@ -1,3 +1,5 @@
+export { customElement } from './customElement';
+
 export function reactive(value, { kind, name, addInitializer }) {
   if (kind === 'accessor') {
     return {
