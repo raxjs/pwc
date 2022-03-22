@@ -4,22 +4,24 @@ export interface SchedulerJob {
 }
 
 let queue: SchedulerJob[] = [];
-let isFlushing: boolean = false;
-let isFlushingPending: boolean = false;
+let isFlushing = false;
+let isFlushingPending = false;
 const resolvedPromise: Promise<any> = Promise.resolve();
 let currentFlushPromise: Promise<void> | null = null;
 
-export function nextTick< T = void>(
+export async function nextTick< T = void>(
   this: T,
-  fn?: (this: T) => void
+  fn?: (this: T) => void,
 ): Promise<void> {
-  const p = currentFlushPromise || resolvedPromise;
-  return fn ? p.then(this ? fn.bind(this) : fn) : p;
+  const promise = currentFlushPromise || resolvedPromise;
+  return fn ? promise.then(this ? fn.bind(this) : fn) : promise;
 }
 
 export function queueJob(job: SchedulerJob) {
   // Ensure a instance only has one job
-  if (!queue.find(({ uid }) => { return uid === job.uid })) {
+  if (!queue.find(({ uid }) => {
+    return uid === job.uid;
+  })) {
     queue.push(job);
     queueFlush();
   }
@@ -28,7 +30,6 @@ export function queueJob(job: SchedulerJob) {
 function queueFlush() {
   if (!isFlushing && !isFlushingPending) {
     isFlushingPending = true;
-    console.log('queueFlush')
     currentFlushPromise = resolvedPromise.then(flushJobs);
   }
 }
@@ -40,7 +41,7 @@ function flushJobs() {
   // TODO update components from parent to child
 
   try {
-    for (let index = 0; index < queue.length; index ++) {
+    for (let index = 0; index < queue.length; index++) {
       const job = queue[index];
       job.run();
     }

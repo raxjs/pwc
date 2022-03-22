@@ -9,7 +9,7 @@ export function reactive(value, { kind, name }) {
       },
       init(initialValue) {
         this.setReactiveValue(name, initialValue);
-      }
+      },
     };
   }
 }

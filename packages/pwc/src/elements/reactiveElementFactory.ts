@@ -4,9 +4,10 @@ import { Reactive } from '../reactivity/reactive';
 import type { ChildElement } from './childElement';
 import { AttributedElement, TextElement } from './childElement';
 import { shallowEqual } from '../utils';
-import { queueJob, SchedulerJob } from './sheduler';
+import type { SchedulerJob } from './sheduler';
+import { queueJob } from './sheduler';
 
-let uid: number = 0;
+let uid = 0;
 
 export default (Definition) => {
   return class extends Definition implements PWCElement {
@@ -24,7 +25,7 @@ export default (Definition) => {
     // update job
     updateJob: SchedulerJob = {
       uid: this.uid,
-      run: this.#performUpdate.bind(this)
+      run: this.#performUpdate.bind(this),
     };
 
     // Custom element native lifecycle
