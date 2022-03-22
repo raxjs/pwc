@@ -1,8 +1,8 @@
-import { hasOwnProperty, isEventName } from '../utils';
 import { commitAttributes } from './commitAttributes';
+import type { Attributes } from '../type';
 
 export interface ReactiveNode {
-  commitValue: (value: any) => void;
+  commitValue: (value: any, isInitial?: boolean) => void;
 }
 
 export class TextNode implements ReactiveNode {
@@ -20,16 +20,23 @@ export class TextNode implements ReactiveNode {
 
 export class AttributedNode implements ReactiveNode {
   #el: Element;
-  constructor(commentNode: Comment, initialAttrs: object) {
+  constructor(commentNode: Comment, initialAttrs: Attributes) {
     this.#el = commentNode.nextSibling as Element;
-    this.#commitAttributes(initialAttrs, true);
+    if (window.customElements.get(this.#el.localName)) {
+      // @ts-ignore
+      this.#el.__init_task__ = () => {
+        this.#commitAttributes(initialAttrs, true);
+      };
+    } else {
+      this.#commitAttributes(initialAttrs, true);
+    }
   }
 
-  commitValue(value: object) {
+  commitValue(value: Attributes) {
     this.#commitAttributes(value);
   }
 
-  #commitAttributes(value: object, isInitial = false) {
+  #commitAttributes(value: Attributes, isInitial = false) {
     commitAttributes(this.#el, value, isInitial);
   }
 }

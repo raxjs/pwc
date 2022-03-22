@@ -2,7 +2,7 @@ import { hasOwnProperty } from '../utils/common';
 import { isEventName } from '../utils/isEventName';
 import type { Attributes } from '../type';
 
-export function commitAttributes(element: Element, attrs: Attributes, isInitial) {
+export function commitAttributes(element: Element, attrs: Attributes, isInitial: boolean) {
   for (const attrName in attrs) {
     if (hasOwnProperty(attrs, attrName)) {
       if (isEventName(attrName) && isInitial) {
