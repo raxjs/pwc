@@ -1,4 +1,4 @@
-import setAttribute from '../setAttribute';
+import { commitAttributes } from '../commitAttributes';
 import '../native/HTMLElement';
 
 describe('Set element attribute/property/event handler', () => {
@@ -8,7 +8,7 @@ describe('Set element attribute/property/event handler', () => {
       class: 'container',
     };
     const div = document.createElement('div');
-    setAttribute(div, attrs);
+    commitAttributes(div, attrs, true);
     expect(div.getAttribute('data-index')).toEqual('1');
     expect(div.dataset.index).toEqual('1');
     expect(div.getAttribute('class')).toEqual('container');
@@ -29,7 +29,7 @@ describe('Set element attribute/property/event handler', () => {
       },
     };
     const parent1 = document.createElement('div');
-    setAttribute(parent1, parent1Attrs);
+    commitAttributes(parent1, parent1Attrs, true);
 
     // Parent2 element
     const parent2ClickHandler = jest.fn().mockImplementation(() => {
@@ -43,7 +43,7 @@ describe('Set element attribute/property/event handler', () => {
       },
     };
     const parent2 = document.createElement('div');
-    setAttribute(parent2, parent2Attrs);
+    commitAttributes(parent2, parent2Attrs, true);
 
     const childClickHandler = jest.fn().mockImplementation(() => {
       parent1ClickState = 'child clicked';
@@ -55,7 +55,7 @@ describe('Set element attribute/property/event handler', () => {
       },
     };
     const child = document.createElement('div');
-    setAttribute(child, childAttrs);
+    commitAttributes(child, childAttrs, true);
 
     document.body.appendChild(parent1);
     document.body.appendChild(parent2);
@@ -89,7 +89,7 @@ describe('Set element attribute/property/event handler', () => {
       description: 'This is custom element',
     };
 
-    setAttribute(customElement, attrs);
+    commitAttributes(customElement, attrs, true);
 
     expect(customElement.getAttribute('data-index')).toEqual('1');
     expect(customElement.dataset.index).toEqual('1');

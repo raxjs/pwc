@@ -1,11 +1,11 @@
-import { hasOwnProperty } from '../utils/hasOwnProperty';
+import { hasOwnProperty } from '../utils/common';
 import { isEventName } from '../utils/isEventName';
 import type { Attributes } from '../type';
 
-export default function setAttribute(element: Element, attrs: Attributes) {
+export function commitAttributes(element: Element, attrs: Attributes, isInitial) {
   for (const attrName in attrs) {
     if (hasOwnProperty(attrs, attrName)) {
-      if (isEventName(attrName)) {
+      if (isEventName(attrName) && isInitial) {
         const { handler, capture = false } = attrs[attrName];
         // If capture is true, the event should be trigger when capture stage
         element.addEventListener(attrName.slice(2).toLowerCase(), handler, capture);

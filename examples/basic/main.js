@@ -1,43 +1,67 @@
-import 'pwc/HTMLElement';
+import { reactive } from 'pwc';
 
 class CustomElement extends HTMLElement {
-  text = 'hello';
-  name = 'jack';
+  changedClassName = false;
+
+  @reactive
+  accessor data = {
+    name: 'jack',
+  };
+
+  @reactive
+  accessor text = 'hello';
+  @reactive
+  accessor className = 'red';
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    console.log('attributeChangedCallback', name, oldValue, newValue);
+  }
+
   connectedCallback() {
     super.connectedCallback();
   }
   onClick() {
-    console.log('click!!!');
+    // console.log(this.data);
+    this.data.name += '!';
+    this.text += '?';
+    this.className = this.changedClassName ? 'red' : 'green';
+    this.changedClassName = !this.changedClassName;
+    // this.names.push('Tom');
   }
-  // <div @click={{onClick}}>{{text}} - {{name}} <child-element/></div>
+  // <div class={{className}} @click={{onClick}} >{{text}} - {{name}} <child-element name={{name}}/></div>
   get template() {
     return [
-      '<!--?pwc_p--><div><!--?pwc_t--> - <!--?pwc_t--><child-element/></div>',
+      '<!--?pwc_p--><div><!--?pwc_t--> - <!--?pwc_t--><!--?pwc_p--><child-element/></div>',
       [
         {
+          class: this.className,
           onclick: {
-            handler: this.onClick,
+            handler: this.onClick.bind(this),
             capture: true,
           },
         },
         this.text,
-        this.name,
+        this.data.name,
+        {
+          name: this.data.name,
+        },
       ],
     ];
   }
 }
 
+
 class Child extends HTMLElement {
-  name = 'Child';
+  privatename = 'Child';
+  attributeChangedCallback(name, oldValue, newValue) {
+    console.log('attributeChangedCallback', name, oldValue, newValue);
+  }
   connectedCallback() {
     super.connectedCallback();
     console.log('connected');
   }
-  onClick() {
-    console.log('click!!!');
-  }
   get template() {
-    return ['<div><!--?pwc_t--></div>', [this.name]];
+    return ['<div><!--?pwc_t--></div>', ['Child']];
   }
 }
 
