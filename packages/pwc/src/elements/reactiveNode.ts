@@ -2,7 +2,7 @@ import { commitAttributes } from './commitAttributes';
 import type { Attributes } from '../type';
 
 export interface ReactiveNode {
-  commitValue: (value: any, isInitial?: boolean) => void;
+  commitValue: (value: any) => void;
 }
 
 export class TextNode implements ReactiveNode {
