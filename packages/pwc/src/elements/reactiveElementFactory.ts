@@ -3,15 +3,13 @@ import { TEXT_COMMENT_DATA, PWC_PREFIX, PLACEHOLDER_COMMENT_DATA } from '../cons
 import { Reactive } from '../reactivity/reactive';
 import type { ReactiveNode } from './reactiveNode';
 import { AttributedNode, TextNode } from './reactiveNode';
-import { shallowEqual } from '../utils';
+import { shallowEqual, generateUid } from '../utils';
 import type { SchedulerJob } from './sheduler';
 import { queueJob } from './sheduler';
 
-let uid = 0;
-
 export default (Definition) => {
   return class extends Definition implements PWCElement {
-    uid: number = uid++;
+    #uid: number = generateUid();
     // Component initial state
     #initialized = false;
     // The root fragment
@@ -22,9 +20,9 @@ export default (Definition) => {
     #reactiveNodes: ReactiveNode[];
     // Reactive instance
     #reactive: Reactive = new Reactive(this);
-    // update job
-    updateJob: SchedulerJob = {
-      uid: this.uid,
+    // Update job
+    #updateJob: SchedulerJob = {
+      uid: this.#uid,
       run: this.#performUpdate.bind(this),
     };
 
@@ -102,7 +100,7 @@ export default (Definition) => {
     }
 
     requestUpdate(): void {
-      queueJob(this.updateJob);
+      queueJob(this.#updateJob);
     }
 
     getReactiveValue(prop: string): unknown {
