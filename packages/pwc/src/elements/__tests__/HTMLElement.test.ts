@@ -1,4 +1,5 @@
 import '../native/HTMLElement';
+import { nextTick } from '../sheduler';
 
 function legacyReactive(name, initialValue) {
   this.setReactiveValue(name, initialValue);
@@ -144,7 +145,8 @@ describe('Render HTMLElement', () => {
     const container = document.getElementById('reactive-container');
     container.click();
 
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="reactive-container" class="green">hello?<!--?pwc_t--> - jack!<!--?pwc_t--></div>');
+    nextTick(() => {
+      expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="reactive-container" class="green">hello?<!--?pwc_t--> - jack!<!--?pwc_t--></div>');
+    });
   });
 });

@@ -13,18 +13,6 @@ class CustomElement extends HTMLElement {
   @reactive
   accessor className = 'red';
 
-  constructor() {
-    super();
-    // this.data = { name: 'jack' };
-    // this.text = 'hello';
-    // this.className = 'red';
-    // legacyReactive.call(this, 'data', {
-    //   name: 'jack',
-    // });
-    // legacyReactive.call(this, 'text', 'hello');
-    // legacyReactive.call(this, 'className', 'red');
-  }
-
   attributeChangedCallback(name, oldValue, newValue) {
     console.log('attributeChangedCallback', name, oldValue, newValue);
   }

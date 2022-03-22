@@ -21,31 +21,3 @@ export function is(prev, curr): boolean {
     return prev !== prev && curr !== curr; // eslint-disable-line no-self-compare
   }
 }
-
-export function isEventName(key: string): boolean {
-  return key.startsWith('on');
-}
-
-export function shallowEqual(valueA: any, valueB: any) {
-  if (typeof valueA !== typeof valueB) {
-    return false;
-  }
-  // text node
-  if (isPrimitive(valueB)) {
-    return valueA === valueB;
-  }
-  // attribute node
-  const keysA = Object.keys(valueA);
-  const keysB = Object.keys(valueB);
-  if (keysA.length !== keysB.length) {
-    return false;
-  }
-
-  for (const val of keysA) {
-    if (!hasOwnProperty(valueB, val) || !isEventName(val) || !is(valueA[val], valueB[val])) {
-      return false;
-    }
-  }
-
-  return true;
-}

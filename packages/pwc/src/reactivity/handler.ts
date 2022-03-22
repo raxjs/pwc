@@ -55,6 +55,7 @@ function createDeleteProperty(trigger) {
     return result;
   };
 }
+
 export function getProxyHandler(callback) {
   const set = createSetter(callback);
   const deleteProperty = createDeleteProperty(callback);

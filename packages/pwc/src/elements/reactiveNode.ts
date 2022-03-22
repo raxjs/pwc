@@ -1,10 +1,10 @@
 import { hasOwnProperty, isEventName } from '../utils';
 
-export interface ChildElement {
+export interface ReactiveNode {
   commitValue: (value: any) => void;
 }
 
-export class TextElement implements ChildElement {
+export class TextNode implements ReactiveNode {
   #el: Text;
   constructor(commentNode: Comment, initialValue: string) {
     const textNode = document.createTextNode(initialValue);
@@ -17,7 +17,7 @@ export class TextElement implements ChildElement {
   }
 }
 
-export class AttributedElement implements ChildElement {
+export class AttributedNode implements ReactiveNode {
   #el: Element;
   constructor(commentNode: Comment, initialAttrs: object) {
     this.#el = commentNode.nextSibling as Element;

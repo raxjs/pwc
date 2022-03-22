@@ -41,8 +41,7 @@ function flushJobs() {
   // TODO update components from parent to child
 
   try {
-    for (let index = 0; index < queue.length; index++) {
-      const job = queue[index];
+    for (const job of queue) {
       job.run();
     }
   } finally {
