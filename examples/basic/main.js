@@ -34,7 +34,7 @@ class CustomElement extends HTMLElement {
           class: this.className,
           onclick: {
             handler: this.onClick.bind(this),
-            type: 'capture',
+            capture: true,
           },
         },
         this.text,
