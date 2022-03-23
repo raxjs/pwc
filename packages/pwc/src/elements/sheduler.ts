@@ -17,7 +17,7 @@ export async function nextTick< T = void>(
   return fn ? promise.then(this ? fn.bind(this) : fn) : promise;
 }
 
-export function queueJob(job: SchedulerJob) {
+export function enqueueJob(job: SchedulerJob) {
   // Ensure a instance only has one job
   if (!queue.find(({ uid }) => {
     return uid === job.uid;
