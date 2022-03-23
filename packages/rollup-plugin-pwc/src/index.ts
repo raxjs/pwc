@@ -1,65 +1,76 @@
-import * as path from 'path';
 import type { Plugin } from 'rollup';
-import { compile } from '@pwc/compiler';
+import { createFilter } from 'rollup-pluginutils';
+import { getDescriptor } from './utils/descriptorCache';
+import { parsePwcPartRequest } from './utils/query';
+import { transformPwcEntry } from './pwc';
+import { getResolvedScript } from './script';
+import { transformStyle } from './style';
 
 
 interface Options {
-  emitCSS: boolean;
+  include?: string | RegExp | (string | RegExp)[];
+  exclude?: string | RegExp | (string | RegExp)[];
 }
 
-export default function PluginPWC(options: Options): Plugin {
-  const { emitCSS } = options;
-  const extensions = ['.pwc'];
-
-  // [filename]:[chunk]
-  const cacheEmit = new Map();
+export default function PluginPWC({
+  include = /\.pwc$/,
+  exclude
+}: Options): Plugin {
+  const rootContext = process.cwd();
+  const filter = createFilter(include, exclude);
 
   return {
     name: 'pwc',
-
-    /**
-     * Resolve an import's full filepath.
-     */
-    resolveId(importee, importer) {
-      if (cacheEmit.has(importee)) return importee;
-      if (!importer || importee[0] === '.' || importee[0] === '\0' || path.isAbsolute(importee)) return null;
+    resolveId(id) {
+      const query = parsePwcPartRequest(id);
+      if (query.pwc) {
+        if (!filter(query.filename)) {
+          return null;
+        }
+        return id;
+      }
+      return null;
     },
-
-    /**
-     * Returns CSS contents for a file, if ours
-     */
     load(id) {
-      return cacheEmit.get(id) || null;
+      const query = parsePwcPartRequest(id);
+      if (query.pwc) {
+        const descriptor = getDescriptor(query.filename);
+        if (descriptor) {
+          const block =
+          query.type === 'script'
+            ? getResolvedScript(descriptor)
+            : query.type === 'style'
+              ? descriptor.style
+              : null;
+          if (block) {
+            return {
+              code: block.content,
+              map: block.map,
+            };
+          }
+        }
+      }
+      return null;
     },
 
-    /**
-     * Transforms a `.pwc` file into a `.js` file.
-     * NOTE: If `emitCss`, append static `import` to virtual CSS file.
-     */
     async transform(code, id) {
-      const extension = path.extname(id);
-      if (!~extensions.indexOf(extension)) return null;
-
-      // TODO:
-      const dependencies = [];
-      const filename = path.relative(process.cwd(), id);
-
-      const compiled = compile(code, { filename });
-      console.log('🚀 ~ file: index.ts ~ line 48 ~ transform ~ compiled', compiled);
-
-      if (emitCSS && compiled.styles) {
-        const fname = id.replace(new RegExp(`\\${extension}$`), '.css');
-        compiled.script.code += `\nimport ${JSON.stringify(fname)};\n`;
-        cacheEmit.set(fname, compiled.styles);
+      const query = parsePwcPartRequest(id);
+      // *.pwc file
+      // Generate an entry module that imports the actual blocks of the PWC
+      if (!query.pwc && filter(id)) {
+        const output = transformPwcEntry(code, id, rootContext, this);
+        return output;
       }
 
-      const result = {
-        code: compiled.script.code,
-        map: compiled.script.map,
-      };
-      console.log('code', compiled.script.code);
-      console.log('map', compiled.script.map);
-      return result;
+      if (query.pwc) {
+        if (!filter(query.filename)) {
+          return null;
+        }
+        if (query.type === 'style') {
+          return transformStyle(query, this);
+        }
+      }
+      return null;
     },
   };
 }

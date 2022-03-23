@@ -1,30 +1,29 @@
 <template>
-  <div class="content" name={{name}} @click.capture={{onClick456}}>
-    Hello World!
-    123
-    {{title}}
-    <img src={{source}} />
-    <hr />
+  <div class="content">
+    <button @click={{addCount}}>+</button>
+    {{count}}
+    <button @click={{reduceCount}}>-</button>
   </div>
 </template>
 
 <script>
-export default class Component extends HTMLElement {
-  constructor() {
-    const box = document.createElement('div');
-    box.className = 'content';
-    box.innerText = 'hahaha';
-    this.appendChild(box);
+@customElement('custom-component')
+export default class CustomComponent extends HTMLElement {
+  @reactive
+  accessor count = 0;
+
+  addCount() {
+    this.count = this.count + 1;
   }
-  #name = 'pwc'
-  onClick() {
-    console.log(123);
+
+  reduceCount() {
+    this.count = this.count - 1;
   }
 }
 </script>
 
 <style>
 .content {
-  color: red;
+  color: blue;
 }
 </style>

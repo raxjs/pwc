@@ -30,21 +30,23 @@ function serve() {
 
 module.exports = {
   input: 'src/index.pwc',
+  // external: ['pwc'],
   output: {
     file: 'public/build/index.js',
-    format: 'iife',
+    format: 'umd',
     name: 'app',
+    sourcemap: 'inline',
   },
   plugins: [
-    pwc({ emitCSS: true }),
+    pwc({ include: /\.pwc$/ }),
     css({ output: 'index.css' }),
     nodeResolve({
       browser: true,
-      dedupe: ['pwc'],
+      dedupe: ['pwc/lib/elements/native/HTMLElements'],
     }),
     commonjs(),
     !production && serve(),
-    !production && livereload('public'),
+    // !production && livereload('public'),
 
   ],
   watch: {

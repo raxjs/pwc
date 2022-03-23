@@ -1,12 +1,26 @@
-import type { SFCDescriptor } from './parse';
-import { transformSync } from '@babel/core';
 import * as parse5 from 'parse5';
-import genGetTemplateMethod from './plugins/genGetTemplateMethod';
+import type { SFCDescriptor } from './parse';
 import dfs from './utils/dfs';
 
-const BINDING_REGEXP = /\{\{(\w*)\}\}/;
+import type { ElementNode } from './parse';
 
-function transformTemplateAst(nodes) {
+export interface attributeDescriptor {
+  [key: string]: string | eventDescriptor;
+}
+
+export interface eventDescriptor {
+  handler: string;
+  capture?: boolean;
+}
+
+export interface compileTemplateResult {
+  templateString: string;
+  values: Array<string | attributeDescriptor>;
+}
+
+const BINDING_REGEXP = /\{\{([\.\w]*)\}\}/;
+
+function transformTemplateAst(nodes: Array<ElementNode>): Array<string | attributeDescriptor> {
   const values = [];
   for (const item of nodes) {
     if (item.nodeName === '#text') {
@@ -16,7 +30,7 @@ function transformTemplateAst(nodes) {
       // Before: aaa {{name}} bbb => a single text node with value 'aaa {{name}} bbb'
       // After: aaa <!--?pwc_t--> bbb => text node + comment node + text node
       // TODO: optimize
-      item.value = item.value.replace(/\{\{(\w*)\}\}/g, (source, p1) => {
+      item.value = item.value.replace(/\{\{([\.\w]*)\}\}/g, (source, p1) => {
         values.push(p1);
         return '?pwc_t';
       });
@@ -59,7 +73,7 @@ function transformTemplateAst(nodes) {
               const isCapture = eventExecArray && eventExecArray[2];
               temp[`on${event}`] = {
                 handler: attr.value.replace(BINDING_REGEXP, '$1'),
-                type: isCapture ? 'capture' : 'bubble',
+                capture: isCapture ? true : false,
               };
             } else {
               // attributes
@@ -78,33 +92,18 @@ function transformTemplateAst(nodes) {
   return values;
 }
 
-function genTemplateString(ast) {
+
+function genTemplateString(ast: ElementNode): string {
   return parse5.serialize(ast);
 }
 
 /**
  * Generate template string and extract values from template
  */
-function processTemplate(descriptor: SFCDescriptor) {
+export function compileTemplate(descriptor: SFCDescriptor): compileTemplateResult {
   const root = descriptor.template.ast;
   const nodes = dfs(root);
   const values = transformTemplateAst(nodes);
   const templateString = genTemplateString(root);
-  return [templateString, values];
-}
-
-export function genScriptCode(descriptor: SFCDescriptor) {
-  const [templateString, values] = processTemplate(descriptor);
-  const plugins = [genGetTemplateMethod([templateString, values])];
-  const { code, map } = transformSync(descriptor.script.content, {
-    filename: descriptor.filename,
-    plugins,
-    sourceMaps: true,
-  });
-  return { code, map };
-}
-
-export function genStyleCode(descriptor: SFCDescriptor) {
-  // TODO: add postcss
-  return descriptor.styles.content;
+  return { templateString, values };
 }

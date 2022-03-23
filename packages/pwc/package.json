@@ -40,5 +40,5 @@
   "devDependencies": {
     "@ice/pkg-cli": "^1.0.0-beta.4"
   },
-  "sideEffects": ["elements/native"]
+  "sideEffects": true
 }

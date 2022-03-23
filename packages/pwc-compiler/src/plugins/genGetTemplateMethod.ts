@@ -2,13 +2,18 @@ import type { PluginItem } from '@babel/core';
 import * as t from '@babel/types';
 
 function createObjectProperty(key, value) {
-  // must bind this
   if (typeof value === 'string') {
     const isConfigEventType = key === 'type' && (value === 'bubble' || value === 'capture');
-    return t.objectProperty(
-      t.identifier(key),
-      isConfigEventType ? t.stringLiteral(value) : createThisMemberExpression(value),
-    );
+    const isHandler = key === 'handler';
+    let val;
+    if (isHandler) {
+      val = t.callExpression(t.memberExpression(createThisMemberExpression(value), t.identifier('bind')), [t.thisExpression()]); // bind this
+    } else if (isConfigEventType) {
+      val = t.stringLiteral(value);
+    } else {
+      val = createThisMemberExpression(value);
+    }
+    return t.objectProperty(t.identifier(key), val);
   } else if (typeof value === 'object') {
     return t.objectProperty(t.identifier(key), createObjectExpression(value));
   }
@@ -28,6 +33,15 @@ function createThisMemberExpression(value) {
   return t.memberExpression(t.thisExpression(), t.stringLiteral(value), true);
 }
 
+/*
+  values: [{
+    name: 'name',
+    onclick: {
+      handler: 'onclicker123',
+      type: 'capture'
+    }
+  }]
+*/
 export default function (value) {
   return function (): PluginItem {
     return {

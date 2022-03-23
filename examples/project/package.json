@@ -12,6 +12,8 @@
     "rollup": "^2.69.0",
     "rollup-plugin-css-only": "^3.1.0",
     "rollup-plugin-livereload": "^2.0.5",
-    "sirv-cli": "^2.0.2"
+    "sirv-cli": "^2.0.2",
+    "pwc": "workspace:*",
+    "rollup-plugin-pwc": "workspace:*"
   }
 }
