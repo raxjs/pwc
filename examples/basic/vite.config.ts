@@ -25,6 +25,7 @@ export default defineConfig({
           ],
           '@babel/plugin-proposal-class-properties',
           '@babel/plugin-proposal-class-static-block',
+          '@babel/plugin-proposal-private-methods'
         ],
       },
     }),

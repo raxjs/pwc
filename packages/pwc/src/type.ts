@@ -1,5 +1,4 @@
 export interface PWCElement {
-  uid: number;
   connectedCallback?: () => void;
   disconnectedCallback?: () => void;
   attributeChangedCallback?: (name: string, oldValue: any, newValue: any) => void;
