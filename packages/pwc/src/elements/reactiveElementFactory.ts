@@ -5,7 +5,7 @@ import type { ReactiveNode } from './reactiveNode';
 import { AttributedNode, TextNode } from './reactiveNode';
 import { shallowEqual } from '../utils';
 import type { SchedulerJob } from './sheduler';
-import { queueJob } from './sheduler';
+import { enqueueJob } from './sheduler';
 
 let uid = 0;
 
@@ -102,7 +102,7 @@ export default (Definition) => {
     }
 
     requestUpdate(): void {
-      queueJob(this.updateJob);
+      enqueueJob(this.updateJob);
     }
 
     getReactiveValue(prop: string): unknown {
