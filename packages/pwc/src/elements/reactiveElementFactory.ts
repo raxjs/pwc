@@ -37,7 +37,7 @@ export default (Definition) => {
       this.#initialized = true;
     }
     disconnectedCallback() {}
-    attributeChangedCallback(name, oldValue, newValue) {}
+    attributeChangedCallback() {}
     adoptedCallback() {}
 
     // Extension methods

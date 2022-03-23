@@ -17,16 +17,17 @@
     "start-bench-server": "ws -c lws.config.js --static.maxage 1 -d ./benchmarks",
     "benchmark": "esno ./scripts/benchmarks/index.ts",
     "start": "pnpm run start -r --filter \"./packages\"",
-    "build": "pnpm run build -r --filter \"./packages\""
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-push": "npm run lint:diff"
-    }
+    "build": "pnpm run build -r --filter \"./packages\"",
+    "prepare-husky": "husky install"
   },
   "dependencies": {
     "@applint/spec": "^1.2.0",
+    "@babel/core": "^7.17.8",
+    "@babel/plugin-proposal-class-properties": "^7.0.0",
+    "@babel/plugin-proposal-class-static-block": "^7.17.6",
+    "@babel/plugin-proposal-decorators": "^7.0.0",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-typescript": "^7.16.7",
     "@commitlint/cli": "^13.0.0",
     "@swc/core": "^1.2.146",
     "@swc/jest": "^0.2.20",
@@ -40,7 +41,7 @@
     "esno": "^0.14.1",
     "fs-extra": "^10.0.1",
     "gzip-size": "^7.0.0",
-    "husky": "^7.0.0",
+    "husky": "^7.0.4",
     "jest": "^27.0.0",
     "local-web-server": "^4.1.0",
     "prettier": "^2.6.0",

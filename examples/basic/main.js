@@ -1,5 +1,6 @@
-import { reactive } from 'pwc';
+import { reactive, customElement } from 'pwc';
 
+@customElement('custom-element')
 class CustomElement extends HTMLElement {
   changedClassName = false;
 
@@ -12,10 +13,6 @@ class CustomElement extends HTMLElement {
   accessor text = 'hello';
   @reactive
   accessor className = 'red';
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    console.log('attributeChangedCallback', name, oldValue, newValue);
-  }
 
   connectedCallback() {
     super.connectedCallback();
@@ -53,9 +50,6 @@ class CustomElement extends HTMLElement {
 
 class Child extends HTMLElement {
   privatename = 'Child';
-  attributeChangedCallback(name, oldValue, newValue) {
-    console.log('attributeChangedCallback', name, oldValue, newValue);
-  }
   connectedCallback() {
     super.connectedCallback();
     console.log('connected');
@@ -65,5 +59,4 @@ class Child extends HTMLElement {
   }
 }
 
-window.customElements.define('custom-element', CustomElement);
 window.customElements.define('child-element', Child);
