@@ -1,8 +1,6 @@
 import * as parse5 from 'parse5';
-import type { SFCDescriptor } from './parse';
+import type { SFCDescriptor, ElementNode } from './parse';
 import dfs from './utils/dfs';
-
-import type { ElementNode } from './parse';
 
 export interface attributeDescriptor {
   [key: string]: string | eventDescriptor;
@@ -73,7 +71,7 @@ function transformTemplateAst(nodes: Array<ElementNode>): Array<string | attribu
               const isCapture = eventExecArray && eventExecArray[2];
               temp[`on${event}`] = {
                 handler: attr.value.replace(BINDING_REGEXP, '$1'),
-                capture: isCapture ? true : false,
+                capture: !!isCapture,
               };
             } else {
               // attributes

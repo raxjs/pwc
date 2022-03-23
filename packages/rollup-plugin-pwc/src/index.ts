@@ -14,7 +14,7 @@ interface Options {
 
 export default function PluginPWC({
   include = /\.pwc$/,
-  exclude
+  exclude,
 }: Options): Plugin {
   const rootContext = process.cwd();
   const filter = createFilter(include, exclude);

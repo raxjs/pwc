@@ -35,7 +35,7 @@ export function resolveScript(
       ['@babel/plugin-proposal-decorators', { version: '2021-12', decoratorsBeforeExport: true }],
       '@babel/plugin-proposal-class-properties',
       '@babel/plugin-proposal-class-static-block',
-      '@babel/plugin-proposal-private-methods'
+      '@babel/plugin-proposal-private-methods',
     ],
     sourceMaps: true,
     // TODO:

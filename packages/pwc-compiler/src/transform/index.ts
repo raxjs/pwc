@@ -9,7 +9,7 @@ export interface transformScriptOptions extends compileTemplateResult {
   importInfo: {
     source: string;
     imported: Array<string>;
-  }
+  };
 }
 
 export default function transformScript(ast: File, {

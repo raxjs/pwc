@@ -215,7 +215,7 @@ export function parse(source: string, {
         sourceType: 'module',
         plugins: [
           ['decorators', { decoratorsBeforeExport: true }],
-          'decoratorAutoAccessors'
+          'decoratorAutoAccessors',
         ],
       });
       errors = errors.concat(validateScript(ast));

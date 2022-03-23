@@ -16,7 +16,7 @@ export function compileScript(descriptor: SFCDescriptor): SFCScriptBlock {
       imported: ['customElement', 'reactive'],
     },
     templateString,
-    values
+    values,
   });
   const { code, map } = generate(ast, {
     sourceMaps: false,
