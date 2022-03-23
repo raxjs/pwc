@@ -1,23 +1,41 @@
 <template>
-  <div class="content">
-    <button @click="{{addCount}}">+</button>
-    {{count}}
-    <button @click="{{reduceCount}}">-</button>
-  </div>
+  <form class={{editVisiblityClass}}>
+    <input class="editInput" value={{editValue}} @input={{onInput}} @blur={{onBlur}} />
+  </form>
+  <span @click={{onClick}} class={{textVisiblityClass}}>{{editValue}}</span>
 </template>
 
 <script>
+  import { customElement } from 'pwc';
+
   @customElement('edit-word')
   export default class EditWord extends HTMLElement {
     @reactive
-    accessor count = 0;
+    accessor editable = false;
 
-    addCount() {
-      this.count = this.count + 1;
+    @reactive
+    accessor editValue = 'Cindy';
+
+    @reactive
+    accessor editVisiblityClass = 'hide';
+
+    @reactive
+    accessor textVisiblityClass = 'show';
+
+    onClick() {
+      this.editable = true;
+      this.editVisiblityClass = 'show';
+      this.textVisiblityClass = 'hide';
     }
 
-    reduceCount() {
-      this.count = this.count - 1;
+    onInput(event) {
+      this.editValue = event.srcElement.value;
+    }
+
+    onBlur() {
+      this.editable = false;
+      this.editVisiblityClass = 'hide';
+      this.textVisiblityClass = 'show';
     }
   }
 </script>
@@ -26,5 +44,14 @@
   span {
     background-color: #eef;
     padding: 0 2px;
+  }
+  .editInput {
+    width: 50px;
+  }
+  .show {
+    display: inline-block;
+  }
+  .hide {
+    display: none;
   }
 </style>
