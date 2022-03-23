@@ -1,3 +1,3 @@
-const { getPrettierConfig } = require('@appworks/spec');
+const { getPrettierConfig } = require('@applint/spec');
 
-module.exports = getPrettierConfig('common');
+module.exports = getPrettierConfig('common-ts');

@@ -32,6 +32,7 @@ coverage
 # Packages
 packages/*/lib/
 packages/*/es/
+packages/*/esnext/
 
 # Dist
 dist/

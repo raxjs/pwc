@@ -1,33 +1,43 @@
-import type { ElementTemplate } from '../type';
+import type { ElementTemplate, PWCElement } from '../type';
 import { TEXT_COMMENT_DATA, PWC_PREFIX, PLACEHOLDER_COMMENT_DATA } from '../constants';
-import { hasOwnProperty } from '../utils';
+import { Reactive } from '../reactivity/reactive';
+import type { ReactiveNode } from './reactiveNode';
+import { AttributedNode, TextNode } from './reactiveNode';
+import { shallowEqual, generateUid } from '../utils';
+import { enqueueJob } from './sheduler';
 
 export default (Definition) => {
-  return class extends Definition {
+  return class extends Definition implements PWCElement {
+    #uid: number = generateUid();
     // Component initial state
     #initialized = false;
     // The root fragment
     #fragment: Node;
     // Template info
-    #template: ElementTemplate;
-    constructor(...args) {
-      super();
-    }
+    #currentTemplate: ElementTemplate;
+    // Reactive nodes
+    #reactiveNodes: ReactiveNode[];
+    // Reactive instance
+    #reactive: Reactive = new Reactive(this);
+
     // Custom element native lifecycle
     connectedCallback() {
       if (!this.#initialized) {
-        this.#template = this.template || [];
-        const [template, values = []] = this.#template;
+        if (this.__init_task__) {
+          this.__init_task__();
+        }
+        this.#currentTemplate = this.template || [];
+        const [template, values = []] = this.#currentTemplate;
 
         this.#fragment = this.#createTemplate(template);
-        // TODO: rename?
-        this.#associateTplAndValue(this.#fragment, values);
+
+        this.#initRenderTemplate(this.#fragment, values);
         this.appendChild(this.#fragment);
       }
       this.#initialized = true;
     }
     disconnectedCallback() {}
-    attributeChangedCallback(name, oldValue, newValue) {}
+    attributeChangedCallback() {}
     adoptedCallback() {}
 
     // Extension methods
@@ -39,7 +49,8 @@ export default (Definition) => {
 
       return template.content.cloneNode(true);
     }
-    #associateTplAndValue(fragment: Node, values) {
+
+    #initRenderTemplate(fragment: Node, values) {
       const nodeIterator = document.createNodeIterator(fragment, NodeFilter.SHOW_COMMENT, {
         acceptNode(node) {
           if ((node as Comment).data?.includes(PWC_PREFIX)) {
@@ -50,35 +61,51 @@ export default (Definition) => {
       });
       let currentComment: Node;
       let index = 0;
+      this.#reactiveNodes = [];
 
       while ((currentComment = nodeIterator.nextNode())) {
         // Insert dynamic text node
         if ((currentComment as Comment).data === TEXT_COMMENT_DATA) {
-          const textNode = document.createTextNode(values[index]);
-          currentComment.parentNode.insertBefore(textNode, currentComment);
+          const textElement = new TextNode(currentComment as Comment, values[index]);
+          this.#reactiveNodes.push(textElement);
         } else if ((currentComment as Comment).data === PLACEHOLDER_COMMENT_DATA) {
-          // Set dynamic attribute and property
-          const targetElement = currentComment.nextSibling as Element;
-          const dynamicValue = values[index];
-          for (const attrName in dynamicValue) {
-            if (hasOwnProperty(dynamicValue, attrName)) {
-              // When attribute name startWith on, it should be an event
-              if (attrName.startsWith('on')) {
-                const { handler, type } = dynamicValue[attrName];
-                // If type is capture, the event should be trigger when capture stage
-                targetElement.addEventListener(attrName.slice(2), handler, type === 'capture');
-              } else if (attrName in targetElement) {
-                // Verify that there is a target property on the node
-                targetElement[attrName] = dynamicValue[attrName];
-              } else {
-                targetElement.setAttribute(attrName, dynamicValue[attrName]);
-              }
-            }
-          }
+          const attributedElement = new AttributedNode(currentComment as Comment, values[index]);
+          this.#reactiveNodes.push(attributedElement);
         }
 
         index++;
       }
+    }
+
+    #performUpdate() {
+      const [oldStrings, oldValues] = this.#currentTemplate;
+      const [strings, values] = this.template;
+
+      // While template strings is constant with prev ones,
+      // it should just update node values and attributes
+      if (oldStrings === strings) {
+        for (let index = 0; index < oldValues.length; index++) {
+          if (!shallowEqual(oldValues[index], values[index])) {
+            this.#reactiveNodes[index].commitValue(values[index]);
+          }
+        }
+      }
+      this.#currentTemplate = this.template;
+    }
+
+    requestUpdate(): void {
+      enqueueJob({
+        uid: this.#uid,
+        run: this.#performUpdate.bind(this),
+      });
+    }
+
+    getReactiveValue(prop: string): unknown {
+      return this.#reactive.getReactiveValue(prop);
+    }
+
+    setReactiveValue(prop: string, val: unknown) {
+      this.#reactive.setReactiveValue(prop, val);
     }
   };
 };

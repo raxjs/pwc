@@ -2,6 +2,6 @@
   "compilerOptions": {
     "target": "ES2015",
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true
+    "noImplicitOverride": true
   }
 }
