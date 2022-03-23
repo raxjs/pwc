@@ -1,0 +1,30 @@
+<template>
+  <div class="content">
+    <button @click="{{addCount}}">+</button>
+    {{count}}
+    <button @click="{{reduceCount}}">-</button>
+  </div>
+</template>
+
+<script>
+  @customElement('edit-word')
+  export default class EditWord extends HTMLElement {
+    @reactive
+    accessor count = 0;
+
+    addCount() {
+      this.count = this.count + 1;
+    }
+
+    reduceCount() {
+      this.count = this.count - 1;
+    }
+  }
+</script>
+
+<style>
+  span {
+    background-color: #eef;
+    padding: 0 2px;
+  }
+</style>
