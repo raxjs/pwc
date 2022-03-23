@@ -7,7 +7,7 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "setup": "npm run clean && pnpm install --reporter=append-only  --registry=https://registry.npmjs.org/",
-    "clean": "rm -rf ./**/node_modules && npm run clean:result",
+    "clean": "rm -rf node_modules && rm -rf ./**/*/node_modules",
     "clean:result": "rm -rf ./packages/*/lib ./packages/*/es ./packages/*/esnext ./packages/*/dist",
     "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx ./",
     "lint:fix": "npm run lint -- --fix",
