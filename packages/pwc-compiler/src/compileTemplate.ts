@@ -1,6 +1,6 @@
 import * as parse5 from 'parse5';
 import type { SFCDescriptor, ElementNode } from './parse';
-import dfs from './utils/dfs';
+import { dfs, isEvent, isBindings, getEventInfo, BINDING_REGEXP } from './utils';
 
 export interface attributeDescriptor {
   [key: string]: string | eventDescriptor;
@@ -16,74 +16,93 @@ export interface compileTemplateResult {
   values: Array<string | attributeDescriptor>;
 }
 
-const BINDING_REGEXP = /\{\{([\.\w]*)\}\}/;
+const TEXT_COMMENT_DATA = '?pwc_t';
+const PLACEHOLDER_COMMENT_DATA = '?pwc_p';
+
+function createCommentNode(data) {
+  return {
+    nodeName: '#comment',
+    data
+  };
+}
+
+function createTextNode(value) {
+  return {
+    nodeName: '#text',
+    value
+  };
+}
+
+// with side effect in changing node structure
+function extractAttributeBindings(node: ElementNode): attributeDescriptor {
+  const tempAttributeDescriptor = {};
+  // Extract attribute bindings
+  if (node.attrs?.length > 0) {
+    let hasInsertComment = false; // Should only insert comment node before current node once
+    node.attrs = node.attrs.filter((attr) => {
+      if (isBindings(attr.value)) {
+        if (!hasInsertComment) {
+          const selfIndex = node.parentNode.childNodes.indexOf(node);
+          node.parentNode.childNodes.splice(selfIndex, 0, createCommentNode(PLACEHOLDER_COMMENT_DATA));
+
+          hasInsertComment = true;
+        }
+        if (isEvent(attr.name)) {
+          // events
+          const { eventName, isCapture } = getEventInfo(attr.name);
+          tempAttributeDescriptor[`on${eventName}`] = {
+            handler: attr.value.replace(BINDING_REGEXP, '$1'),
+            capture: isCapture
+          };
+        } else {
+          // attributes
+          tempAttributeDescriptor[attr.name] = attr.value.replace(BINDING_REGEXP, '$1');
+        }
+        return false; // remove attribute bindings
+      }
+      return true;
+    });
+  }
+  return tempAttributeDescriptor;
+}
+
+// with side effect in changing node structure
+function extractTextInterpolation(node): Array<string> {
+  const tempTextInterpolation = [];
+  // Extract text interpolation
+  // Splice text node into text node and comment node
+  // Example:
+  // Before: aaa {{name}} bbb => a single text node with value 'aaa {{name}} bbb'
+  // After: aaa <!--?pwc_t--> bbb => text node + comment node + text node
+  // TODO: optimize
+  node.value = node.value.replace(/\{\{\s*([#\.\w]*)\s*\}\}/g, (source, p1) => {
+    tempTextInterpolation.push(p1);
+    return TEXT_COMMENT_DATA;
+  });
+  const textArr = node.value.split(TEXT_COMMENT_DATA);
+  const newChildNodes = [];
+  for (let i = 0, { length } = textArr; i < length; i++) {
+    newChildNodes.push(createTextNode(textArr[i]));
+    if (i !== length - 1) {
+      newChildNodes.push(createCommentNode(TEXT_COMMENT_DATA));
+    }
+  }
+  const selfIndex = node.parentNode.childNodes.indexOf(node);
+  node.parentNode.childNodes.splice(selfIndex, 1, ...newChildNodes);
+
+  return tempTextInterpolation;
+}
 
 function transformTemplateAst(nodes: Array<ElementNode>): Array<string | attributeDescriptor> {
-  const values = [];
-  for (const item of nodes) {
-    if (item.nodeName === '#text') {
-      // Extract text bindings
-      // Splice text node into text node and comment node
-      // Example:
-      // Before: aaa {{name}} bbb => a single text node with value 'aaa {{name}} bbb'
-      // After: aaa <!--?pwc_t--> bbb => text node + comment node + text node
-      // TODO: optimize
-      item.value = item.value.replace(/\{\{([\.\w]*)\}\}/g, (source, p1) => {
-        values.push(p1);
-        return '?pwc_t';
-      });
-      const textArr = item.value.split('?pwc_t');
-      const newChildNodes = [];
-      for (let i = 0, { length } = textArr; i < length; i++) {
-        newChildNodes.push({
-          nodeName: '#text',
-          value: textArr[i],
-        });
-        if (i !== length - 1) {
-          newChildNodes.push({
-            nodeName: '#comment',
-            data: '?pwc_t',
-          });
-        }
-      }
-      const selfIndex = item.parentNode.childNodes.indexOf(item);
-      item.parentNode.childNodes.splice(selfIndex, 1, ...newChildNodes);
+  let values = [];
+  for (const node of nodes) {
+    if (node.nodeName === '#text') {
+      const tempTextInterpolation = extractTextInterpolation(node);
+      values = values.concat(tempTextInterpolation);
     } else {
-      // Extract attribute bindings
-      const temp = {};
-      if (item.attrs?.length > 0) {
-        let hasInsertComment = false; // Should only insert comment node before current node once
-        item.attrs = item.attrs.filter((attr) => {
-          if (BINDING_REGEXP.test(attr.value)) {
-            if (!hasInsertComment) {
-              const selfIndex = item.parentNode.childNodes.indexOf(item);
-              item.parentNode.childNodes.splice(selfIndex, 0, {
-                nodeName: '#comment',
-                data: '?pwc_p',
-              });
-
-              hasInsertComment = true;
-            }
-            if (attr.name.startsWith('@')) {
-              // events
-              const eventExecArray = /^@(\w*)(\.capture)?/.exec(attr.name);
-              const event = eventExecArray && eventExecArray[1];
-              const isCapture = eventExecArray && eventExecArray[2];
-              temp[`on${event}`] = {
-                handler: attr.value.replace(BINDING_REGEXP, '$1'),
-                capture: !!isCapture,
-              };
-            } else {
-              // attributes
-              temp[attr.name] = attr.value.replace(BINDING_REGEXP, '$1');
-            }
-            return false; // remove attribute bindings
-          }
-          return true;
-        });
-      }
-      if (Object.keys(temp).length > 0) {
-        values.push(temp);
+      const tempAttributeDescriptor = extractAttributeBindings(node);
+      if (Object.keys(tempAttributeDescriptor).length > 0) {
+        values.push(tempAttributeDescriptor);
       }
     }
   }

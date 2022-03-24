@@ -1,4 +1,4 @@
-export default function dfs(node) {
+export function dfs(node) {
   const nodes = [];
   if (node !== null) {
     const stack = [];

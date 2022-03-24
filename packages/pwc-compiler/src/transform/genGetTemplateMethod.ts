@@ -1,6 +1,7 @@
 import type { File } from '@babel/types';
 import * as t from '@babel/types';
 import babelTraverse from '@babel/traverse';
+import { isPrivateField } from '../utils';
 
 import type { compileTemplateResult } from '../compileTemplate';
 
@@ -9,14 +10,18 @@ function createObjectProperty(key, value) {
     const isHandler = key === 'handler';
     let valueExpression;
     if (isHandler) {
-      valueExpression = t.callExpression(t.memberExpression(createThisMemberExpression(value), t.identifier('bind')), [t.thisExpression()]); // bind this
+      // this.xxx.bind(this)
+      valueExpression = t.callExpression(t.memberExpression(createThisMemberExpression(value, !isPrivateField(value)), t.identifier('bind')), [t.thisExpression()]);
     } else {
-      valueExpression = createThisMemberExpression(value);
+      // this.xxx
+      valueExpression = createThisMemberExpression(value, !isPrivateField(key));
     }
     return t.objectProperty(t.identifier(key), valueExpression);
   } else if (typeof value === 'object') {
+    // [key]: {}
     return t.objectProperty(t.identifier(key), createObjectExpression(value));
   } else if (key === 'capture') {
+    // capture: true/false
     return t.objectProperty(t.identifier(key), t.booleanLiteral(value));
   }
 }
@@ -31,8 +36,31 @@ function createArrayExpression(elements) {
   return t.arrayExpression(elements);
 }
 
-function createThisMemberExpression(value) {
-  return t.memberExpression(t.thisExpression(), t.stringLiteral(value), true);
+// If computed is true, return this['xxx']
+// else return this.xxx
+function createThisMemberExpression(value, computed: boolean = true) {
+  if (computed) {
+    return t.memberExpression(t.thisExpression(), t.stringLiteral(value), computed);
+  } else {
+    return t.memberExpression(t.thisExpression(), t.identifier(value), computed);
+  }
+}
+
+/**
+ *
+ * get template() {
+ *  return []
+ * }
+ */
+function cretateGetTemplateClassMethod(returnExpression) {
+  return t.classMethod(
+    'get',
+    t.identifier('template'),
+    [],
+    t.blockStatement(
+      [t.returnStatement(returnExpression)]
+    ),
+  )
 }
 
 export default function genGetTemplateMethod(ast: File, templateResult: compileTemplateResult): void {
@@ -48,7 +76,7 @@ export default function genGetTemplateMethod(ast: File, templateResult: compileT
           const templateValuesExpression = createArrayExpression(values.map(val => {
             if (typeof val === 'string') {
               // 1 variables
-              return createThisMemberExpression(val);
+              return createThisMemberExpression(val, !isPrivateField(val));
             } else {
               // 2. events and props
               /*
@@ -64,18 +92,8 @@ export default function genGetTemplateMethod(ast: File, templateResult: compileT
               return createObjectExpression(val);
             }
           }));
-
-          const returnExpression = t.arrayExpression([templateStringExpression, templateValuesExpression]);
-          node.body.body.push(
-            t.classMethod(
-              'get',
-              t.identifier('template'),
-              [],
-              t.blockStatement(
-                [t.returnStatement(returnExpression)],
-              ),
-            ),
-          );
+          const returnExpression = createArrayExpression([templateStringExpression, templateValuesExpression]);
+          node.body.body.push(cretateGetTemplateClassMethod(returnExpression));
         }
       }
     },
