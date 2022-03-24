@@ -6,6 +6,6 @@ export function getEventInfo(name): any {
   const isCapture = !!(eventExecArray && eventExecArray[2]);
   return {
     eventName,
-    isCapture
+    isCapture,
   };
 }

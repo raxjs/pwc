@@ -10,9 +10,9 @@ function extractBindings(values: Array<attributeDescriptor | string>) {
     if (typeof value === 'string') {
       bindings.push(value);
     } else {
-      Object.keys(value).forEach(k => {
-        if (typeof value[k] === 'string') {
-          bindings.push(value[k]);
+      Object.keys(value).forEach(key => {
+        if (typeof value[key] === 'string') {
+          bindings.push(value[key]);
         }
       });
     }
@@ -26,7 +26,7 @@ function createIdentifierDecorator(decorator: string) {
 
 // e.g. @customElement('custom-component')
 function createCallExpressionDecorator(decorator: string, argument) {
-  return t.decorator(t.callExpression(t.identifier(decorator), [ t.stringLiteral(argument) ]));
+  return t.decorator(t.callExpression(t.identifier(decorator), [t.stringLiteral(argument)]));
 }
 
 export default function autoAddDecorator(ast: File, values: Array<attributeDescriptor | string>): void {
@@ -41,7 +41,7 @@ export default function autoAddDecorator(ast: File, values: Array<attributeDescr
         if (!declaration.decorators || declaration.decorators.length === 0) {
           const { id } = declaration;
           // TODO:component name
-          declaration.decorators = [ createCallExpressionDecorator('customElement', toDash(id.name)) ];
+          declaration.decorators = [createCallExpressionDecorator('customElement', toDash(id.name))];
         }
       }
     },
@@ -50,7 +50,7 @@ export default function autoAddDecorator(ast: File, values: Array<attributeDescr
       const { node } = path;
       if (t.isIdentifier(node.key) && bindings.includes(node.key.name)) {
         if (!node.decorators || node.decorators.length === 0) {
-          node.decorators = [ createIdentifierDecorator('reactive') ];
+          node.decorators = [createIdentifierDecorator('reactive')];
         }
       }
     },

@@ -22,14 +22,14 @@ const PLACEHOLDER_COMMENT_DATA = '?pwc_p';
 function createCommentNode(data) {
   return {
     nodeName: '#comment',
-    data
+    data,
   };
 }
 
 function createTextNode(value) {
   return {
     nodeName: '#text',
-    value
+    value,
   };
 }
 
@@ -52,7 +52,7 @@ function extractAttributeBindings(node: ElementNode): attributeDescriptor {
           const { eventName, isCapture } = getEventInfo(attr.name);
           tempAttributeDescriptor[`on${eventName}`] = {
             handler: attr.value.replace(BINDING_REGEXP, '$1'),
-            capture: isCapture
+            capture: isCapture,
           };
         } else {
           // attributes
@@ -81,9 +81,9 @@ function extractTextInterpolation(node): Array<string> {
   });
   const textArr = node.value.split(TEXT_COMMENT_DATA);
   const newChildNodes = [];
-  for (let i = 0, { length } = textArr; i < length; i++) {
-    newChildNodes.push(createTextNode(textArr[i]));
-    if (i !== length - 1) {
+  for (let index = 0, { length } = textArr; index < length; index++) {
+    newChildNodes.push(createTextNode(textArr[index]));
+    if (index !== length - 1) {
       newChildNodes.push(createCommentNode(TEXT_COMMENT_DATA));
     }
   }

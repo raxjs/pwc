@@ -109,12 +109,12 @@ function createBlock(
     loc,
     attrs,
   };
-  node.attrs.forEach((p) => {
-    attrs[p.name] = p.value ? p.value || true : true;
-    if (p.name === 'lang') {
-      block.lang = p.value && p.value;
+  node.attrs.forEach((attr) => {
+    attrs[attr.name] = attr.value ? attr.value || true : true;
+    if (attr.name === 'lang') {
+      block.lang = attr.value && attr.value;
     } else if (type === 'style') {
-      if (p.name === 'scoped') {
+      if (attr.name === 'scoped') {
         (block as SFCStyleBlock).scoped = true;
       }
     }
@@ -140,17 +140,17 @@ function generateSourceMap(
     if (!emptyRE.test(line)) {
       const originalLine = index + 1;
       const generatedLine = index + 1;
-      for (let i = 0; i < line.length; i++) {
-        if (!/\s/.test(line[i])) {
+      for (let index = 0; index < line.length; index++) {
+        if (!/\s/.test(line[index])) {
           map.addMapping({
             source: filename,
             original: {
               line: originalLine,
-              column: i,
+              column: index,
             },
             generated: {
               line: generatedLine,
-              column: i,
+              column: index,
             },
           });
         }
@@ -176,8 +176,8 @@ export function parse(source: string, {
   let dom;
   try {
     dom = parse5.parseFragment(source, { sourceCodeLocationInfo: true });
-  } catch (e) {
-    throw new Error(`[@pwc/compiler] compile error: ${e}`);
+  } catch (err) {
+    throw new Error(`[@pwc/compiler] compile error: ${err}`);
   }
 
   // Check phase 1: sfc

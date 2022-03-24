@@ -4,7 +4,7 @@ import babelTraverse from '@babel/traverse';
 
 // e.g. import { reactive, customElement } from 'pwc'
 function createImportDeclaration(source: string, imported: Array<string>) {
-  const specifiers = imported.map(i => t.importSpecifier(t.identifier(i), t.identifier(i)));
+  const specifiers = imported.map(im => t.importSpecifier(t.identifier(im), t.identifier(im)));
   return t.importDeclaration(specifiers, t.stringLiteral(source));
 }
 
@@ -20,7 +20,7 @@ export default function autoInjectImportPWC(ast: File): void {
       let hasImportPWC = false;
       const hasImportedFromPWC = shouldImportedFromPWC.reduce((prev, cur) => {
         return Object.assign(prev, {
-          [cur]: false
+          [cur]: false,
         });
       }, {});
       path.traverse({
@@ -34,13 +34,13 @@ export default function autoInjectImportPWC(ast: File): void {
                 hasImportedFromPWC[importedName] = true;
               }
             });
-            Object.entries(hasImportedFromPWC).forEach(([ importedName, hasImported ]) => {
-              if(!hasImported) {
+            Object.entries(hasImportedFromPWC).forEach(([importedName, hasImported]) => {
+              if (!hasImported) {
                 node.specifiers.push(createImportSpecifier(importedName));
               }
             });
           }
-        }
+        },
       });
 
       if (!hasImportPWC) {

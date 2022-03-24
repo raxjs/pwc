@@ -9,7 +9,7 @@ export function validateScript(ast: File) {
     // TODO: script validation
     Program(path) {
       const { node } = path;
-      const exportDefaultDeclarationNode = node.body.filter(n => t.isExportDefaultDeclaration(n));
+      const exportDefaultDeclarationNode = node.body.filter(nn => t.isExportDefaultDeclaration(nn));
       if (!exportDefaultDeclarationNode) {
         errors.push(new SyntaxError('PWC must allow one export default'));
       }

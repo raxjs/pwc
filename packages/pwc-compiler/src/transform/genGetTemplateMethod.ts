@@ -38,7 +38,7 @@ function createArrayExpression(elements) {
 
 // If computed is true, return this['xxx']
 // else return this.xxx
-function createThisMemberExpression(value, computed: boolean = true) {
+function createThisMemberExpression(value, computed = true) {
   if (computed) {
     return t.memberExpression(t.thisExpression(), t.stringLiteral(value), computed);
   } else {
@@ -58,9 +58,9 @@ function cretateGetTemplateClassMethod(returnExpression) {
     t.identifier('template'),
     [],
     t.blockStatement(
-      [t.returnStatement(returnExpression)]
+      [t.returnStatement(returnExpression)],
     ),
-  )
+  );
 }
 
 export default function genGetTemplateMethod(ast: File, templateResult: compileTemplateResult): void {

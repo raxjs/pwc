@@ -7,8 +7,8 @@ export function dfs(node) {
       const item = stack.pop();
       nodes.push(item);
       if (item.childNodes) {
-        for (let i = item.childNodes.length - 1; i >= 0; i--) {
-          stack.push(item.childNodes[i]);
+        for (let index = item.childNodes.length - 1; index >= 0; index--) {
+          stack.push(item.childNodes[index]);
         }
       }
     }
