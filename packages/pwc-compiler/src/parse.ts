@@ -185,8 +185,8 @@ export function parse(source: string, {
   const templateNodeAmount = dom.childNodes.filter(node => node.nodeName === 'template').length;
   const styleNodeAmount = dom.childNodes.filter(node => node.nodeName === 'style').length;
 
-  if (scriptNodeAmount > 1) {
-    throw new Error('[@pwc/compiler] PWC mustn\'t contain more than one <script> tag.');
+  if (scriptNodeAmount !== 1) {
+    throw new Error('[@pwc/compiler] PWC mustt contain only one <script> tag.');
   }
 
   if (templateNodeAmount > 1) {
