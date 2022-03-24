@@ -11,10 +11,6 @@ export function compileScript(descriptor: SFCDescriptor): SFCScriptBlock {
   const { templateString, values } = compileTemplate(descriptor);
   const ast = deepClone(descriptor.script.ast);
   transformScript(ast, {
-    importInfo: {
-      source: 'pwc',
-      imported: ['customElement', 'reactive'],
-    },
     templateString,
     values,
   });
