@@ -19,6 +19,7 @@ function extractBindings(values: Array<attributeDescriptor | string>) {
   });
   return bindings;
 }
+
 // e.g. @reactive
 function createIdentifierDecorator(decorator: string) {
   return t.decorator(t.identifier(decorator));
@@ -54,9 +55,10 @@ export default function autoAddDecorator(ast: File, values: Array<attributeDescr
         }
       }
     },
+
     ClassPrivateProperty(path) {
       const { node } = path;
-      if (t.isPrivateName(node.key) && bindings.includes(node.key.id.name)) {
+      if (t.isPrivateName(node.key) && bindings.includes(`#${node.key.id.name}`)) {
         if (!node.decorators || node.decorators.length === 0) {
           node.decorators = [createIdentifierDecorator('reactive')];
         }
