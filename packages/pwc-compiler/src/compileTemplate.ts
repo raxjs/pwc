@@ -75,7 +75,7 @@ function extractTextInterpolation(node): Array<string> {
   // Before: aaa {{name}} bbb => a single text node with value 'aaa {{name}} bbb'
   // After: aaa <!--?pwc_t--> bbb => text node + comment node + text node
   // TODO: optimize
-  node.value = node.value.replace(/\{\{\s*([#\.\w]*)\s*\}\}/g, (source, p1) => {
+  node.value = node.value.replace(/\{\{\s*([#.\w]*)\s*\}\}/g, (source, p1) => {
     tempTextInterpolation.push(p1);
     return TEXT_COMMENT_DATA;
   });

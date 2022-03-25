@@ -7,7 +7,7 @@ export function isPrivateField(field: string): boolean {
   return field.startsWith('#');
 }
 
-export const BINDING_REGEXP = /\{\{\s*([#\.\w]*)\s*\}\}/;
+export const BINDING_REGEXP = /\{\{\s*([#.\w]*)\s*\}\}/;
 
 export function isBindings(value: string): boolean {
   return BINDING_REGEXP.test(value);
