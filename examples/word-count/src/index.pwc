@@ -27,10 +27,8 @@
 <script>
   import { countWords } from './countWords';
 
-  @customElement('word-count')
   export default class WordCount extends HTMLElement {
-    @reactive
-    accessor count = 0;
+    count = 0;
 
     constructor() {
       super();

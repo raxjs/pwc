@@ -8,19 +8,14 @@
 <script>
   import { customElement } from 'pwc';
 
-  @customElement('edit-word')
   export default class EditWord extends HTMLElement {
-    @reactive
-    accessor editable = false;
+    editable = false;
 
-    @reactive
-    accessor editValue = 'Cindy';
+    editValue = 'Cindy';
 
-    @reactive
-    accessor editVisiblityClass = 'hide';
+    editVisiblityClass = 'hide';
 
-    @reactive
-    accessor textVisiblityClass = 'show';
+    textVisiblityClass = 'show';
 
     onClick() {
       this.editable = true;
