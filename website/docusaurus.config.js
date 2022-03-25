@@ -8,13 +8,13 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'PWC',
   tagline: '渐进式 Web Components UI 框架',
-  url: 'https://pwc.alibaba-inc.com',
-  baseUrl: '/',
+  url: 'https://raxjs.github.io',
+  baseUrl: '/pwc/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'raxjs', // Usually your GitHub org/user name.
+  projectName: 'pwc', // Usually your repo name.
 
   presets: [
     [
