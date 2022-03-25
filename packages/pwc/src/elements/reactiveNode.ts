@@ -1,4 +1,5 @@
-import { hasOwnProperty, isEventName } from '../utils';
+import { commitAttributes } from './commitAttributes';
+import type { Attributes } from '../type';
 
 export interface ReactiveNode {
   commitValue: (value: any) => void;
@@ -19,30 +20,23 @@ export class TextNode implements ReactiveNode {
 
 export class AttributedNode implements ReactiveNode {
   #el: Element;
-  constructor(commentNode: Comment, initialAttrs: object) {
+  constructor(commentNode: Comment, initialAttrs: Attributes) {
     this.#el = commentNode.nextSibling as Element;
-    this.#updateAttributes(initialAttrs, true);
-  }
-
-  commitValue(value: object) {
-    this.#updateAttributes(value);
-  }
-
-  #updateAttributes(value: object, isInitial = false) {
-    for (const attrName in value) {
-      if (hasOwnProperty(value, attrName)) {
-        // When attribute name startWith on, it should be an event
-        if (isEventName(attrName) && isInitial) {
-          const { handler, type } = value[attrName];
-          // If type is capture, the event should be trigger when capture stage
-          this.#el.addEventListener(attrName.slice(2), handler, type === 'capture');
-        } else if (attrName in this.#el) {
-          // Verify that there is a target property on the node
-          this.#el[attrName] = value[attrName];
-        } else {
-          this.#el.setAttribute(attrName, value[attrName]);
-        }
-      }
+    if (window.customElements.get(this.#el.localName)) {
+      // @ts-ignore
+      this.#el.__init_task__ = () => {
+        this.#commitAttributes(initialAttrs, true);
+      };
+    } else {
+      this.#commitAttributes(initialAttrs, true);
     }
+  }
+
+  commitValue(value: Attributes) {
+    this.#commitAttributes(value);
+  }
+
+  #commitAttributes(value: Attributes, isInitial = false) {
+    commitAttributes(this.#el, value, isInitial);
   }
 }

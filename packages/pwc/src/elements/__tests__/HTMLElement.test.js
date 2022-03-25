@@ -1,18 +1,6 @@
 import '../native/HTMLElement';
+import { reactive } from '../../decorators/reactive';
 import { nextTick } from '../sheduler';
-
-function legacyReactive(name, initialValue) {
-  this.setReactiveValue(name, initialValue);
-
-  Object.defineProperty(this.constructor.prototype, name, {
-    set(val) {
-      this.setReactiveValue(name, val);
-    },
-    get() {
-      return this.getReactiveValue(name);
-    },
-  });
-}
 
 function getSimpleCustomElement() {
   return class CustomElement extends HTMLElement {
@@ -67,21 +55,16 @@ function getNestedCustomElement() {
 
 function getReactiveCustomElement() {
   return class CustomElement extends HTMLElement {
-    text: string;
-    className: string;
-    data: {
-      [key: string]: any
+    @reactive
+    accessor text = 'hello';
+    @reactive
+    accessor className = 'red';
+    @reactive
+    accessor data = {
+      name: 'jack',
     };
-    changedClassName: boolean = false;
+    changedClassName = false;
 
-    constructor() {
-      super();
-      legacyReactive.call(this, 'data', {
-        name: 'jack',
-      });
-      legacyReactive.call(this, 'text', 'hello');
-      legacyReactive.call(this, 'className', 'red');
-    }
     onClick() {
       this.data.name += '!';
       this.text += '?';
@@ -99,7 +82,7 @@ function getReactiveCustomElement() {
             },
           },
           this.text,
-          this.data.name
+          this.data.name,
         ],
       ];
     }
