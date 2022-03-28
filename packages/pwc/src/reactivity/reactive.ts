@@ -1,9 +1,11 @@
 import { getProxyHandler } from './handler';
 
 interface ReactiveType {
-  setReactiveValue: (prop: string, val: unknown) => void;
+  setValue: (prop: string, val: unknown) => void;
 
-  getReactiveValue: (prop: string) => unknown;
+  getValue: (prop: string) => unknown;
+
+  setReactiveValue: (prop: string, val: unknown) => void;
 
   // The reactive property if changed will request a update
   requestUpdate: () => void;
@@ -25,22 +27,28 @@ export class Reactive implements ReactiveType {
     this.#element?.requestUpdate();
   }
 
-  getReactiveValue(prop: string) {
+  getValue(prop: string) {
     const key = Reactive.getKey(prop);
     return this.#element[key];
   }
 
-  setReactiveValue(prop: string, value: unknown) {
+  setValue(prop: string, value: unknown) {
     const key = Reactive.getKey(prop);
-    if (typeof value === 'object') {
-      this.#createReactiveProperty(key, value);
-    } else {
-      this.#element[key] = value;
-    }
+    this.#element[key] = value;
     this.requestUpdate();
   }
 
-  #createReactiveProperty(key: string, initialValue: any) {
+  setReactiveValue(prop: string, value: unknown) {
+    if (typeof value === 'object') {
+      this.#createReactiveProperty(prop, value);
+    } else {
+      this.setValue(prop, value);
+    }
+  }
+
+  #createReactiveProperty(prop: string, initialValue: any) {
+    const key = Reactive.getKey(prop);
     this.#element[key] = new Proxy(initialValue, this.#proxyHandler);
+    this.requestUpdate();
   }
 }

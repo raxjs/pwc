@@ -2,13 +2,16 @@ export function reactive(value, { kind, name }) {
   if (kind === 'accessor') {
     return {
       get() {
-        return this.getReactiveValue(name);
+        console.log('get', name);
+        return this.getValue(name);
       },
       set(val) {
-        this.setReactiveValue(name, val);
+        console.log('set', name, val);
+        this.setValue(name, val);
       },
       init(initialValue) {
-        this.setReactiveValue(name, initialValue);
+        console.log('init', name, initialValue);
+        this.setValue(name, initialValue);
       },
     };
   }

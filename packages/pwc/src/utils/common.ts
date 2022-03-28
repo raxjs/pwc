@@ -21,3 +21,7 @@ export function is(prev, curr): boolean {
     return prev !== prev && curr !== curr; // eslint-disable-line no-self-compare
   }
 }
+
+export function isPrivate(name: string) {
+  return name.startsWith('#');
+}
