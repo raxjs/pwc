@@ -2,14 +2,6 @@ export function hasOwnProperty(target, key) {
   return Object.prototype.hasOwnProperty.call(target, key);
 }
 
-export function isArray(arg: any) {
-  return Array.isArray(arg);
-}
-
-export function isPrimitive(value: unknown) {
-  return value === null || (typeof value !== 'object' && typeof value !== 'function');
-}
-
 export function is(prev, curr): boolean {
   // SameValue algorithm
   if (prev === curr) {

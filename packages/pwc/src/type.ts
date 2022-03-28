@@ -15,3 +15,5 @@ export interface CustomHTMLBaseElement extends HTMLBaseElement {
   template?: ElementTemplate;
   shadowOptions: ShadowRootInit;
 }
+
+export type Warning = ((template: string, ...args: any[]) => void);

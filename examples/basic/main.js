@@ -1,4 +1,17 @@
-import { reactive, customElement } from 'pwc';
+import { reactive, customElement, attribute } from 'pwc';
+
+@customElement('child-element')
+class Child extends HTMLElement {
+  name = 'Child';
+  connectedCallback() {
+    super.connectedCallback();
+    console.log('connected');
+  }
+  get template() {
+    return ['<div><!--?pwc_t--></div>', ['Child']];
+  }
+}
+
 
 @customElement('custom-element')
 class CustomElement extends HTMLElement {
@@ -11,12 +24,11 @@ class CustomElement extends HTMLElement {
 
   @reactive
   accessor text = 'hello';
+
   @reactive
+  @attribute('data-class-name')
   accessor className = 'red';
 
-  connectedCallback() {
-    super.connectedCallback();
-  }
   onClick() {
     // console.log(this.data);
     this.data.name += '!';
@@ -46,17 +58,3 @@ class CustomElement extends HTMLElement {
     ];
   }
 }
-
-
-class Child extends HTMLElement {
-  privatename = 'Child';
-  connectedCallback() {
-    super.connectedCallback();
-    console.log('connected');
-  }
-  get template() {
-    return ['<div><!--?pwc_t--></div>', ['Child']];
-  }
-}
-
-window.customElements.define('child-element', Child);
