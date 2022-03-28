@@ -1,6 +1,6 @@
 import * as parse5 from 'parse5';
 import type { SFCDescriptor, ElementNode } from './parse';
-import { dfs, isEvent, isBindings, getEventInfo, BINDING_REGEXP } from './utils';
+import { dfs, isEvent, isBindings, getEventInfo, BINDING_REGEXP, GLOBAL_BINDING_REGEXP } from './utils';
 
 export interface attributeDescriptor {
   [key: string]: string | eventDescriptor;
@@ -74,8 +74,7 @@ function extractTextInterpolation(node): Array<string> {
   // Example:
   // Before: aaa {{name}} bbb => a single text node with value 'aaa {{name}} bbb'
   // After: aaa <!--?pwc_t--> bbb => text node + comment node + text node
-  // TODO: optimize
-  node.value = node.value.replace(/\{\{\s*([#.\w]*)\s*\}\}/g, (source, p1) => {
+  node.value = node.value.replace(GLOBAL_BINDING_REGEXP, (source, p1) => {
     tempTextInterpolation.push(p1);
     return TEXT_COMMENT_DATA;
   });

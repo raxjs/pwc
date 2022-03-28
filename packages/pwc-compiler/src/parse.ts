@@ -1,5 +1,5 @@
 import * as parse5 from 'parse5';
-import babelParser from '@babel/parser';
+import * as babelParser from '@babel/parser';
 import type { File } from '@babel/types';
 import type { RawSourceMap } from 'source-map';
 import { SourceMapGenerator } from 'source-map';
@@ -160,6 +160,10 @@ function generateSourceMap(
   return JSON.parse(map.toString());
 }
 
+function isEmptyString(str: string): boolean {
+  return str.replace(/(^\s*)|(\s*$)/g, '').length === 0;
+}
+
 export function parse(source: string, {
   filename = 'anonymous.pwc',
   sourceRoot = '',
@@ -180,53 +184,59 @@ export function parse(source: string, {
     throw new Error(`[@pwc/compiler] compile error: ${err}`);
   }
 
+  let errors = [];
+
   // Check phase 1: sfc
   const scriptNodeAmount = dom.childNodes.filter(node => node.nodeName === 'script').length;
-  const templateNodeAmount = dom.childNodes.filter(node => node.nodeName === 'template').length;
-  const styleNodeAmount = dom.childNodes.filter(node => node.nodeName === 'style').length;
-
-  if (scriptNodeAmount !== 1) {
-    throw new Error('[@pwc/compiler] PWC mustt contain only one <script> tag.');
+  if (scriptNodeAmount === 0) {
+    errors.push(new Error('[@pwc/compiler] PWC must contain one <script> tag.'));
   }
 
-  if (templateNodeAmount > 1) {
-    throw new Error('[@pwc/compiler] PWC mustn\'t contain more than one <template> tag.');
-  }
-
-  if (styleNodeAmount > 1) {
-    throw new Error('[@pwc/compiler] PWC mustn\'t contain more than one <style> tag.');
-  }
-
-  let errors = [];
   for (const node of dom.childNodes) {
     if (node.nodeName === 'template') {
       // TODO: Check phase 2: template
-      node.childNodes = node.content.childNodes;
-      const templateBlock = createBlock(node, source) as SFCTemplateBlock;
-      templateBlock.ast = node;
+      if (!descriptor.template) {
+        node.childNodes = node.content.childNodes;
+        const templateBlock = createBlock(node, source) as SFCTemplateBlock;
+        templateBlock.ast = node;
 
-      errors = errors.concat(validateTemplate(node));
-      descriptor.template = templateBlock;
+        errors = errors.concat(validateTemplate(node));
+        descriptor.template = templateBlock;
+      } else {
+        errors.push(new Error('[@pwc/compiler] PWC mustn\'t contain more than one <template> tag.'));
+      }
     }
     if (node.nodeName === 'script') {
       // TODO:Check phase 3: script
-      const scriptBlock = createBlock(node, source) as SFCScriptBlock;
-      const ast = babelParser.parse(scriptBlock.content, {
-        sourceType: 'module',
-        plugins: [
-          ['decorators', { decoratorsBeforeExport: true }],
-          'decoratorAutoAccessors',
-        ],
-      });
-      errors = errors.concat(validateScript(ast));
+      if (!descriptor.script) {
+        const scriptBlock = createBlock(node, source) as SFCScriptBlock;
+        if (!isEmptyString(scriptBlock.content)) {
+          const ast = babelParser.parse(scriptBlock.content, {
+            sourceType: 'module',
+            plugins: [
+              ['decorators', { decoratorsBeforeExport: true }],
+              'decoratorAutoAccessors',
+            ],
+          });
+          errors = errors.concat(validateScript(ast));
 
-      scriptBlock.ast = ast;
-      descriptor.script = scriptBlock;
+          scriptBlock.ast = ast;
+          descriptor.script = scriptBlock;
+        }
+      } else {
+        errors.push(new Error('[@pwc/compiler] PWC mustn\'t contain more than only one <script> tag.'));
+      }
     }
     if (node.nodeName === 'style') {
       // TODO:Check phase 4: style
-      const styleBlock = createBlock(node, source) as SFCStyleBlock;
-      descriptor.style = styleBlock;
+      if (!descriptor.style) {
+        const styleBlock = createBlock(node, source) as SFCStyleBlock;
+        if (!isEmptyString(styleBlock.content)) {
+          descriptor.style = styleBlock;
+        }
+      } else {
+        errors.push(new Error('[@pwc/compiler] PWC mustn\'t contain more than one <style> tag.'));
+      }
     }
 
     if (sourceMap) {
