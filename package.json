@@ -1,7 +1,4 @@
 {
-  "workspaces": [
-    "packages/*"
-  ],
   "name": "pwc-project",
   "private": true,
   "scripts": {
