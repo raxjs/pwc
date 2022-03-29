@@ -1,4 +1,4 @@
-import * as parse5 from 'parse5';
+import { parseFragment } from 'parse5';
 import * as babelParser from '@babel/parser';
 import type { File } from '@babel/types';
 import type { RawSourceMap } from 'source-map';
@@ -179,7 +179,7 @@ export function parse(source: string, {
 
   let dom;
   try {
-    dom = parse5.parseFragment(source, { sourceCodeLocationInfo: true });
+    dom = parseFragment(source, { sourceCodeLocationInfo: true });
   } catch (err) {
     throw new Error(`[@pwc/compiler] compile error: ${err}`);
   }

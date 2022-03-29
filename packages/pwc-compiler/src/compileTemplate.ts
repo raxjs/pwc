@@ -117,9 +117,13 @@ function genTemplateString(ast: ElementNode): string {
  * Generate template string and extract values from template
  */
 export function compileTemplate(descriptor: SFCDescriptor): compileTemplateResult {
-  const root = descriptor.template.ast;
-  const nodes = dfs(root);
+  const { ast } = descriptor.template;
+  return compileTemplateAST(ast);
+}
+
+export function compileTemplateAST(ast: ElementNode): compileTemplateResult {
+  const nodes = dfs(ast);
   const values = transformTemplateAst(nodes);
-  const templateString = genTemplateString(root);
+  const templateString = genTemplateString(ast);
   return { templateString, values };
 }
