@@ -18,6 +18,6 @@ export function transformStyle(
   }
   return {
     code,
-    map
+    map,
   };
 }

@@ -1,5 +1,6 @@
-import postcss, { SourceMap, ProcessOptions } from 'postcss';
-import { RawSourceMap } from 'source-map';
+import type { SourceMap, ProcessOptions } from 'postcss';
+import postcss from 'postcss';
+import type { RawSourceMap } from 'source-map';
 import type { SFCDescriptor } from './parse';
 
 // type definition in postcss (source-map-js) is different from source-map v0.7
@@ -14,7 +15,7 @@ export interface SFCStyleCompileResults {
 
 export function compileStyle(descriptor: SFCDescriptor): SFCStyleCompileResults {
   const source = descriptor.style.content;
-  const filename = descriptor.filename;
+  const { filename } = descriptor;
   const errors: Error[] = [];
   const plugins = []; // TODO:
   let result;
@@ -25,8 +26,8 @@ export function compileStyle(descriptor: SFCDescriptor): SFCStyleCompileResults 
     from: filename,
     map: {
       inline: false,
-      annotation: false
-    }
+      annotation: false,
+    },
   };
 
   try {
@@ -41,6 +42,6 @@ export function compileStyle(descriptor: SFCDescriptor): SFCStyleCompileResults 
   return {
     code: code || '',
     map: outMap && outMap.toJSON(),
-    errors
-  }
+    errors,
+  };
 }

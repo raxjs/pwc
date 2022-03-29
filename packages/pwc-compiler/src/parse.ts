@@ -195,20 +195,22 @@ export function parse(source: string, {
   for (const node of dom.childNodes) {
     if (node.nodeName === 'template') {
       // TODO: Check phase 2: template
-      if (!descriptor.template) {
+      if (descriptor.template) {
+        errors.push(new Error('[@pwc/compiler] PWC mustn\'t contain more than one <template> tag.'));
+      } else {
         node.childNodes = node.content.childNodes;
         const templateBlock = createBlock(node, source) as SFCTemplateBlock;
         templateBlock.ast = node;
 
         errors = errors.concat(validateTemplate(node));
         descriptor.template = templateBlock;
-      } else {
-        errors.push(new Error('[@pwc/compiler] PWC mustn\'t contain more than one <template> tag.'));
       }
     }
     if (node.nodeName === 'script') {
       // TODO:Check phase 3: script
-      if (!descriptor.script) {
+      if (descriptor.script) {
+        errors.push(new Error('[@pwc/compiler] PWC mustn\'t contain more than only one <script> tag.'));
+      } else {
         const scriptBlock = createBlock(node, source) as SFCScriptBlock;
         if (!isEmptyString(scriptBlock.content)) {
           const ast = babelParser.parse(scriptBlock.content, {
@@ -223,19 +225,17 @@ export function parse(source: string, {
           scriptBlock.ast = ast;
           descriptor.script = scriptBlock;
         }
-      } else {
-        errors.push(new Error('[@pwc/compiler] PWC mustn\'t contain more than only one <script> tag.'));
       }
     }
     if (node.nodeName === 'style') {
       // TODO:Check phase 4: style
-      if (!descriptor.style) {
+      if (descriptor.style) {
+        errors.push(new Error('[@pwc/compiler] PWC mustn\'t contain more than one <style> tag.'));
+      } else {
         const styleBlock = createBlock(node, source) as SFCStyleBlock;
         if (!isEmptyString(styleBlock.content)) {
           descriptor.style = styleBlock;
         }
-      } else {
-        errors.push(new Error('[@pwc/compiler] PWC mustn\'t contain more than one <style> tag.'));
       }
     }
 
