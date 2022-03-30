@@ -1,10 +1,10 @@
 import type { Plugin } from 'rollup';
 import { createFilter } from 'rollup-pluginutils';
-import { getDescriptor } from './utils/descriptorCache.js';
-import { parsePwcPartRequest } from './utils/query.js';
-import { transformPwcEntry } from './pwc.js';
-import { getResolvedScript } from './script.js';
-import { transformStyle } from './style.js';
+import { getDescriptor } from './utils/descriptorCache';
+import { parsePwcPartRequest } from './utils/query';
+import { transformPwcEntry } from './pwc';
+import { getResolvedScript } from './script';
+import { transformStyle } from './style';
 
 
 interface Options {

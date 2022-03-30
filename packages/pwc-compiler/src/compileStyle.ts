@@ -1,7 +1,7 @@
 import type { SourceMap, ProcessOptions } from 'postcss';
 import postcss from 'postcss';
 import type { RawSourceMap } from 'source-map';
-import type { SFCDescriptor } from './parse.js';
+import type { SFCDescriptor } from './parse';
 
 // type definition in postcss (source-map-js) is different from source-map v0.7
 interface AdaptorRawSourceMap extends Omit<RawSourceMap, 'version' | 'file'> {

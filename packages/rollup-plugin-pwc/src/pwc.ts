@@ -2,9 +2,9 @@ import type { TransformPluginContext } from 'rollup';
 import qs from 'querystring';
 import { parse } from '@pwc/compiler';
 import type { SFCDescriptor, SFCBlock } from '@pwc/compiler';
-import { resolveScript } from './script.js';
-import { setDescriptor } from './utils/descriptorCache.js';
-import { createRollupError } from './utils/error.js';
+import { resolveScript } from './script';
+import { setDescriptor } from './utils/descriptorCache';
+import { createRollupError } from './utils/error';
 
 // these are built-in query parameters so should be ignored
 // if the user happen to add them as attrs

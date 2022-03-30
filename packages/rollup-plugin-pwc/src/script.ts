@@ -1,7 +1,7 @@
 import type { SFCDescriptor, SFCScriptCompileResult } from '@pwc/compiler';
 import { compileScript } from '@pwc/compiler';
 import type { TransformPluginContext } from 'rollup';
-import { createRollupError } from './utils/error.js';
+import { createRollupError } from './utils/error';
 import { transformSync } from '@babel/core';
 import babelPluginProposalDecorators from '@babel/plugin-proposal-decorators';
 import babelPluginProposalClassProperties from '@babel/plugin-proposal-class-properties';

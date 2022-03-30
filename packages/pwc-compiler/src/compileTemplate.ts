@@ -1,6 +1,6 @@
 import * as parse5 from 'parse5';
-import type { SFCDescriptor, ElementNode } from './parse.js';
-import { dfs, isEvent, isBindings, getEventInfo, BINDING_REGEXP, GLOBAL_BINDING_REGEXP } from './utils/index.js';
+import type { SFCDescriptor, ElementNode } from './parse';
+import { dfs, isEvent, isBindings, getEventInfo, BINDING_REGEXP, GLOBAL_BINDING_REGEXP } from './utils/index';
 
 export interface attributeDescriptor {
   [key: string]: string | eventDescriptor;
