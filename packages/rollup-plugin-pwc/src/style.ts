@@ -1,8 +1,8 @@
 import { compileStyle } from '@pwc/compiler';
 import type { TransformPluginContext } from 'rollup';
-import { getDescriptor } from './utils/descriptorCache';
-import type { StyleBlockQuery } from './utils/query';
-import { createRollupError } from './utils/error';
+import { getDescriptor } from './utils/descriptorCache.js';
+import type { StyleBlockQuery } from './utils/query.js';
+import { createRollupError } from './utils/error.js';
 
 export function transformStyle(
   query: StyleBlockQuery,
@@ -18,6 +18,6 @@ export function transformStyle(
   }
   return {
     code,
-    map,
+    map: { mappings: '' },
   };
 }

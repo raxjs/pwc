@@ -1,10 +1,10 @@
 import type { File } from '@babel/types';
-import autoAddDecorator from './autoAddDecorator';
-import autoAddAccessor from './autoAddAccessor';
-import autoInjectImportPWC from './autoInjectImportPWC';
-import genGetTemplateMethod from './genGetTemplateMethod';
+import autoAddDecorator from './autoAddDecorator.js';
+import autoAddAccessor from './autoAddAccessor.js';
+import autoInjectImportPWC from './autoInjectImportPWC.js';
+import genGetTemplateMethod from './genGetTemplateMethod.js';
 
-import type { compileTemplateResult } from '../compileTemplate';
+import type { compileTemplateResult } from '../compileTemplate.js';
 
 export default function transformScript(ast: File, {
   templateString,

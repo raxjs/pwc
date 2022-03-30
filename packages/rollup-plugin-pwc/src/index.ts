@@ -1,10 +1,10 @@
 import type { Plugin } from 'rollup';
 import { createFilter } from 'rollup-pluginutils';
-import { getDescriptor } from './utils/descriptorCache';
-import { parsePwcPartRequest } from './utils/query';
-import { transformPwcEntry } from './pwc';
-import { getResolvedScript } from './script';
-import { transformStyle } from './style';
+import { getDescriptor } from './utils/descriptorCache.js';
+import { parsePwcPartRequest } from './utils/query.js';
+import { transformPwcEntry } from './pwc.js';
+import { getResolvedScript } from './script.js';
+import { transformStyle } from './style.js';
 
 
 interface Options {
@@ -58,8 +58,7 @@ export default function PluginPWC({
       // *.pwc file
       // Generate an entry module that imports the actual blocks of the PWC
       if (!query.pwc && filter(id)) {
-        const output = transformPwcEntry(code, id, rootContext, this);
-        return output;
+        return transformPwcEntry(code, id, rootContext, this);
       }
 
       if (query.pwc) {

@@ -1,13 +1,17 @@
 import generate from '@babel/generator';
 import rfdc from 'rfdc';
-import type { SFCDescriptor, SFCScriptBlock } from './parse';
-import { compileTemplate } from './compileTemplate';
-import transformScript from './transform';
+import type { SFCDescriptor, SFCScriptBlock } from './parse.js';
+import { compileTemplate } from './compileTemplate.js';
+import transformScript from './transform/index.js';
 
 const deepClone = rfdc();
 
-export function compileScript(descriptor: SFCDescriptor): SFCScriptBlock {
-  const { script } = descriptor;
+export interface SFCScriptCompileResult extends SFCScriptBlock {
+  filename: string;
+}
+
+export function compileScript(descriptor: SFCDescriptor): SFCScriptCompileResult {
+  const { script, filename } = descriptor;
   const { templateString, values } = compileTemplate(descriptor);
   const ast = deepClone(descriptor.script.ast);
   transformScript(ast, {
@@ -22,6 +26,7 @@ export function compileScript(descriptor: SFCDescriptor): SFCScriptBlock {
   // TODO: source map
   return {
     ...script,
+    filename,
     content: code,
     map,
   };

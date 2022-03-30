@@ -1,6 +1,6 @@
 import { parseFragment } from 'parse5';
-import { compileTemplateAST } from './compileTemplate';
-import type { compileTemplateResult } from './compileTemplate';
+import { compileTemplateAST } from './compileTemplate.js';
+import type { compileTemplateResult } from './compileTemplate.js';
 export function compileTemplateInRuntime(template: string): compileTemplateResult {
   let dom;
   try {

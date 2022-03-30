@@ -1,9 +1,9 @@
 import type { File } from '@babel/types';
 import * as t from '@babel/types';
 import babelTraverse from '@babel/traverse';
-import { isPrivateField } from '../utils';
+import { isPrivateField } from '../utils/index.js';
 
-import type { compileTemplateResult } from '../compileTemplate';
+import type { compileTemplateResult } from '../compileTemplate.js';
 
 function createObjectProperty(key, value) {
   if (typeof value === 'string') {

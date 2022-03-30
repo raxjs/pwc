@@ -1,5 +1,5 @@
-export { parse } from './parse';
-export { compileScript } from './compileScript';
-export { compileTemplate } from './compileTemplate';
-export { compileStyle } from './compileStyle';
-export { compileTemplateInRuntime } from './compileTemplateInRuntime';
+export * from './parse.js';
+export * from './compileScript.js';
+export * from './compileTemplate.js';
+export * from './compileStyle.js';
+export { compileTemplateInRuntime } from './compileTemplateInRuntime.js';

@@ -1,8 +1,8 @@
 import type { File } from '@babel/types';
 import * as t from '@babel/types';
 import babelTraverse from '@babel/traverse';
-import toDash from '../utils/toDash';
-import type { attributeDescriptor } from '../compileTemplate';
+import { toDash } from '../utils/index.js';
+import type { attributeDescriptor } from '../compileTemplate.js';
 
 function extractBindings(values: Array<attributeDescriptor | string>) {
   const bindings = [];
