@@ -11,7 +11,7 @@ const plugin = (api) => {
     rollupOptions: {
       output: {
         format: 'es',
-        file: './dist/index.es.js',
+        file: './dist/pwc.es.js',
       },
     },
   });
