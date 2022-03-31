@@ -3,15 +3,15 @@ import * as t from '@babel/types';
 import babelTraverse from '@babel/traverse';
 import type { attributeDescriptor } from '../compileTemplate';
 
-function extractBindings(values: Array<attributeDescriptor | string>) {
+function extractBindings(values: Array<string | Array<attributeDescriptor>>) {
   const bindings = [];
-  values.forEach(value => {
-    if (typeof value === 'string') {
-      bindings.push(value);
+  values.forEach(each => {
+    if (typeof each === 'string') {
+      bindings.push(each);
     } else {
-      Object.keys(value).forEach(key => {
-        if (typeof value[key] === 'string') {
-          bindings.push(value[key]);
+      each.forEach(({ value }) => {
+        if (typeof value === 'string') {
+          bindings.push(value);
         }
       });
     }
@@ -24,7 +24,7 @@ function createIdentifierDecorator(decorator: string) {
   return t.decorator(t.identifier(decorator));
 }
 
-export default function autoAddDecorator(ast: File, values: Array<attributeDescriptor | string>): void {
+export default function autoAddDecorator(ast: File, values: Array<string | Array<attributeDescriptor>>): void {
   const bindings = extractBindings(values);
 
   babelTraverse(ast, {
