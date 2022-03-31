@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Test docs
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    name: Test Docs
+    name: Test docs
     runs-on: ubuntu-latest
     defaults:
       run:
