@@ -14,7 +14,6 @@ export default () => {
       autoFocus={true}
       onChange={(value, viewUpdate) => {
         onCodeChange(value);
-        console.log("🚀 ~ file: index.tsx ~ line 18 ~ viewUpdate", viewUpdate)
       }}
       // extensions={[javascript({ jsx: true })]}
     />

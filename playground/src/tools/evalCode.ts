@@ -23,7 +23,7 @@ export const evalCode = (code, webComponentName) => {
   import { compile, customElement, reactive } from 'pwc';
   @customElement('${webComponentName}')
   ${code}
-  `
+  `;
   const output = transform(wrappedCode, {
     presets: ['env'],
     plugins: [

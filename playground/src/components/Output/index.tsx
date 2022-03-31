@@ -3,7 +3,7 @@ import store from '@/store';
 import { evalCode } from '@/tools/evalCode';
 
 export default () => {
-  const [ code ] = store.useModel('code');
+  const [code] = store.useModel('code');
   useEffect(() => {
     evalCode(code.value, `test-component-${code.componentIndex}`);
   }, [code]);

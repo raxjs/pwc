@@ -20,7 +20,7 @@ export default {
   // 定义 model 的初始 state
   state: {
     value: initPWCCode,
-    componentIndex: 0
+    componentIndex: 0,
   },
 
   // 定义改变该模型状态的纯函数
@@ -38,7 +38,7 @@ export default {
     setActiveCode(value, rootState) {
       dispatch.code.update({
         value,
-        componentIndex: rootState.code.componentIndex + 1
+        componentIndex: rootState.code.componentIndex + 1,
       });
     },
   }),
