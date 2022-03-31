@@ -99,7 +99,7 @@ PWC **推荐使用单文件组件**的形式进行开发，如果你熟悉 Vue�
 
 - **性能下降**，`template` 解析的过程会从构建阶段挪到运行时阶段，当模板结构越复杂的时候，对性能的影响越大
 - **代码提示缺失**，由于 `template` 属性传入的是字符串，所以在书写 html 结构的时候，代码提示不够丰富，同时没有代码高亮
-- **无法自动补全 `reactive` 装饰器**，灵活的 JavaScript 语法让 PWC 完全无法做到给开发者的代码补充 `reactive` 装饰器，因此所有响应式属性开发者都必须自己手动加上 `reactive` 装饰器
+- **无法自动补全 `reactive` 装饰器**，灵活的 JavaScript 语法让 PWC 完全无法做到给开发者的代码补充 `reactive` 装饰器等便捷语法，因此所有响应式属性开发者都必须自己手动加上 `reactive` 装饰器，模板的用法也有所改变
 
 :::
 
@@ -140,10 +140,10 @@ export default class EditWord extends HTMLElement {
   }
 
   get template() {
-    return html(`<form class="{{#editVisiblityClass}}">
-    <input class="editInput" value="{{editValue}}" @input="{{onInput}}" @blur="{{onBlur}}" />
+    return html`<form class="${this.#editVisiblityClass}">
+    <input class="editInput" value="${this.editValue}" @input="${this.onInput.bind(this)}" @blur="${this.onBlur.bind(this)}" />
   </form>
-  <span @click="{{onClick}}" class="{{#textVisiblityClass}}">{{editValue}}</span>`);
+  <span @click="${this.onClick.bind(this)}" class="${this.#textVisiblityClass}">${this.editValue}</span>`;
   }
 }
 ```
