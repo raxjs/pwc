@@ -77,7 +77,7 @@ const config = {
             items: [
               {
                 label: '使用文档',
-                to: '/docs/event',
+                to: '/docs/intro/pwc',
               },
             ],
           },
