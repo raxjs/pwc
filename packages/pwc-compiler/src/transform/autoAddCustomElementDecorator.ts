@@ -21,6 +21,6 @@ export default function autoAddCustomElementDecorator(ast: File): void {
           declaration.decorators = [createCallExpressionDecorator('customElement', toDash(id.name))];
         }
       }
-    }
+    },
   });
 }

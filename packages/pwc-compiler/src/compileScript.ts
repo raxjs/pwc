@@ -16,7 +16,6 @@ export function compileScript(descriptor: SFCDescriptor): SFCScriptCompileResult
 
   // With template block
   const hasTemplate = !!descriptor.template;
-  console.log("🚀 ~ file: compileScript.ts ~ line 19 ~ compileScript ~ hasTemplate", hasTemplate)
   if (hasTemplate) {
     const { templateString, values } = compileTemplate(descriptor);
     transformScript(ast, {

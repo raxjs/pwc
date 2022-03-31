@@ -13,7 +13,7 @@ export interface transformScriptOptions extends compileTemplateResult {
 export default function transformScript(ast: File, {
   templateString,
   values,
-  hasTemplate
+  hasTemplate,
 }: transformScriptOptions): void {
   autoInjectImportPWC(ast);
   autoAddCustomElementDecorator(ast);

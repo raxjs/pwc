@@ -30,7 +30,6 @@ function serve() {
 
 module.exports = {
   input: 'src/index.pwc',
-  // external: ['pwc'],
   output: {
     file: 'public/dist/index.js',
     format: 'umd',

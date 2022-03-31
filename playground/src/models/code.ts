@@ -1,4 +1,4 @@
-const initPWCCode = 
+const initPWCCode =
 `import { compile, customElement, reactive } from 'pwc';
 @customElement('test-component')
 export default class CustomComponent extends HTMLElement {
@@ -11,7 +11,7 @@ export default class CustomComponent extends HTMLElement {
 }
 `;
 
-const initReactCode = 
+const initReactCode =
 `import React from "react";
 
 export default function FileTest () {
@@ -21,7 +21,7 @@ export default function FileTest () {
 export default {
   // 定义 model 的初始 state
   state: {
-    value: initPWCCode
+    value: initPWCCode,
   },
 
   // 定义改变该模型状态的纯函数
@@ -38,8 +38,8 @@ export default {
   effects: (dispatch) => ({
     setActiveCode(value) {
       dispatch.code.update({
-        value
-      });  
+        value,
+      });
     },
   }),
 };

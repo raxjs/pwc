@@ -3,7 +3,7 @@ import code from './models/code';
 
 const store = createStore(
   {
-    code
+    code,
   },
   {
     // options

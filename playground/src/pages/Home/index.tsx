@@ -3,10 +3,11 @@ import Repl from '@/components/Repl';
 
 
 const Home = () => {
-  return <div>
-    <Header />
-    <Repl />
-  </div>;
+  return (
+    <div>
+      <Header />
+      <Repl />
+    </div>);
 };
 
 export default Home;

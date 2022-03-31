@@ -1,4 +1,4 @@
-import CodeMirror from "../CodeMirror"
+import CodeMirror from '../CodeMirror';
 import Output from '../Output';
 
 import './index.css';
@@ -13,5 +13,5 @@ export default () => {
         <Output />
       </div>
     </div>
-  )
-}
+  );
+};
