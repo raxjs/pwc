@@ -4,6 +4,7 @@ import autoAddReactiveDecorator from './autoAddReactiveDecorator';
 import autoAddCustomElementDecorator from './autoAddCustomElementDecorator';
 import autoInjectImportPWC from './autoInjectImportPWC';
 import genGetTemplateMethod from './genGetTemplateMethod';
+import autoAddAccessor from './autoAddAccessor';
 
 import type { compileTemplateResult } from '../compileTemplate';
 
