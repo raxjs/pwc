@@ -4,12 +4,15 @@ import { compile, reactive  } from 'pwc';
 export default class RuntimeComponent extends HTMLElement {
   title = 'pwc';
 
+  className = 'container'
+
   handleClick() {
     this.title = 'changed title';
   }
 
   get template() {
-    return compile(`<div class="container">{{ ${this.title} }}</div>`);
+    return compile`<div class="${this.className}" @click.capture=${this.handleClick}>${this.title}</div>`;
+
   }
 }
 </script>
