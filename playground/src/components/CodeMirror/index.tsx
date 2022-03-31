@@ -11,8 +11,10 @@ export default () => {
       value={code.value}
       theme="light"
       width="100%"
+      autoFocus={true}
       onChange={(value, viewUpdate) => {
         onCodeChange(value);
+        console.log("🚀 ~ file: index.tsx ~ line 18 ~ viewUpdate", viewUpdate)
       }}
       // extensions={[javascript({ jsx: true })]}
     />

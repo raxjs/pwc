@@ -1,7 +1,5 @@
 const initPWCCode =
-`import { compile, customElement, reactive } from 'pwc';
-@customElement('test-component')
-export default class CustomComponent extends HTMLElement {
+`export default class CustomComponent extends HTMLElement {
   @reactive
   accessor title = 'pwc';
 
@@ -22,6 +20,7 @@ export default {
   // 定义 model 的初始 state
   state: {
     value: initPWCCode,
+    componentIndex: 0
   },
 
   // 定义改变该模型状态的纯函数
@@ -36,9 +35,10 @@ export default {
 
   // 定义处理该模型副作用的函数
   effects: (dispatch) => ({
-    setActiveCode(value) {
+    setActiveCode(value, rootState) {
       dispatch.code.update({
         value,
+        componentIndex: rootState.code.componentIndex + 1
       });
     },
   }),

@@ -18,8 +18,13 @@ const _require = (moduleName) => {
   );
 };
 
-export const evalCode = (code) => {
-  const output = transform(code, {
+export const evalCode = (code, webComponentName) => {
+  const wrappedCode = `
+  import { compile, customElement, reactive } from 'pwc';
+  @customElement('${webComponentName}')
+  ${code}
+  `
+  const output = transform(wrappedCode, {
     presets: ['env'],
     plugins: [
       [
