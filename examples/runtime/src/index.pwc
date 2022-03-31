@@ -9,11 +9,7 @@ export default class RuntimeComponent extends HTMLElement {
   }
 
   get template() {
-    const [templateString, values ] =  compile(`<div class="container">{{ ${this.title} }}</div>`);
-    console.log("🚀 ~ file: index.pwc ~ line 11 ~ RuntimeComponent ~ gettemplate ~ values", values)
-    console.log("🚀 ~ file: index.pwc ~ line 11 ~ RuntimeComponent ~ gettemplate ~ templateString", templateString)
-    return [ templateString, values ]
-    // return compile.call(this, '<div class="container" @click={{handleClick}}>{{ title }}</div>');
+    return compile(`<div class="container">{{ ${this.title} }}</div>`);
   }
 }
 </script>
