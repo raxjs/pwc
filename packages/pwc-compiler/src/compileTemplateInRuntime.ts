@@ -31,5 +31,5 @@ export function compileTemplateInRuntime(strings: Array<string>, ...runtimeValue
   }
   const { templateString, values: originalValues } = compileTemplateAST(dom);
   const values = injectRuntimeValue(runtimeValues, originalValues);
-  return [ templateString, values ];
+  return [templateString, values];
 }
