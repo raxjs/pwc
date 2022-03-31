@@ -1,4 +1,5 @@
 import type { File } from '@babel/types';
+import autoAddAccessor from './autoAddAccessor';
 import autoAddReactiveDecorator from './autoAddReactiveDecorator';
 import autoAddCustomElementDecorator from './autoAddCustomElementDecorator';
 import autoInjectImportPWC from './autoInjectImportPWC';
@@ -11,14 +12,15 @@ export interface transformScriptOptions extends compileTemplateResult {
 }
 
 export default function transformScript(ast: File, {
+  hasTemplate,
   templateString,
   values,
-  hasTemplate,
 }: transformScriptOptions): void {
   autoInjectImportPWC(ast);
   autoAddCustomElementDecorator(ast);
   if (hasTemplate) {
     autoAddReactiveDecorator(ast, values);
+    autoAddAccessor(ast);
     genGetTemplateMethod(ast, { templateString, values });
   }
 }
