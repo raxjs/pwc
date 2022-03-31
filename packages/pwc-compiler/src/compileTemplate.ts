@@ -12,8 +12,8 @@ export interface eventDescriptor {
 }
 
 export interface compileTemplateResult {
-  templateString: string;
-  values: Array<string | attributeDescriptor>;
+  templateString?: string;
+  values?: Array<string | attributeDescriptor>;
 }
 
 const TEXT_COMMENT_DATA = '?pwc_t';

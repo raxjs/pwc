@@ -12,12 +12,22 @@ export interface SFCScriptCompileResult extends SFCScriptBlock {
 
 export function compileScript(descriptor: SFCDescriptor): SFCScriptCompileResult {
   const { script, filename } = descriptor;
-  const { templateString, values } = compileTemplate(descriptor);
   const ast = deepClone(descriptor.script.ast);
-  transformScript(ast, {
-    templateString,
-    values,
-  });
+
+  // With template block
+  const hasTemplate = !!descriptor.template;
+  console.log("🚀 ~ file: compileScript.ts ~ line 19 ~ compileScript ~ hasTemplate", hasTemplate)
+  if (hasTemplate) {
+    const { templateString, values } = compileTemplate(descriptor);
+    transformScript(ast, {
+      hasTemplate: true,
+      templateString,
+      values,
+    });
+  } else {
+    transformScript(ast, { hasTemplate: false });
+  }
+
   const { code, map } = generate(ast, {
     sourceMaps: false,
     decoratorsBeforeExport: true,
