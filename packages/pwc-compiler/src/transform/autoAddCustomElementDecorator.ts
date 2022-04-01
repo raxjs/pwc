@@ -1,7 +1,7 @@
 import type { File } from '@babel/types';
 import * as t from '@babel/types';
 import babelTraverse from '@babel/traverse';
-import { toDash } from '../utils/index';
+import { toDash } from '../utils';
 
 // e.g. @customElement('custom-component')
 function createCallExpressionDecorator(decorator: string, argument) {

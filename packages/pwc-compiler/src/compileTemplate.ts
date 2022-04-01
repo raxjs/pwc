@@ -1,16 +1,18 @@
 import * as parse5 from 'parse5';
 import type { SFCDescriptor, ElementNode } from './parse';
-import { dfs, isEvent, isBindings, getEventInfo, BINDING_REGEXP, GLOBAL_BINDING_REGEXP } from './utils/index';
+import { dfs, isEvent, isBindings, getEventInfo, BINDING_REGEXP, GLOBAL_BINDING_REGEXP } from './utils';
 
-export interface attributeDescriptor {
+export interface AttributeDescriptor {
   name: string;
   value: string;
   capture?: boolean;
 }
 
-export interface compileTemplateResult {
+export type ValueDescriptor = Array<string | Array<AttributeDescriptor>>;
+
+export interface CompileTemplateResult {
   templateString?: string;
-  values?: Array<string | Array<attributeDescriptor>>;
+  values?: ValueDescriptor;
 }
 
 const TEXT_COMMENT_DATA = '?pwc_t';
@@ -31,7 +33,7 @@ function createTextNode(value) {
 }
 
 // with side effect in changing node structure
-function extractAttributeBindings(node: ElementNode): Array<attributeDescriptor> {
+function extractAttributeBindings(node: ElementNode): Array<AttributeDescriptor> {
   const tempAttributeDescriptor = [];
   // Extract attribute bindings
   if (node.attrs?.length > 0) {
@@ -93,7 +95,7 @@ function extractTextInterpolation(node): Array<string> {
   return tempTextInterpolation;
 }
 
-function transformTemplateAst(nodes: Array<ElementNode>): Array<string | Array<attributeDescriptor>> {
+function transformTemplateAst(nodes: Array<ElementNode>): ValueDescriptor {
   let values = [];
   for (const node of nodes) {
     if (node.nodeName === '#text') {
@@ -117,12 +119,12 @@ function genTemplateString(ast: ElementNode): string {
 /**
  * Generate template string and extract values from template
  */
-export function compileTemplate(descriptor: SFCDescriptor): compileTemplateResult {
+export function compileTemplate(descriptor: SFCDescriptor): CompileTemplateResult {
   const { ast } = descriptor.template;
   return compileTemplateAST(ast);
 }
 
-export function compileTemplateAST(ast: ElementNode): compileTemplateResult {
+export function compileTemplateAST(ast: ElementNode): CompileTemplateResult {
   const nodes = dfs(ast);
   const values = transformTemplateAst(nodes);
   const templateString = genTemplateString(ast);

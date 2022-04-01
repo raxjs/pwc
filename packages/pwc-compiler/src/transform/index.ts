@@ -5,20 +5,20 @@ import autoAddCustomElementDecorator from './autoAddCustomElementDecorator';
 import autoInjectImportPWC from './autoInjectImportPWC';
 import genGetTemplateMethod from './genGetTemplateMethod';
 
-import type { compileTemplateResult } from '../compileTemplate';
+import type { CompileTemplateResult } from '../compileTemplate';
 
-export interface transformScriptOptions extends compileTemplateResult {
-  hasTemplate: boolean;
+export interface TransformScriptOptions {
+  templateString: string | null;
+  values?: CompileTemplateResult['values'];
 }
 
 export default function transformScript(ast: File, {
-  hasTemplate,
   templateString,
   values,
-}: transformScriptOptions): void {
+}: TransformScriptOptions): void {
   autoAddCustomElementDecorator(ast);
   let shouldImportReactive = false;
-  if (hasTemplate) {
+  if (templateString !== null) {
     shouldImportReactive = autoAddReactiveDecorator(ast, values);
     autoAddAccessor(ast);
     genGetTemplateMethod(ast, { templateString, values });

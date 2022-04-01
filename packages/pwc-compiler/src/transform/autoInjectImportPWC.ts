@@ -13,6 +13,8 @@ function createImportSpecifier(importedName) {
   return t.importSpecifier(t.identifier(importedName), t.identifier(importedName));
 }
 
+// customElement must be imported
+// reactive should be imported if shouldImportReactive is true
 const shouldImportedFromPWC = ['customElement', 'reactive'];
 
 export default function autoInjectImportPWC(ast: File, shouldImportReactive: boolean): void {
@@ -27,6 +29,8 @@ export default function autoInjectImportPWC(ast: File, shouldImportReactive: boo
       path.traverse({
         ImportDeclaration(path) {
           const { node } = path;
+          // has imported pwc manually
+          // should check whether specifiers have been imported
           if (t.isLiteral(node.source) && node.source.value === 'pwc') {
             hasImportPWC = true;
             node.specifiers.forEach(specifier => {
@@ -46,6 +50,8 @@ export default function autoInjectImportPWC(ast: File, shouldImportReactive: boo
         },
       });
 
+      // not import pwc in original code
+      // should generate import declaration
       if (!hasImportPWC) {
         const { node } = path;
         const importSpecifiers = shouldImportReactive ? shouldImportedFromPWC : shouldImportedFromPWC.slice(0, 1);

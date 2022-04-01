@@ -1,9 +1,9 @@
 import type { File } from '@babel/types';
 import * as t from '@babel/types';
 import babelTraverse from '@babel/traverse';
-import type { attributeDescriptor } from '../compileTemplate';
+import type { ValueDescriptor } from '../compileTemplate';
 
-function extractBindings(values: Array<string | Array<attributeDescriptor>>) {
+function extractBindings(values: ValueDescriptor) {
   const bindings = [];
   values.forEach(each => {
     if (typeof each === 'string') {
@@ -24,7 +24,7 @@ function createIdentifierDecorator(decorator: string) {
   return t.decorator(t.identifier(decorator));
 }
 
-export default function autoAddReactiveDecorator(ast: File, values: Array<string | Array<attributeDescriptor>>): boolean {
+export default function autoAddReactiveDecorator(ast: File, values: ValueDescriptor): boolean {
   let hasReactiveVariableInTemplate = false;
   const bindings = extractBindings(values);
   babelTraverse(ast, {

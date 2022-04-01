@@ -2,7 +2,7 @@ import generate from '@babel/generator';
 import rfdc from 'rfdc';
 import type { SFCDescriptor, SFCScriptBlock } from './parse';
 import { compileTemplate } from './compileTemplate';
-import transformScript from './transform/index';
+import transformScript from './transform';
 
 const deepClone = rfdc();
 
@@ -19,12 +19,11 @@ export function compileScript(descriptor: SFCDescriptor): SFCScriptCompileResult
   if (hasTemplate) {
     const { templateString, values } = compileTemplate(descriptor);
     transformScript(ast, {
-      hasTemplate: true,
       templateString,
       values,
     });
   } else {
-    transformScript(ast, { hasTemplate: false });
+    transformScript(ast, { templateString: null });
   }
 
   const { code, map } = generate(ast, {

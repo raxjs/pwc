@@ -1,9 +1,9 @@
 import type { File } from '@babel/types';
 import * as t from '@babel/types';
 import babelTraverse from '@babel/traverse';
-import { isPrivateField } from '../utils/index';
+import { isPrivateField } from '../utils';
 
-import type { compileTemplateResult } from '../compileTemplate';
+import type { CompileTemplateResult } from '../compileTemplate';
 
 function createObjectProperty(key, value, isEvent = false) {
   if (key === 'value') {
@@ -61,7 +61,7 @@ function cretateGetTemplateClassMethod(returnExpression) {
   );
 }
 
-export default function genGetTemplateMethod(ast: File, templateResult: compileTemplateResult): void {
+export default function genGetTemplateMethod(ast: File, templateResult: CompileTemplateResult): void {
   babelTraverse(ast, {
     ClassDeclaration(path) {
       // export default class
