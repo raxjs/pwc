@@ -54,7 +54,7 @@ describe('compileScript', () => {
     const { descriptor } = parse(simpeComponent);
     const result = compileScript(descriptor);
 
-    expect(result.content).toContain('import { reactive, customElement } from "pwc"');
+    expect(result.content).toContain(`import { customElement, reactive } from \"pwc\";`);
   });
 
   test('It should inject decorators', () => {
@@ -87,7 +87,7 @@ export default class CustomElement extends HTMLElement {
     const { descriptor } = parse(mixNormalPropertyComponent);
     const result = compileScript(descriptor);
 
-    expect(result.content).toEqual(`import { reactive, customElement } from "pwc";
+    expect(result.content).toEqual(`import { customElement, reactive } from "pwc";
 @customElement("custom-element")
 export default class CustomElement extends HTMLElement {
   @reactive
