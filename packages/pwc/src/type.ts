@@ -8,6 +8,7 @@ export interface PWCElement {
 export interface Attribute {
   name: string;
   value: any;
+  capture?: boolean;
   [key: string]: any;
 }
 
