@@ -5,7 +5,7 @@ export interface PWCElement {
   adoptedCallback?: () => void;
 }
 
-export type Attribute = {
+export interface Attribute {
   name: string;
   value: any;
   [key: string]: any;
