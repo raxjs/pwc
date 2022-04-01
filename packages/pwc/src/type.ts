@@ -9,7 +9,7 @@ export interface Attribute {
   name: string;
   value: any;
   [key: string]: any;
-};
+}
 
 export type Attributes = Attribute[];
 
