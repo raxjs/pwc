@@ -13,9 +13,9 @@ function createImportSpecifier(importedName) {
   return t.importSpecifier(t.identifier(importedName), t.identifier(importedName));
 }
 
-const shouldImportedFromPWC = ['reactive', 'customElement'];
+const shouldImportedFromPWC = ['customElement', 'reactive'];
 
-export default function autoInjectImportPWC(ast: File): void {
+export default function autoInjectImportPWC(ast: File, shouldImportReactive: boolean): void {
   babelTraverse(ast, {
     Program(path) {
       let hasImportPWC = false;
@@ -37,7 +37,9 @@ export default function autoInjectImportPWC(ast: File): void {
             });
             Object.entries(hasImportedFromPWC).forEach(([importedName, hasImported]) => {
               if (!hasImported) {
-                node.specifiers.push(createImportSpecifier(importedName));
+                if (importedName !== 'reactive' || shouldImportReactive) {
+                  node.specifiers.push(createImportSpecifier(importedName));
+                }
               }
             });
           }
@@ -46,7 +48,8 @@ export default function autoInjectImportPWC(ast: File): void {
 
       if (!hasImportPWC) {
         const { node } = path;
-        const importDeclaration = createImportDeclaration('pwc', shouldImportedFromPWC);
+        const importSpecifiers = shouldImportReactive ? shouldImportedFromPWC : shouldImportedFromPWC.slice(0, 1);
+        const importDeclaration = createImportDeclaration('pwc', importSpecifiers);
         node.body.unshift(importDeclaration);
       }
     },

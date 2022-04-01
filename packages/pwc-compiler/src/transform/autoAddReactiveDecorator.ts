@@ -24,9 +24,9 @@ function createIdentifierDecorator(decorator: string) {
   return t.decorator(t.identifier(decorator));
 }
 
-export default function autoAddDecorator(ast: File, values: Array<string | Array<attributeDescriptor>>): void {
+export default function autoAddReactiveDecorator(ast: File, values: Array<string | Array<attributeDescriptor>>): boolean {
+  let hasReactiveVariableInTemplate = false;
   const bindings = extractBindings(values);
-
   babelTraverse(ast, {
     // Add @reactive for class fields
     ClassProperty(path) {
@@ -34,6 +34,7 @@ export default function autoAddDecorator(ast: File, values: Array<string | Array
       if (t.isIdentifier(node.key) && bindings.includes(node.key.name)) {
         if (!node.decorators || node.decorators.length === 0) {
           node.decorators = [createIdentifierDecorator('reactive')];
+          hasReactiveVariableInTemplate = true;
         }
       }
     },
@@ -43,8 +44,10 @@ export default function autoAddDecorator(ast: File, values: Array<string | Array
       if (t.isPrivateName(node.key) && bindings.includes(`#${node.key.id.name}`)) {
         if (!node.decorators || node.decorators.length === 0) {
           node.decorators = [createIdentifierDecorator('reactive')];
+          hasReactiveVariableInTemplate = true;
         }
       }
     },
   });
+  return hasReactiveVariableInTemplate;
 }

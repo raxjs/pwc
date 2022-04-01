@@ -112,8 +112,7 @@ export default class CustomElement extends HTMLElement {
     return [\"\\n  <p>hello</p>\\n\", []];
   }
 
-}
-`);
+}`);
   });
 
   test('It should not import customElement again with defined component', () => {
@@ -127,7 +126,6 @@ export default class CustomElement extends HTMLElement {
     return [\"\\n  <p>hello</p>\\n\", []];
   }
 
-}
-`);
+}`);
   });
 });
