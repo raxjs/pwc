@@ -1,8 +1,0 @@
-.repl-container {
-  display: flex;
-  flex-direction: row;
-}
-
-.left-panel, .right-panel {
-  width: 50%;
-}

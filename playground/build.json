@@ -1,5 +1,0 @@
-{
-  "plugins": [
-    "@ali/build-plugin-ice-def"
-  ]
-}
