@@ -93,7 +93,7 @@ describe('Set element attribute/property/event handler', () => {
     class CustomElement extends HTMLElement {
       description = 'default description';
     }
-    debugger
+
     window.customElements.define('custom-element', CustomElement);
 
     const customElement: HTMLElement = document.createElement('custom-element');
