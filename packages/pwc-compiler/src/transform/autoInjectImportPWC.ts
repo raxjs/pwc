@@ -8,6 +8,7 @@ function createImportDeclaration(source: string, imported: Array<string>) {
   return t.importDeclaration(specifiers, t.stringLiteral(source));
 }
 
+// create import specifier expression, e.g. the { reactive } of import { reactive } from 'pwc'
 function createImportSpecifier(importedName) {
   return t.importSpecifier(t.identifier(importedName), t.identifier(importedName));
 }

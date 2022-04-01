@@ -13,11 +13,12 @@ function getSimpleCustomElement() {
       return [
         '<!--?pwc_p--><div id="container"><!--?pwc_t--> - <!--?pwc_t--></div>',
         [
-          {
-            onclick: {
-              handler: this.onClick.bind(this),
-            },
-          },
+          [
+            {
+              name: 'onclick',
+              value: this.onClick.bind(this),
+            }
+          ],
           this.text,
           this.name,
         ],
@@ -39,11 +40,12 @@ function getNestedCustomElement() {
       return [
         '<!--?pwc_p--><div id="nested-container"><!--?pwc_t--> <div>This is <!--?pwc_t--></div> <!--?pwc_t--></div>',
         [
-          {
-            onclick: {
-              handler: this.onClick.bind(this),
-            },
-          },
+          [
+            {
+              name: 'onclick',
+              value: this.onClick.bind(this),
+            }
+          ],
           this.text,
           this.#title,
           this.name,
@@ -75,12 +77,16 @@ function getReactiveCustomElement() {
       return [
         '<!--?pwc_p--><div id="reactive-container"><!--?pwc_t--> - <!--?pwc_t--></div>',
         [
-          {
-            class: this.className,
-            onclick: {
-              handler: this.onClick.bind(this),
+          [
+            {
+              name: 'class',
+              value: this.className,
             },
-          },
+            {
+              name: 'onclick',
+              value: this.onClick.bind(this),
+            }
+          ],
           this.text,
           this.data.name,
         ],

@@ -3,10 +3,16 @@ import '../native/HTMLElement';
 
 describe('Set element attribute/property/event handler', () => {
   it('should set attribute at built-in element', () => {
-    const attrs = {
-      ['data-index']: 1,
-      class: 'container',
-    };
+    const attrs = [
+      {
+        name: 'data-index',
+        value: 1,
+      },
+      {
+        name: 'class',
+        value: 'container',
+      },
+    ];
     const div = document.createElement('div');
     commitAttributes(div, attrs, true);
     expect(div.getAttribute('data-index')).toEqual('1');
@@ -22,12 +28,16 @@ describe('Set element attribute/property/event handler', () => {
     const parent1ClickHandler = jest.fn().mockImplementation(() => {
       parent1ClickState = 'parent1 clicked';
     });
-    const parent1Attrs = {
-      class: 'container',
-      onclick: {
-        handler: parent1ClickHandler,
+    const parent1Attrs = [
+      {
+        name: 'class',
+        value: 'container',
       },
-    };
+      {
+        name: 'onclick',
+        value: parent1ClickHandler,
+      },
+    ];
     const parent1 = document.createElement('div');
     commitAttributes(parent1, parent1Attrs, true);
 
@@ -35,13 +45,17 @@ describe('Set element attribute/property/event handler', () => {
     const parent2ClickHandler = jest.fn().mockImplementation(() => {
       parent2ClickState = 'parent2 clicked';
     });
-    const parent2Attrs = {
-      class: 'container',
-      onclick: {
-        handler: parent2ClickHandler,
+    const parent2Attrs = [
+      {
+        name: 'class',
+        value: 'container',
+      },
+      {
+        name: 'onclick',
+        value: parent2ClickHandler,
         capture: true,
       },
-    };
+    ];
     const parent2 = document.createElement('div');
     commitAttributes(parent2, parent2Attrs, true);
 
@@ -49,11 +63,12 @@ describe('Set element attribute/property/event handler', () => {
       parent1ClickState = 'child clicked';
       parent2ClickState = 'child clicked';
     });
-    const childAttrs = {
-      onclick: {
-        handler: childClickHandler,
+    const childAttrs = [
+      {
+        name: 'onclick',
+        value: childClickHandler,
       },
-    };
+    ];
     const child = document.createElement('div');
     commitAttributes(child, childAttrs, true);
 
@@ -83,11 +98,20 @@ describe('Set element attribute/property/event handler', () => {
 
     const customElement: HTMLElement = document.createElement('custom-element');
 
-    const attrs = {
-      ['data-index']: 1,
-      class: 'container',
-      description: 'This is custom element',
-    };
+    const attrs = [
+      {
+        name: 'data-index',
+        value: 1,
+      },
+      {
+        name: 'class',
+        value: 'container',
+      },
+      {
+        name: 'description',
+        value: 'This is custom element',
+      },
+    ];
 
     commitAttributes(customElement, attrs, true);
 

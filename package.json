@@ -13,7 +13,7 @@
     "test:watch": "jest --watch",
     "start-bench-server": "ws -c lws.config.js --static.maxage 1 -d ./benchmarks",
     "benchmark": "esno ./scripts/benchmarks/index.ts",
-    "start": "pnpm --filter \"./packages\" -r exec npm run start ",
+    "start": "pnpm run start --parallel --filter \"./packages\"",
     "build": "pnpm run build -r --filter \"./packages\"",
     "prepare-husky": "husky install"
   },
