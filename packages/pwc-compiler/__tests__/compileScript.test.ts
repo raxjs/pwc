@@ -17,6 +17,38 @@ const noTemplateComponent = `
   }
 </script>`;
 
+const mixNormalPropertyComponent = `
+<template>
+  <p>{{#text}}</p>
+</template>
+<script>
+  export default class CustomElement extends HTMLElement {
+    #text = '';
+    data = {};
+  }
+</script>
+`;
+
+const pureComponent = `
+<template>
+  <p>hello</p>
+</template>
+<script>
+export default class CustomElement extends HTMLElement {}
+</script>`;
+
+const definedComponent = `
+<template>
+  <p>hello</p>
+</template>
+<script>
+import { customElement } from 'pwc';
+
+@customElement('custom-element')
+export default class CustomElement extends HTMLElement {}
+</script>
+`;
+
 describe('compileScript', () => {
   test('It should inject pwc', () => {
     const { descriptor } = parse(simpeComponent);
@@ -49,5 +81,53 @@ export default class CustomElement extends HTMLElement {
     const result = compileScript(descriptor);
 
     expect(result.content).not.toContain('get template()');
+  });
+
+  test('It should not add @reactive decorator to normal property', () => {
+    const { descriptor } = parse(mixNormalPropertyComponent);
+    const result = compileScript(descriptor);
+
+    expect(result.content).toEqual(`import { reactive, customElement } from "pwc";
+@customElement("custom-element")
+export default class CustomElement extends HTMLElement {
+  @reactive
+  accessor #text = '';
+  data = {};
+
+  get template() {
+    return ["\\n  <p><!--?pwc_t--></p>\\n", [this.#text]];
+  }
+
+}`);
+  });
+
+  test('It should not import pwc with pure component', () => {
+    const { descriptor } = parse(pureComponent);
+    const result = compileScript(descriptor);
+
+    expect(result.content).toEqual(`import { customElement } from \"pwc\";
+@customElement(\"custom-element\")
+export default class CustomElement extends HTMLElement {
+  get template() {
+    return [\"\\n  <p>hello</p>\\n\", []];
+  }
+
+}
+`);
+  });
+
+  test('It should not import customElement again with defined component', () => {
+    const { descriptor } = parse(definedComponent);
+    const result = compileScript(descriptor);
+
+    expect(result.content).toEqual(`import { customElement } from 'pwc';
+@customElement('custom-element')
+export default class CustomElement extends HTMLElement {
+  get template() {
+    return [\"\\n  <p>hello</p>\\n\", []];
+  }
+
+}
+`);
   });
 });

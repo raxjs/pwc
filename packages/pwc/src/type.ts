@@ -5,7 +5,13 @@ export interface PWCElement {
   adoptedCallback?: () => void;
 }
 
-export type Attributes = Record<string, any>;
+export type Attribute = {
+  name: string;
+  value: any;
+  [key: string]: any;
+};
+
+export type Attributes = Attribute[];
 
 export type TemplateValue = Attributes | string;
 
