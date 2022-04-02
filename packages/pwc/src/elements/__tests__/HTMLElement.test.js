@@ -1,6 +1,7 @@
 import '../native/HTMLElement';
 import { reactive } from '../../decorators/reactive';
 import { nextTick } from '../sheduler';
+import { compileTemplateInRuntime as html } from '@pwc/compiler';
 
 function getSimpleCustomElement() {
   return class CustomElement extends HTMLElement {
@@ -136,6 +137,28 @@ describe('Render HTMLElement', () => {
 
     nextTick(() => {
       expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="reactive-container" class="green">hello?<!--?pwc_t--> - jack!<!--?pwc_t--></div>');
+    });
+  });
+
+  it('should trigger template method as expected', (done) => {
+    const mockFn = jest.fn().mockImplementation((text) => {
+      return html`<div>${text}</div>`;
+    });
+    class CustomElement extends HTMLElement {
+      @reactive
+      accessor text = 'hello';
+      get template() {
+        return mockFn(this.text);
+      }
+    }
+    window.customElements.define('custom-runtime-component', CustomElement);
+    const element = document.createElement('custom-runtime-component');
+    document.body.appendChild(element);
+    expect(mockFn).toBeCalledTimes(1);
+    element.text = 'world';
+    nextTick(() => {
+      expect(mockFn).toBeCalledTimes(2);
+      done();
     });
   });
 });

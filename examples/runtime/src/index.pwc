@@ -1,20 +1,21 @@
 <script>
-import { compile, reactive  } from 'pwc';
+  import { html, reactive } from 'pwc';
 
-export default class RuntimeComponent extends HTMLElement {
-  title = 'pwc';
+  export default class RuntimeComponent extends HTMLElement {
+    @reactive
+    accessor name = 'pwc';
 
-  className = 'container'
+    className = 'container';
 
-  handleClick() {
-    this.title = 'changed title';
+    handleClick = () => {
+      console.log('click');
+      this.name = 'changed title';
+    };
+
+    get template() {
+      return html`<div class="${this.className}" @click.capture=${this.handleClick}>${this.name}${this.name}</div>`;
+    }
   }
-
-  get template() {
-    return compile`<div class="${this.className}" @click.capture=${this.handleClick}>${this.title}</div>`;
-
-  }
-}
 </script>
 
 <style>

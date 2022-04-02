@@ -122,4 +122,22 @@ describe('Set element attribute/property/event handler', () => {
     // @ts-ignore
     expect(customElement.description).toEqual('This is custom element');
   });
+
+  it('should only add event listener once with component update', () => {
+    const mockClickHandler = jest.fn();
+    const div = document.createElement('div');
+    const attrs = [
+      {
+        name: 'onclick',
+        value: mockClickHandler,
+        capture: true,
+      }
+    ];
+    commitAttributes(div, attrs, true);
+    div.click();
+    expect(mockClickHandler).toBeCalledTimes(1);
+    commitAttributes(div, attrs);
+    div.click();
+    expect(mockClickHandler).toBeCalledTimes(2);
+  });
 });

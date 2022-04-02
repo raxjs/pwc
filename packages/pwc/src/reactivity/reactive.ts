@@ -1,4 +1,5 @@
 import { getProxyHandler } from './handler';
+import { isObject } from '../utils';
 
 interface ReactiveType {
   setReactiveValue: (prop: string, val: unknown) => void;
@@ -30,14 +31,24 @@ export class Reactive implements ReactiveType {
     return this.#element[key];
   }
 
-  setReactiveValue(prop: string, value: unknown) {
+  initReactiveValue(prop: string, value: unknown) {
     const key = Reactive.getKey(prop);
-    if (typeof value === 'object') {
+
+    if (isObject(value)) {
       this.#createReactiveProperty(key, value);
     } else {
       this.#element[key] = value;
     }
-    this.requestUpdate();
+  }
+
+  setReactiveValue(prop: string, value: unknown) {
+    if (this.#element._getInitialState()) {
+      this.initReactiveValue(prop, value);
+      this.requestUpdate();
+    } else {
+      // For Object.defineProperty case
+      this.initReactiveValue(prop, value);
+    }
   }
 
   #createReactiveProperty(key: string, initialValue: any) {
