@@ -6,14 +6,26 @@ import transformScript from './transform';
 
 const deepClone = rfdc();
 
-export function compileScript(descriptor: SFCDescriptor): SFCScriptBlock {
-  const { script } = descriptor;
-  const { templateString, values } = compileTemplate(descriptor);
+export interface SFCScriptCompileResult extends SFCScriptBlock {
+  filename: string;
+}
+
+export function compileScript(descriptor: SFCDescriptor): SFCScriptCompileResult {
+  const { script, filename } = descriptor;
   const ast = deepClone(descriptor.script.ast);
-  transformScript(ast, {
-    templateString,
-    values,
-  });
+
+  // With template block
+  const hasTemplate = !!descriptor.template;
+  if (hasTemplate) {
+    const { templateString, values } = compileTemplate(descriptor);
+    transformScript(ast, {
+      templateString,
+      values,
+    });
+  } else {
+    transformScript(ast, { templateString: null });
+  }
+
   const { code, map } = generate(ast, {
     sourceMaps: false,
     decoratorsBeforeExport: true,
@@ -22,6 +34,7 @@ export function compileScript(descriptor: SFCDescriptor): SFCScriptBlock {
   // TODO: source map
   return {
     ...script,
+    filename,
     content: code,
     map,
   };

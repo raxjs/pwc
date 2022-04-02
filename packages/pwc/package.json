@@ -30,7 +30,8 @@
   "dependencies": {
     "@swc/helpers": "^0.3.8",
     "core-js": "^3.21.1",
-    "regenerator-runtime": "^0.13.9"
+    "regenerator-runtime": "^0.13.9",
+    "@pwc/compiler": "^1.0.0"
   },
   "exports": {
     "es": "./es/index.js",

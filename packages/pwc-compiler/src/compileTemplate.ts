@@ -2,18 +2,17 @@ import * as parse5 from 'parse5';
 import type { SFCDescriptor, ElementNode } from './parse';
 import { dfs, isEvent, isBindings, getEventInfo, BINDING_REGEXP, GLOBAL_BINDING_REGEXP } from './utils';
 
-export interface attributeDescriptor {
-  [key: string]: string | eventDescriptor;
-}
-
-export interface eventDescriptor {
-  handler: string;
+export interface AttributeDescriptor {
+  name: string;
+  value: string;
   capture?: boolean;
 }
 
-export interface compileTemplateResult {
-  templateString: string;
-  values: Array<string | attributeDescriptor>;
+export type ValueDescriptor = Array<string | Array<AttributeDescriptor>>;
+
+export interface CompileTemplateResult {
+  templateString?: string;
+  values?: ValueDescriptor;
 }
 
 const TEXT_COMMENT_DATA = '?pwc_t';
@@ -34,8 +33,8 @@ function createTextNode(value) {
 }
 
 // with side effect in changing node structure
-function extractAttributeBindings(node: ElementNode): attributeDescriptor {
-  const tempAttributeDescriptor = {};
+function extractAttributeBindings(node: ElementNode): Array<AttributeDescriptor> {
+  const tempAttributeDescriptor = [];
   // Extract attribute bindings
   if (node.attrs?.length > 0) {
     let hasInsertComment = false; // Should only insert comment node before current node once
@@ -50,13 +49,17 @@ function extractAttributeBindings(node: ElementNode): attributeDescriptor {
         if (isEvent(attr.name)) {
           // events
           const { eventName, isCapture } = getEventInfo(attr.name);
-          tempAttributeDescriptor[`on${eventName}`] = {
-            handler: attr.value.replace(BINDING_REGEXP, '$1'),
+          tempAttributeDescriptor.push({
+            name: `on${eventName}`,
+            value: attr.value.replace(BINDING_REGEXP, '$1'),
             capture: isCapture,
-          };
+          });
         } else {
           // attributes
-          tempAttributeDescriptor[attr.name] = attr.value.replace(BINDING_REGEXP, '$1');
+          tempAttributeDescriptor.push({
+            name: attr.name,
+            value: attr.value.replace(BINDING_REGEXP, '$1'),
+          });
         }
         return false; // remove attribute bindings
       }
@@ -92,7 +95,7 @@ function extractTextInterpolation(node): Array<string> {
   return tempTextInterpolation;
 }
 
-function transformTemplateAst(nodes: Array<ElementNode>): Array<string | attributeDescriptor> {
+function transformTemplateAst(nodes: Array<ElementNode>): ValueDescriptor {
   let values = [];
   for (const node of nodes) {
     if (node.nodeName === '#text') {
@@ -100,7 +103,7 @@ function transformTemplateAst(nodes: Array<ElementNode>): Array<string | attribu
       values = values.concat(tempTextInterpolation);
     } else {
       const tempAttributeDescriptor = extractAttributeBindings(node);
-      if (Object.keys(tempAttributeDescriptor).length > 0) {
+      if (tempAttributeDescriptor.length > 0) {
         values.push(tempAttributeDescriptor);
       }
     }
@@ -116,10 +119,14 @@ function genTemplateString(ast: ElementNode): string {
 /**
  * Generate template string and extract values from template
  */
-export function compileTemplate(descriptor: SFCDescriptor): compileTemplateResult {
-  const root = descriptor.template.ast;
-  const nodes = dfs(root);
+export function compileTemplate(descriptor: SFCDescriptor): CompileTemplateResult {
+  const { ast } = descriptor.template;
+  return compileTemplateAST(ast);
+}
+
+export function compileTemplateAST(ast: ElementNode): CompileTemplateResult {
+  const nodes = dfs(ast);
   const values = transformTemplateAst(nodes);
-  const templateString = genTemplateString(root);
+  const templateString = genTemplateString(ast);
   return { templateString, values };
 }

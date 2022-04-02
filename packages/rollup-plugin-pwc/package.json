@@ -6,17 +6,19 @@
   "license": "MIT",
   "main": "lib/index.js",
   "module": "es/index.js",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
+  "files": [
+    "lib",
+    "es/",
+    "esnext/",
+    "README.md"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/raxjs/pwc.git"
   },
   "scripts": {
-    "start": "rollup -c -w",
-    "build": "rollup -c",
+    "start": "pkg-cli start",
+    "build": "pkg-cli build",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "bugs": {
@@ -27,9 +29,12 @@
     "npm": ">=3.0.0"
   },
   "devDependencies": {
+    "@ice/pkg-cli": "^1.0.0-beta.4",
     "@rollup/plugin-typescript": "^8.3.1",
     "rollup": "^2.69.0",
-    "tslib": "^2.3.1"
+    "tslib": "^2.3.1",
+    "core-js": "^3.21.1",
+    "regenerator-runtime": "^0.13.9"
   },
   "dependencies": {
     "@babel/core": "^7.17.8",

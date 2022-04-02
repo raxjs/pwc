@@ -1,10 +1,14 @@
 import { Reactive } from '../reactive';
 class MockElement {
+  #initialized = false;
   isUpdating: boolean = false;
   reactive = new Reactive(this);
+  _getInitialState() {
+    return this.#initialized;
+  };
   constructor(initialValue) {
-    this.reactive.setReactiveValue('data', initialValue);
-    this.isUpdating = false;
+    this.reactive.initReactiveValue('data', initialValue);
+    this.#initialized = true;
   }
   set data(val) {
     this.reactive.setReactiveValue('data', val);

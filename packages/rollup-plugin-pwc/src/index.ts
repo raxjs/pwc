@@ -58,8 +58,7 @@ export default function PluginPWC({
       // *.pwc file
       // Generate an entry module that imports the actual blocks of the PWC
       if (!query.pwc && filter(id)) {
-        const output = transformPwcEntry(code, id, rootContext, this);
-        return output;
+        return transformPwcEntry(code, id, rootContext, this);
       }
 
       if (query.pwc) {

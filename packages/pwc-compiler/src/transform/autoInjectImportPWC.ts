@@ -8,13 +8,16 @@ function createImportDeclaration(source: string, imported: Array<string>) {
   return t.importDeclaration(specifiers, t.stringLiteral(source));
 }
 
+// create import specifier expression, e.g. the { reactive } of import { reactive } from 'pwc'
 function createImportSpecifier(importedName) {
   return t.importSpecifier(t.identifier(importedName), t.identifier(importedName));
 }
 
-const shouldImportedFromPWC = ['reactive', 'customElement'];
+// customElement must be imported
+// reactive should be imported if shouldImportReactive is true
+const shouldImportedFromPWC = ['customElement', 'reactive'];
 
-export default function autoInjectImportPWC(ast: File): void {
+export default function autoInjectImportPWC(ast: File, shouldImportReactive: boolean): void {
   babelTraverse(ast, {
     Program(path) {
       let hasImportPWC = false;
@@ -26,6 +29,8 @@ export default function autoInjectImportPWC(ast: File): void {
       path.traverse({
         ImportDeclaration(path) {
           const { node } = path;
+          // has imported pwc manually
+          // should check whether specifiers have been imported
           if (t.isLiteral(node.source) && node.source.value === 'pwc') {
             hasImportPWC = true;
             node.specifiers.forEach(specifier => {
@@ -36,16 +41,21 @@ export default function autoInjectImportPWC(ast: File): void {
             });
             Object.entries(hasImportedFromPWC).forEach(([importedName, hasImported]) => {
               if (!hasImported) {
-                node.specifiers.push(createImportSpecifier(importedName));
+                if (importedName !== 'reactive' || shouldImportReactive) {
+                  node.specifiers.push(createImportSpecifier(importedName));
+                }
               }
             });
           }
         },
       });
 
+      // not import pwc in original code
+      // should generate import declaration
       if (!hasImportPWC) {
         const { node } = path;
-        const importDeclaration = createImportDeclaration('pwc', shouldImportedFromPWC);
+        const importSpecifiers = shouldImportReactive ? shouldImportedFromPWC : shouldImportedFromPWC.slice(0, 1);
+        const importDeclaration = createImportDeclaration('pwc', importSpecifiers);
         node.body.unshift(importDeclaration);
       }
     },

@@ -1,18 +1,21 @@
 <template>
   <div class="content">
-    <button @click={{addCount}}>+</button>
-    {{count}}
+    <button @click={{#addCount}}>+</button>
+    {{ #count }}
+    {{ publicField }}
     <button @click={{reduceCount}}>-</button>
   </div>
 </template>
 
 <script>
-@customElement('custom-component')
-export default class CustomComponent extends HTMLElement {
-  @reactive
-  accessor count = 0;
 
-  addCount() {
+export default class CustomComponent extends HTMLElement {
+  #count = 0;
+
+  publicField = 'pwc';
+
+
+  #addCount() {
     this.count = this.count + 1;
   }
 

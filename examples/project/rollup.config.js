@@ -2,7 +2,7 @@ const commonjs = require('@rollup/plugin-commonjs');
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const livereload = require('rollup-plugin-livereload');
 const css = require('rollup-plugin-css-only');
-const pwc = require('rollup-plugin-pwc');
+const pwc = require('rollup-plugin-pwc').default;
 
 
 const production = !process.env.ROLLUP_WATCH;

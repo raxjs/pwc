@@ -1,12 +1,16 @@
-import type { SFCDescriptor, SFCScriptBlock } from '@pwc/compiler';
+import type { SFCDescriptor, SFCScriptCompileResult } from '@pwc/compiler';
 import { compileScript } from '@pwc/compiler';
 import type { TransformPluginContext } from 'rollup';
 import { createRollupError } from './utils/error';
 import { transformSync } from '@babel/core';
+import babelPluginProposalDecorators from '@babel/plugin-proposal-decorators';
+import babelPluginProposalClassProperties from '@babel/plugin-proposal-class-properties';
+import babelPluginProposalClassStaticBlock from '@babel/plugin-proposal-class-static-block';
+import babalPluginProposalPrivateMethods from '@babel/plugin-proposal-private-methods';
 
 const cache = new WeakMap<SFCDescriptor>();
 
-export function getResolvedScript(descriptor: SFCDescriptor): SFCScriptBlock | null | undefined {
+export function getResolvedScript(descriptor: SFCDescriptor): SFCScriptCompileResult | null | undefined {
   return cache.get(descriptor);
 }
 
@@ -22,20 +26,21 @@ export function resolveScript(
     return cached;
   }
 
-  let resolved: SFCScriptBlock | null = null;
+  let resolved: SFCScriptCompileResult | null = null;
   try {
     resolved = compileScript(descriptor);
   } catch (err) {
     pluginContext.error(createRollupError(descriptor.filename, err));
   }
+  console.log('resolved', resolved.content);
   // Use babel to transform syntax like decorators
   const { code, map } = transformSync(resolved.content, {
     filename: resolved.filename,
     plugins: [
-      ['@babel/plugin-proposal-decorators', { version: '2021-12', decoratorsBeforeExport: true }],
-      '@babel/plugin-proposal-class-properties',
-      '@babel/plugin-proposal-class-static-block',
-      '@babel/plugin-proposal-private-methods',
+      [babelPluginProposalDecorators, { version: '2021-12', decoratorsBeforeExport: true }],
+      babelPluginProposalClassProperties,
+      babelPluginProposalClassStaticBlock,
+      babalPluginProposalPrivateMethods,
     ],
     sourceMaps: true,
     // TODO:

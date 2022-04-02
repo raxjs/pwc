@@ -2,7 +2,6 @@ import type { File } from '@babel/types';
 import * as t from '@babel/types';
 import babelTraverse from '@babel/traverse';
 import type { ElementNode } from './parse';
-
 export function validateScript(ast: File) {
   const errors = [];
   babelTraverse(ast, {

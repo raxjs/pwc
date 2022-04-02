@@ -41,6 +41,10 @@ export default (Definition) => {
     adoptedCallback() {}
 
     // Extension methods
+    _getInitialState() {
+      return this.#initialized;
+    }
+
     #createTemplate(source: string): Node {
       const template = document.createElement('template');
 
@@ -90,7 +94,8 @@ export default (Definition) => {
           }
         }
       }
-      this.#currentTemplate = this.template;
+      // It will trigger get template method if there use this.template
+      this.#currentTemplate = [strings, values];
     }
 
     requestUpdate(): void {
@@ -106,6 +111,10 @@ export default (Definition) => {
 
     setReactiveValue(prop: string, val: unknown) {
       this.#reactive.setReactiveValue(prop, val);
+    }
+
+    initReactiveValue(prop: string, val: unknown) {
+      this.#reactive.initReactiveValue(prop, val);
     }
   };
 };

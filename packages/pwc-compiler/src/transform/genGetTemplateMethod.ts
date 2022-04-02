@@ -3,32 +3,30 @@ import * as t from '@babel/types';
 import babelTraverse from '@babel/traverse';
 import { isPrivateField } from '../utils';
 
-import type { compileTemplateResult } from '../compileTemplate';
+import type { CompileTemplateResult } from '../compileTemplate';
 
-function createObjectProperty(key, value) {
-  if (typeof value === 'string') {
-    const isHandler = key === 'handler';
+function createObjectProperty(key, value, isEvent = false) {
+  if (key === 'value') {
     let valueExpression;
-    if (isHandler) {
+    if (isEvent) {
       // this.xxx.bind(this)
       valueExpression = t.callExpression(t.memberExpression(createThisMemberExpression(value, !isPrivateField(value)), t.identifier('bind')), [t.thisExpression()]);
     } else {
       // this.xxx
-      valueExpression = createThisMemberExpression(value, !isPrivateField(key));
+      valueExpression = createThisMemberExpression(value, !isPrivateField(value));
     }
     return t.objectProperty(t.identifier(key), valueExpression);
-  } else if (typeof value === 'object') {
-    // [key]: {}
-    return t.objectProperty(t.identifier(key), createObjectExpression(value));
+  } else if (key === 'name') {
+    return t.objectProperty(t.identifier(key), t.stringLiteral(value));
   } else if (key === 'capture') {
-    // capture: true/false
     return t.objectProperty(t.identifier(key), t.booleanLiteral(value));
   }
 }
 
 function createObjectExpression(obj: object) {
+  const isEvent = 'capture' in obj;
   return t.objectExpression(Object.entries(obj).map(([key, value]) => {
-    return createObjectProperty(key, value);
+    return createObjectProperty(key, value, isEvent);
   }));
 }
 
@@ -63,7 +61,7 @@ function cretateGetTemplateClassMethod(returnExpression) {
   );
 }
 
-export default function genGetTemplateMethod(ast: File, templateResult: compileTemplateResult): void {
+export default function genGetTemplateMethod(ast: File, templateResult: CompileTemplateResult): void {
   babelTraverse(ast, {
     ClassDeclaration(path) {
       // export default class
@@ -81,15 +79,21 @@ export default function genGetTemplateMethod(ast: File, templateResult: compileT
               // 2. events and props
               /*
                 example:
-                {
-                  onclick: {
-                    handler: 'onClick',
+                [
+                  {
+                    name: 'onclick',
+                    value: 'onClick',
                     capture: true,
                   },
-                  title: 'title'
-                }
+                  {
+                    name: 'title',
+                    value: '#title'
+                  }
+                ]
               */
-              return createObjectExpression(val);
+              return createArrayExpression(val.map(attr => {
+                return createObjectExpression(attr);
+              }));
             }
           }));
           const returnExpression = createArrayExpression([templateStringExpression, templateValuesExpression]);
