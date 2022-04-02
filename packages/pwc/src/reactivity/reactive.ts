@@ -42,7 +42,7 @@ export class Reactive implements ReactiveType {
   }
 
   setReactiveValue(prop: string, value: unknown) {
-    if (this.#element.__initialized) {
+    if (this.#element._getInitialState()) {
       this.initReactiveValue(prop, value);
       this.requestUpdate();
     } else {

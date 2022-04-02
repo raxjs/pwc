@@ -10,7 +10,7 @@ export default (Definition) => {
   return class extends Definition implements PWCElement {
     #uid: number = generateUid();
     // Component initial state
-    __initialized = false;
+    #initialized = false;
     // The root fragment
     #fragment: Node;
     // Template info
@@ -22,7 +22,7 @@ export default (Definition) => {
 
     // Custom element native lifecycle
     connectedCallback() {
-      if (!this.__initialized) {
+      if (!this.#initialized) {
         if (this.__init_task__) {
           this.__init_task__();
         }
@@ -34,13 +34,17 @@ export default (Definition) => {
         this.#initRenderTemplate(this.#fragment, values);
         this.appendChild(this.#fragment);
       }
-      this.__initialized = true;
+      this.#initialized = true;
     }
     disconnectedCallback() {}
     attributeChangedCallback() {}
     adoptedCallback() {}
 
     // Extension methods
+    _getInitialState() {
+      return this.#initialized;
+    }
+
     #createTemplate(source: string): Node {
       const template = document.createElement('template');
 
