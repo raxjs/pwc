@@ -13,7 +13,6 @@
     };
 
     get template() {
-      console.log(1);
       return html`<div class="${this.className}" @click.capture=${this.handleClick}>${this.name}${this.name}</div>`;
     }
   }
