@@ -1,7 +1,7 @@
 import { isEventName } from '../utils/isEventName';
 import type { Attributes } from '../type';
 
-export function commitAttributes(element: Element, attrs: Attributes, isInitial: boolean = false) {
+export function commitAttributes(element: Element, attrs: Attributes, isInitial = false) {
   for (const attr of attrs) {
     const { name, value } = attr;
     if (isEventName(name)) {
