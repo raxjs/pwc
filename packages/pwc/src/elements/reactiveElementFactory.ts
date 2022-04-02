@@ -10,7 +10,7 @@ export default (Definition) => {
   return class extends Definition implements PWCElement {
     #uid: number = generateUid();
     // Component initial state
-    #initialized = false;
+    __initialized = false;
     // The root fragment
     #fragment: Node;
     // Template info
@@ -22,7 +22,7 @@ export default (Definition) => {
 
     // Custom element native lifecycle
     connectedCallback() {
-      if (!this.#initialized) {
+      if (!this.__initialized) {
         if (this.__init_task__) {
           this.__init_task__();
         }
@@ -34,7 +34,7 @@ export default (Definition) => {
         this.#initRenderTemplate(this.#fragment, values);
         this.appendChild(this.#fragment);
       }
-      this.#initialized = true;
+      this.__initialized = true;
     }
     disconnectedCallback() {}
     attributeChangedCallback() {}
@@ -90,7 +90,8 @@ export default (Definition) => {
           }
         }
       }
-      this.#currentTemplate = this.template;
+      // It will trigger get template method if there use this.template
+      this.#currentTemplate = [strings, values];
     }
 
     requestUpdate(): void {
@@ -106,6 +107,10 @@ export default (Definition) => {
 
     setReactiveValue(prop: string, val: unknown) {
       this.#reactive.setReactiveValue(prop, val);
+    }
+
+    initReactiveValue(prop: string, val: unknown) {
+      this.#reactive.initReactiveValue(prop, val);
     }
   };
 };

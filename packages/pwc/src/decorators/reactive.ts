@@ -5,10 +5,12 @@ export function reactive(value, { kind, name }) {
         return this.getReactiveValue(name);
       },
       set(val) {
+        console.log('set ====>', val);
         this.setReactiveValue(name, val);
       },
       init(initialValue) {
-        this.setReactiveValue(name, initialValue);
+        this.initReactiveValue(name, initialValue);
+        return initialValue;
       },
     };
   }

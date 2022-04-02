@@ -2,4 +2,4 @@ import './elements';
 
 export * from './decorators';
 
-export { compileTemplateInRuntime as compile } from '@pwc/compiler/compileTemplateInRuntime';
+export { compileTemplateInRuntime as html } from '@pwc/compiler/compileTemplateInRuntime';
