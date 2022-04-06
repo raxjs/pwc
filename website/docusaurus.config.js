@@ -3,6 +3,8 @@
 
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const devServerPlugin =require('./plugins/devServer');
+
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -39,6 +41,10 @@ const config = {
     ],
   ],
 
+  plugins: [
+    devServerPlugin
+  ],
+
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
@@ -51,7 +57,7 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'intro',
+            docId: 'intro/pwc',
             position: 'left',
             label: '使用文档',
           },
@@ -71,7 +77,7 @@ const config = {
             items: [
               {
                 label: '使用文档',
-                to: '/docs/intro',
+                to: '/docs/intro/pwc',
               },
             ],
           },
