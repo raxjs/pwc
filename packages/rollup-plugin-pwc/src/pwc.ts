@@ -1,4 +1,4 @@
-import type { TransformPluginContext } from 'rollup';
+import type { TransformPluginContext, TransformResult } from 'rollup';
 import qs from 'querystring';
 import { parse } from '@pwc/compiler';
 import type { SFCDescriptor, SFCBlock } from '@pwc/compiler';
@@ -61,7 +61,7 @@ export function transformPwcEntry(
   filename: string,
   sourceRoot: string,
   pluginContext: TransformPluginContext,
-) {
+): TransformResult {
   const { descriptor, errors } = parse(code, {
     filename,
     sourceMap: true,
@@ -85,8 +85,6 @@ export function transformPwcEntry(
   output.push('export default script');
   return {
     code: output.join('\n'),
-    map: {
-      mappings: '',
-    },
+    map: { mappings: '' }
   };
 }

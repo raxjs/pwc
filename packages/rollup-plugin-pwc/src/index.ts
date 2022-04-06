@@ -21,6 +21,12 @@ export default function PluginPWC({
 
   return {
     name: 'pwc',
+    /**
+     * meaning of query in id:
+     * pwc: it is from .pwc file (script or style)
+     * type: script of style
+     * filename: original filename
+     */
     resolveId(id) {
       const query = parsePwcPartRequest(id);
       if (query.pwc) {
@@ -36,12 +42,13 @@ export default function PluginPWC({
       if (query.pwc) {
         const descriptor = getDescriptor(query.filename);
         if (descriptor) {
-          const block =
-          query.type === 'script'
-            ? getResolvedScript(descriptor)
-            : query.type === 'style'
-              ? descriptor.style
-              : null;
+          let block = null;
+          if (query.type === 'script') {
+            // script has been resolved in transformPwcEntry function and has been cached
+            block = getResolvedScript(descriptor);
+          } else if (query.type === 'style') {
+            block = descriptor.style;
+          }
           if (block) {
             return {
               code: block.content,
@@ -53,7 +60,7 @@ export default function PluginPWC({
       return null;
     },
 
-    async transform(code, id) {
+    transform(code, id) {
       const query = parsePwcPartRequest(id);
       // *.pwc file
       // Generate an entry module that imports the actual blocks of the PWC
@@ -62,6 +69,7 @@ export default function PluginPWC({
       }
 
       if (query.pwc) {
+        // not transform non-pwc file
         if (!filter(query.filename)) {
           return null;
         }

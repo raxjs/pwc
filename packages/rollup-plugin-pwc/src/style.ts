@@ -1,5 +1,5 @@
 import { compileStyle } from '@pwc/compiler';
-import type { TransformPluginContext } from 'rollup';
+import type { TransformPluginContext, TransformResult } from 'rollup';
 import { getDescriptor } from './utils/descriptorCache';
 import type { StyleBlockQuery } from './utils/query';
 import { createRollupError } from './utils/error';
@@ -7,7 +7,7 @@ import { createRollupError } from './utils/error';
 export function transformStyle(
   query: StyleBlockQuery,
   pluginContext: TransformPluginContext,
-) {
+): TransformResult {
   const descriptor = getDescriptor(query.filename);
   const { code, map, errors } = compileStyle(descriptor);
   if (errors.length) {
@@ -18,6 +18,6 @@ export function transformStyle(
   }
   return {
     code,
-    map: { mappings: '' },
+    map: { mappings: '' }
   };
 }
