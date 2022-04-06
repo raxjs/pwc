@@ -1,3 +1,5 @@
+import { validateAccessor } from "./validateAccessor";
+
 export function reactive(value, { kind, name }) {
   if (kind === 'accessor') {
     return {
@@ -13,4 +15,5 @@ export function reactive(value, { kind, name }) {
       },
     };
   }
+  validateAccessor('@reactive');
 }

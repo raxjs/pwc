@@ -1,3 +1,8 @@
+/**
+ * Minify code:
+ * 0: class field should add accessor
+ * 1: repeated reflect attribute name
+ */
 import type { Warning } from './type';
 import { NOOP } from './utils';
 

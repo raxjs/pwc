@@ -8,3 +8,7 @@ export function isArray(arg: any) {
 export function isPrimitive(value: unknown) {
   return value === null || (typeof value !== 'object' && typeof value !== 'function');
 }
+
+export function isBoolean(value: unknown) {
+  return typeof value === 'boolean';
+}

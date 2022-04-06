@@ -1,4 +1,4 @@
-import type { ElementTemplate, PWCElement } from '../type';
+import type { ElementTemplate, PWCElement, ReflectProperties } from '../type';
 import { TEXT_COMMENT_DATA, PWC_PREFIX, PLACEHOLDER_COMMENT_DATA } from '../constants';
 import { Reactive } from '../reactivity/reactive';
 import type { ReactiveNode } from './reactiveNode';
@@ -19,6 +19,8 @@ export default (Definition) => {
     #reactiveNodes: ReactiveNode[];
     // Reactive instance
     #reactive: Reactive = new Reactive(this);
+    // Reflect properties
+    #reflectProperties: ReflectProperties = new Map();
 
     // Custom element native lifecycle
     connectedCallback() {
@@ -106,6 +108,10 @@ export default (Definition) => {
 
     setReactiveValue(prop: string, val: unknown) {
       this.#reactive.setReactiveValue(prop, val);
+    }
+
+    _getReflectProperties() {
+      return this.#reflectProperties;
     }
   };
 };

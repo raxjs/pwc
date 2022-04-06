@@ -29,13 +29,15 @@ class CustomElement extends HTMLElement {
   @attribute('data-class-name')
   accessor className = 'red';
 
+  @attribute('custom')
+  accessor custom = false;
+
   onClick() {
-    // console.log(this.data);
+    console.log('prop ===>', this.custom)
     this.data.name += '!';
     this.text += '?';
     this.className = this.changedClassName ? 'red' : 'green';
     this.changedClassName = !this.changedClassName;
-    // this.names.push('Tom');
   }
   // <div class={{className}} @click={{onClick}} >{{text}} - {{name}} <child-element name={{name}}/></div>
   get template() {
