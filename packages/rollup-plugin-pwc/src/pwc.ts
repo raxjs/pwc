@@ -85,6 +85,6 @@ export function transformPwcEntry(
   output.push('export default script');
   return {
     code: output.join('\n'),
-    map: { mappings: '' }
+    map: { mappings: '' },
   };
 }
