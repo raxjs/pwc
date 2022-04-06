@@ -62,16 +62,17 @@ export default function PluginPWC({
 
     transform(code, id) {
       const query = parsePwcPartRequest(id);
-      // *.pwc file
-      // Generate an entry module that imports the actual blocks of the PWC
-      if (!query.pwc && filter(id)) {
-        return transformPwcEntry(code, id, rootContext, this);
+      if (filter(id)) {
+        // *.pwc file
+        // Generate an entry module that imports the actual blocks of the PWC
+        if (!query.pwc) {
+          return transformPwcEntry(code, id, rootContext, this);
+        } else if (query.type === 'style') {
+          // Sub request for blocks
+          return transformStyle(query, this);
+        }
       }
 
-      // Sub request for blocks
-      if (query.pwc && query.type === 'style') {
-        return transformStyle(query, this);
-      }
       return null;
     },
   };
