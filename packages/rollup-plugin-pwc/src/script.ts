@@ -32,7 +32,6 @@ export function resolveScript(
   } catch (err) {
     pluginContext.error(createRollupError(descriptor.filename, err));
   }
-  console.log('resolved', resolved.content);
   // Use babel to transform syntax like decorators
   const { code, map } = transformSync(resolved.content, {
     filename: resolved.filename,

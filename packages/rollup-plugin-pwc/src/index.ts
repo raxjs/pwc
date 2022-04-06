@@ -68,14 +68,9 @@ export default function PluginPWC({
         return transformPwcEntry(code, id, rootContext, this);
       }
 
-      if (query.pwc) {
-        // not transform non-pwc file
-        if (!filter(query.filename)) {
-          return null;
-        }
-        if (query.type === 'style') {
-          return transformStyle(query, this);
-        }
+     // Sub request for blocks
+      if (query.pwc && query.type === 'style') {
+        return transformStyle(query, this);
       }
       return null;
     },
