@@ -1,4 +1,4 @@
-import { attribute } from '../attribute';
+import { attribute, customElement } from '..';
 
 describe('attribute decorator', () => {
   it('should relect attribute to property with the attribute decorator alone', () => {

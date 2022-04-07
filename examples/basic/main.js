@@ -33,7 +33,6 @@ class CustomElement extends HTMLElement {
   accessor custom = false;
 
   onClick() {
-    console.log('prop ===>', this.custom)
     this.data.name += '!';
     this.text += '?';
     this.className = this.changedClassName ? 'red' : 'green';

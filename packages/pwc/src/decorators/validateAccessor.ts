@@ -6,16 +6,18 @@ import { throwError, throwMinifiedError } from '../error';
 
 const __DEV__ = process.env.NODE_ENV !== 'production';
 
-export function validateAccessor(decoratorExp: string) {
-  if (__DEV__) {
-    throwError(`The attribute decorator should be added to the class field with accessor, like:
+export function validateAccessor(kind: string, decoratorExp: string) {
+  if (kind !== 'accessor') {
+    if (__DEV__) {
+      throwError(`The attribute decorator should be added to the class field with accessor, like:
 
-    class extends HTMLElement {
-      ${decoratorExp}
-      accessor ${name}
+      class extends HTMLElement {
+        ${decoratorExp}
+        accessor ${name}
+      }
+      `);
+    } else {
+      throwMinifiedError(0);
     }
-    `);
-  } else {
-    throwMinifiedError(0);
   }
 }
