@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "ES2015",
     "moduleResolution": "node",
-    "noImplicitOverride": true,
-    "typeRoots": ["src/types/global.d.ts" ]
+    "typeRoots": ["src/types/global.d.ts", "../../node_modules/@types"]
   }
 }

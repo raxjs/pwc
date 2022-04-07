@@ -25,4 +25,7 @@ export interface CustomHTMLBaseElement extends HTMLBaseElement {
 
 export type Warning = ((template: string, ...args: any[]) => void);
 
-export type ReflectProperties = Map<string, boolean>;
+export type ReflectProperties = Map<string, {
+  attrName: string;
+  isBoolean: boolean;
+}>;

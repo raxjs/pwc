@@ -6,7 +6,7 @@ import { throwError, throwMinifiedError } from '../error';
 
 const __DEV__ = process.env.NODE_ENV !== 'production';
 
-export function validateAccessor(kind: string, decoratorExp: string) {
+export function validateAccessor(kind: string, decoratorExp: string, name: string) {
   if (kind !== 'accessor') {
     if (__DEV__) {
       throwError(`The attribute decorator should be added to the class field with accessor, like:

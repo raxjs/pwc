@@ -4,7 +4,8 @@
  * The reflect rule is:
  * 1. DOMTokenList type is not included in the cases, because developer cannot create domTokenList directly, more detail: https://dom.spec.whatwg.org/#domtokenlist
  * 2. Attribute has two kinds: (1) Boolean attribute; (2) Common attribute
- * (1) Boolean attribute:
+ *
+ *  (1) Boolean attribute:
  *     - property getter: if attribute value is null, it will return false, else return true
  *     - property setter: not reflect to attribute, more detail see InputElement checked property
  *     - property init:  the default value must be false,
@@ -14,34 +15,30 @@
  *     - property getter: directly return attribute value
  *     - property setter: directly set attribute
  *     - property init: if attribute value is null, return default value; else return attribute value
- * Minify code:
+ *
+ *  Minify code:
  * 1: repeated reflect attribute name
  */
-import { throwError, throwMinifiedError } from '../error';
-import { validateAccessor } from './validateAccessor';
-import type { ReflectProperties } from '../type';
-import { isBoolean } from '../utils';
+import { throwError, throwMinifiedError } from '../../error';
+import { validateAccessor } from '../validateAccessor';
+import type { ReflectProperties } from '../../type';
+import { isBoolean } from '../../utils';
+import { attributeSetter } from './setter';
+import { attributeGetter } from './getter';
 
 const __DEV__ = process.env.NODE_ENV !== 'production';
 
 export function attribute(attrName: string) {
-  return (value, { kind }) => {
+  return (value, { kind, name }) => {
     // Validate accessor operator
-    validateAccessor(kind, `@attribute('${attrName}')`);
+    validateAccessor(kind, `@attribute('${attrName}')`, name);
 
     return {
       get() {
-        const attrValue = this.getAttribute(attrName);
-        if (this._getReflectProperties().get(attrName)) {
-          return attrValue !== null;
-        }
-        return attrValue;
+        return attributeGetter.call(this, name);
       },
       set(val) {
-        // Boolean attribute not reflect to attribute
-        if (!this._getReflectProperties().get(attrName)) {
-          this.setAttribute(attrName, val);
-        }
+        attributeSetter.call(this, val, name);
       },
       /**
        * The init rule is, if the property has default value, it won't setAttrbute to element
@@ -56,9 +53,12 @@ export function attribute(attrName: string) {
         const reflectProperties: ReflectProperties = this._getReflectProperties();
 
         // Validate the repeated attribute name
-        validateReflectedAttr(reflectProperties, attrName);
+        validateReflectedAttr(reflectProperties, name, attrName);
 
-        reflectProperties.set(attrName, isBooleanValue);
+        reflectProperties.set(name, {
+          attrName,
+          isBoolean: isBooleanValue,
+        });
 
         if (isBooleanValue) {
           initialValue = handleBooleanAttribute(initialValue, attrValue);
@@ -72,8 +72,8 @@ export function attribute(attrName: string) {
   };
 }
 
-function validateReflectedAttr(reflectProperties: ReflectProperties, attrName: string) {
-  if (reflectProperties.has(attrName)) {
+function validateReflectedAttr(reflectProperties: ReflectProperties, name: string, attrName: string) {
+  if (reflectProperties.has(name)) {
     if (__DEV__) {
       throwError(`The attribute name ${attrName} has been reflected.`);
     } else {
