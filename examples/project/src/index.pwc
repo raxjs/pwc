@@ -1,9 +1,9 @@
 <template>
   <div class="content">
-    <button @click={{#addCount}}>+</button>
+    <button @click="{{#addCount}}">+</button>
     {{ #count }}
     {{ publicField }}
-    <button @click={{reduceCount}}>-</button>
+    <button @click="{{reduceCount}}">-</button>
   </div>
 </template>
 

@@ -13,7 +13,7 @@
     };
 
     get template() {
-      return html`<div class="${this.className}" @click.capture=${this.handleClick}>${this.name}${this.name}</div>`;
+      return html`<div class="${this.className}" @click.capture="${this.handleClick}"">${this.name}${this.name}</div>`;
     }
   }
 </script>
