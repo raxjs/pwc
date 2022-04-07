@@ -8,7 +8,7 @@ export function isPrivateField(field: string): boolean {
 }
 
 export const BINDING_REGEXP = /\{\{\s*([#.\w]*)\s*\}\}/;
-export const GLOBAL_BINDING_REGEXP = /\{\{\s*([#.\w]*)\s*\}\}/g;
+export const INTERPOLATION_REGEXP = /\{\{\s*([#.\w]*)\s*\}\}/g;
 
 export function isBindings(value: string): boolean {
   return BINDING_REGEXP.test(value);

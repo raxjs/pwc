@@ -1,8 +1,8 @@
 <template>
-  <form class={{editVisiblityClass}}>
-    <input class="editInput" value={{editValue}} @input={{onInput}} @blur={{onBlur}} />
+  <form class="{{editVisiblityClass}}">
+    <input class="editInput" value="{{editValue}}" @input="{{onInput}}" @blur="{{onBlur}}" />
   </form>
-  <span @click={{onClick}} class={{textVisiblityClass}}>{{editValue}}</span>
+  <span @click="{{onClick}}" class="{{textVisiblityClass}}">{{editValue}}</span>
 </template>
 
 <script>
