@@ -50,6 +50,6 @@ if (process.env.NODE_ENV !== 'production') {
       let argIndex = 0;
       const message = `Warning: ${template.replace(/%s/g, () => args[argIndex++])}`;
       throw new Error(message);
-    } catch (e) {}
+    } catch (error) {}
   };
 }

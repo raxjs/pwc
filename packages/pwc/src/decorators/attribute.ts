@@ -7,7 +7,9 @@
  * (1) Boolean attribute:
  *     - property getter: if attribute value is null, it will return false, else return true
  *     - property setter: not reflect to attribute, more detail see InputElement checked property
- *     - property init:  the default value must be false, and the return value depends on attribute value, attribute value is null return false, else return true
+ *     - property init:  the default value must be false,
+ *                       and the return value depends on attribute value,
+ *                       attribute value is null return false, else return true
  * (2) Common attribute:
  *     - property getter: directly return attribute value
  *     - property setter: directly set attribute
@@ -23,7 +25,7 @@ import { isBoolean } from '../utils';
 const __DEV__ = process.env.NODE_ENV !== 'production';
 
 export function attribute(attrName: string) {
-  return (value, { kind, name }) => {
+  return (value, { kind }) => {
     // Validate accessor operator
     validateAccessor(kind, `@attribute('${attrName}')`);
 
@@ -87,7 +89,7 @@ function handleBooleanAttribute(initialValue: boolean, attrValue: unknown) {
   if (__DEV__) {
     if (initialValue !== false) {
       throwError(
-        `The boolean attribute initial value must be false, more detail see https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#boolean-attribute`,
+        'The boolean attribute initial value must be false, more detail see https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#boolean-attribute',
       );
     }
   }
