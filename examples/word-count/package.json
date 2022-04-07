@@ -1,0 +1,19 @@
+{
+  "name": "word-count",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "rollup -c -w",
+    "build": "rollup -c",
+    "serve": "sirv public --no-clear"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.0.2",
+    "@rollup/plugin-node-resolve": "^13.1.3",
+    "rollup": "^2.69.0",
+    "rollup-plugin-css-only": "^3.1.0",
+    "rollup-plugin-livereload": "^2.0.5",
+    "sirv-cli": "^2.0.2",
+    "pwc": "workspace:*",
+    "rollup-plugin-pwc": "workspace:*"
+  }
+}

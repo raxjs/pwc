@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "ES2015",
-    "moduleResolution": "node",
-    "noImplicitOverride": true
+    "moduleResolution": "node"
   }
 }

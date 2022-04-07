@@ -1,6 +1,7 @@
 import '../native/HTMLElement';
 import { reactive } from '../../decorators/reactive';
 import { nextTick } from '../sheduler';
+import { compileTemplateInRuntime as html } from '@pwc/compiler';
 
 function getSimpleCustomElement() {
   return class CustomElement extends HTMLElement {
@@ -13,11 +14,12 @@ function getSimpleCustomElement() {
       return [
         '<!--?pwc_p--><div id="container"><!--?pwc_t--> - <!--?pwc_t--></div>',
         [
-          {
-            onclick: {
-              handler: this.onClick.bind(this),
-            },
-          },
+          [
+            {
+              name: 'onclick',
+              value: this.onClick.bind(this),
+            }
+          ],
           this.text,
           this.name,
         ],
@@ -39,11 +41,12 @@ function getNestedCustomElement() {
       return [
         '<!--?pwc_p--><div id="nested-container"><!--?pwc_t--> <div>This is <!--?pwc_t--></div> <!--?pwc_t--></div>',
         [
-          {
-            onclick: {
-              handler: this.onClick.bind(this),
-            },
-          },
+          [
+            {
+              name: 'onclick',
+              value: this.onClick.bind(this),
+            }
+          ],
           this.text,
           this.#title,
           this.name,
@@ -75,12 +78,16 @@ function getReactiveCustomElement() {
       return [
         '<!--?pwc_p--><div id="reactive-container"><!--?pwc_t--> - <!--?pwc_t--></div>',
         [
-          {
-            class: this.className,
-            onclick: {
-              handler: this.onClick.bind(this),
+          [
+            {
+              name: 'class',
+              value: this.className,
             },
-          },
+            {
+              name: 'onclick',
+              value: this.onClick.bind(this),
+            }
+          ],
           this.text,
           this.data.name,
         ],
@@ -130,6 +137,28 @@ describe('Render HTMLElement', () => {
 
     nextTick(() => {
       expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="reactive-container" class="green">hello?<!--?pwc_t--> - jack!<!--?pwc_t--></div>');
+    });
+  });
+
+  it('should trigger template method as expected', (done) => {
+    const mockFn = jest.fn().mockImplementation((text) => {
+      return html`<div>${text}</div>`;
+    });
+    class CustomElement extends HTMLElement {
+      @reactive
+      accessor text = 'hello';
+      get template() {
+        return mockFn(this.text);
+      }
+    }
+    window.customElements.define('custom-runtime-component', CustomElement);
+    const element = document.createElement('custom-runtime-component');
+    document.body.appendChild(element);
+    expect(mockFn).toBeCalledTimes(1);
+    element.text = 'world';
+    nextTick(() => {
+      expect(mockFn).toBeCalledTimes(2);
+      done();
     });
   });
 });

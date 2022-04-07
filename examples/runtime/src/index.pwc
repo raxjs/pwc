@@ -1,0 +1,25 @@
+<script>
+  import { html, reactive } from 'pwc';
+
+  export default class RuntimeComponent extends HTMLElement {
+    @reactive
+    accessor name = 'pwc';
+
+    className = 'container';
+
+    handleClick = () => {
+      console.log('click');
+      this.name = 'changed title';
+    };
+
+    get template() {
+      return html`<div class="${this.className}" @click.capture=${this.handleClick}>${this.name}${this.name}</div>`;
+    }
+  }
+</script>
+
+<style>
+  .container {
+    color: blue;
+  }
+</style>
