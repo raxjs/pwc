@@ -12,3 +12,7 @@ export function isPrimitive(value: unknown) {
 export function isBoolean(value: unknown) {
   return typeof value === 'boolean';
 }
+
+export function isObject(value: unknown) {
+  return typeof value === 'object';
+}
