@@ -1,0 +1,18 @@
+<template>
+  <div class="child">
+    {{ #count }}
+  </div>
+</template>
+
+<script>
+
+export default class ChildComponent extends HTMLElement {
+  #count = 0;
+}
+</script>
+
+<style>
+.child {
+  color: blue;
+}
+</style>

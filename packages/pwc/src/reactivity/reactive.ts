@@ -35,7 +35,6 @@ export class Reactive implements ReactiveType {
   setValue(prop: string, value: unknown) {
     const key = Reactive.getKey(prop);
     this.#element[key] = value;
-    this.requestUpdate();
   }
 
   setReactiveValue(prop: string, value: unknown) {
@@ -49,6 +48,5 @@ export class Reactive implements ReactiveType {
   #createReactiveProperty(prop: string, initialValue: any) {
     const key = Reactive.getKey(prop);
     this.#element[key] = new Proxy(initialValue, this.#proxyHandler);
-    this.requestUpdate();
   }
 }

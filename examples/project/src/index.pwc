@@ -1,0 +1,32 @@
+<template>
+  <div class="content">
+    <button @click={{#addCount}}>+</button>
+    {{ #count }}
+    {{ publicField }}
+    <button @click={{reduceCount}}>-</button>
+  </div>
+</template>
+
+<script>
+
+export default class CustomComponent extends HTMLElement {
+  #count = 0;
+
+  publicField = 'pwc';
+
+
+  #addCount() {
+    this.count = this.count + 1;
+  }
+
+  reduceCount() {
+    this.count = this.count - 1;
+  }
+}
+</script>
+
+<style>
+.content {
+  color: blue;
+}
+</style>

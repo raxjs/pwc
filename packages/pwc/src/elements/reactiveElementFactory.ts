@@ -41,6 +41,10 @@ export default (Definition) => {
     adoptedCallback() {}
 
     // Extension methods
+    _getInitialState() {
+      return this.#initialized;
+    }
+
     #createTemplate(source: string): Node {
       const template = document.createElement('template');
 
@@ -90,7 +94,8 @@ export default (Definition) => {
           }
         }
       }
-      this.#currentTemplate = this.template;
+      // It will trigger get template method if there use this.template
+      this.#currentTemplate = [strings, values];
     }
 
     requestUpdate(): void {
@@ -104,13 +109,21 @@ export default (Definition) => {
       return this.#reactive.getValue(prop);
     }
 
-    setValue(prop: string, val: unknown) {
+    setValue(prop: string, val: unknown, forceUpdate = true) {
       if (isPrivate(prop)) {
         this.#reactive.setReactiveValue(prop, val);
       } else {
         // Public prop should not be reactive
         this.#reactive.setValue(prop, shallowCloneAndFreeze(val));
       }
+
+      if (forceUpdate) {
+        this.requestUpdate();
+      }
+    }
+
+    initValue(prop: string, val: unknown) {
+      this.setValue(prop, val, false);
     }
   };
 };

@@ -8,7 +8,8 @@ export function reactive(value, { kind, name }) {
         this.setValue(name, val);
       },
       init(initialValue) {
-        this.setValue(name, initialValue);
+        this.initValue(name, initialValue);
+        return initialValue;
       },
     };
   }

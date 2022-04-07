@@ -1,0 +1,29 @@
+<template>
+  <div class="content">
+  </div>
+  <child-component></child-component>
+</template>
+
+<script>
+import ChildComponent from './components/child.pwc';
+export default class CustomComponent extends HTMLElement {
+  #count = 0;
+
+  publicField = 'pwc';
+
+
+  #addCount() {
+    this.count = this.count + 1;
+  }
+
+  reduceCount() {
+    this.count = this.count - 1;
+  }
+}
+</script>
+
+<style>
+.content {
+  color: blue;
+}
+</style>
