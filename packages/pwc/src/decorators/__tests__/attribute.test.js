@@ -3,16 +3,23 @@ import '../../elements/native/HTMLElement';
 import { nextTick } from '../../elements/sheduler';
 import { compileTemplateInRuntime as html } from '@pwc/compiler';
 
+let count = 0;
+
+function genLocalName() {
+  return `custom-element-${count++}`;
+}
+
 describe('attribute decorator', () => {
   it('should reflect property to attribute', () => {
-    @customElement('custom-element')
+    const localName = genLocalName();
+    @customElement(localName)
     class CustomElement extends HTMLElement {
       @attribute('attr-name')
       accessor attrName = 'default value';
     }
 
-    document.body.innerHTML = '<custom-element attr-name="outside value" />';
-    const el = document.getElementsByTagName('custom-element')[0];
+    document.body.innerHTML = `<${localName} attr-name="outside value" />`;
+    const el = document.getElementsByTagName(localName)[0];
     expect(el.attrName).toEqual('outside value');
     el.attrName = 'changed value';
     expect(el.getAttribute('attr-name')).toEqual('changed value');
@@ -27,14 +34,25 @@ describe('attribute decorator', () => {
   });
 
   it('should reflect boolean attribute', () => {
-    @customElement('custom-element-1')
-    class CustomElement extends HTMLElement {
+    const childLocalName = genLocalName();
+    const parentLocalName = genLocalName();
+
+    @customElement(childLocalName)
+    class Child extends HTMLElement {
       @attribute('attr-toggle')
       accessor toggle = false;
     }
 
-    document.body.innerHTML = '<custom-element-1 />';
-    const el = document.getElementsByTagName('custom-element-1')[0];
+    @customElement(parentLocalName)
+    class CustomElement extends HTMLElement {
+      get template() {
+        return html` <custom-element-1></custom-element-1>
+          <custom-element-1 attr-toggle=${true}></custom-element-1>`;
+      }
+    }
+
+    document.body.innerHTML = `<${parentLocalName} />`;
+    const el = document.getElementsByTagName(childLocalName)[0];
     expect(el.toggle).toEqual(false);
     // set null
     el.setAttribute('attr-toggle', null);
@@ -55,10 +73,16 @@ describe('attribute decorator', () => {
     // change property
     el.toggle = false;
     expect(el.getAttribute('attr-toggle')).toEqual(null);
+
+    // render with parent
+    const el1 = document.getElementsByTagName(childLocalName)[1];
+    expect(el1.toggle).toEqual(true);
   });
 
   it('should get right property value when first render', () => {
-    @customElement('custom-element-2')
+    const childLocalName = genLocalName();
+    const parentLocalName = genLocalName();
+    @customElement(childLocalName)
     class Child extends HTMLElement {
       @attribute('item-title')
       accessor childTitle;
@@ -67,23 +91,24 @@ describe('attribute decorator', () => {
       }
     }
 
-    @customElement('custom-element-3')
+    @customElement(parentLocalName)
     class Parent extends HTMLElement {
       itemTitle = 'title';
       get template() {
-        return html`<custom-element-2 item-title=${this.itemTitle} />`;
+        return html`<custom-element-3 item-title=${this.itemTitle} />`;
       }
     }
 
-    const el = document.createElement('custom-element-3');
+    const el = document.createElement(parentLocalName);
     document.body.appendChild(el);
     expect(el.innerHTML).toEqual(
-      '<!--?pwc_p--><custom-element-2 item-title="title"><div>title<!--?pwc_t--></div></custom-element-2>',
+      `<!--?pwc_p--><${childLocalName} item-title="title"><div>title<!--?pwc_t--></div></${childLocalName}>`,
     );
   });
 
   it('should be right with mix two decorators', async () => {
-    @customElement('custom-element-4')
+    const localName = genLocalName();
+    @customElement(localName)
     class CustomElement extends HTMLElement {
       @reactive
       @attribute('attr-name')
@@ -93,7 +118,7 @@ describe('attribute decorator', () => {
       }
     }
 
-    const el = document.createElement('custom-element-4');
+    const el = document.createElement(localName);
     el.setAttribute('attr-name', 'outside value');
     document.body.appendChild(el);
 
@@ -105,8 +130,9 @@ describe('attribute decorator', () => {
   });
 
   it('should throw error without accessor', () => {
+    const localName = genLocalName();
     expect(() => {
-      @customElement('custom-element-5')
+      @customElement(localName)
       class CustomElement extends HTMLElement {
         @attribute('attr-name')
         attrName = 'default value';

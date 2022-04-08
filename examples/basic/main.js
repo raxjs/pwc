@@ -8,9 +8,13 @@ class Child extends HTMLElement {
   @attribute('data-class-name')
   accessor className = 'red';
 
+  @attribute('checked')
+  accessor checked = false;
+
   connectedCallback() {
     super.connectedCallback();
     console.log('connected');
+    console.log('checked => ', this.checked);
   }
 
   get template() {
@@ -46,7 +50,7 @@ class CustomElement extends HTMLElement {
   get template() {
     return html`<div class=${this.className} @click=${this.onClick}>
       ${this.text} - ${this.data.name}
-      <child-element name=${this.data.name} data-class-name=${this.className} />
+      <child-element name=${this.data.name} checked=${true} data-class-name=${this.className} />
     </div>`;
   }
 }
