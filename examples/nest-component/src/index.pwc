@@ -1,29 +1,34 @@
 <template>
   <div class="content">
+    <span>父组件：{{ #data.count }}</span>
+    <button @click={{#addCount}}>+</button>
+    <button @click={{reduceCount}}>-</button>
   </div>
-  <child-component></child-component>
+  <child-component data="{{ #data }}"></child-component>
 </template>
 
 <script>
 import ChildComponent from './components/child.pwc';
 export default class CustomComponent extends HTMLElement {
-  #count = 0;
+  #data = {
+    count: 0
+  };
 
   publicField = 'pwc';
 
 
   #addCount() {
-    this.count = this.count + 1;
+    this.#data.count++;
   }
 
   reduceCount() {
-    this.count = this.count - 1;
+    this.#data.count--;
   }
 }
 </script>
 
 <style>
 .content {
-  color: blue;
+  color: red;
 }
 </style>

@@ -1,11 +1,13 @@
+import { isPrivate, shallowCloneAndFreeze } from '../utils';
 import { getProxyHandler } from './handler';
 
 interface ReactiveType {
-  setValue: (prop: string, val: unknown) => void;
+  initValue: (prop: string, value: unknown) => void;
+
+  setValue: (prop: string, value: unknown, forceUpdate: boolean) => void;
 
   getValue: (prop: string) => unknown;
 
-  setReactiveValue: (prop: string, val: unknown) => void;
 
   // The reactive property if changed will request a update
   requestUpdate: () => void;
@@ -27,22 +29,39 @@ export class Reactive implements ReactiveType {
     this.#element?.requestUpdate();
   }
 
+  initValue(prop: string, value: unknown) {
+    this.setValue(prop, value);
+  }
+
   getValue(prop: string) {
     const key = Reactive.getKey(prop);
     return this.#element[key];
   }
 
-  setValue(prop: string, value: unknown) {
-    const key = Reactive.getKey(prop);
-    this.#element[key] = value;
+  setValue(prop: string, value: unknown, forceUpdate = true) {
+    if (isPrivate(prop)) {
+      this.#setReactiveValue(prop, value);
+    } else {
+      // Clone and Freeze public props and it should not be reactive
+      this.#setNormalValue(prop, shallowCloneAndFreeze(value));
+    }
+
+    if (forceUpdate) {
+      this.requestUpdate();
+    }
   }
 
-  setReactiveValue(prop: string, value: unknown) {
+  #setReactiveValue(prop: string, value: unknown) {
     if (typeof value === 'object') {
       this.#createReactiveProperty(prop, value);
     } else {
-      this.setValue(prop, value);
+      this.#setNormalValue(prop, value);
     }
+  }
+
+  #setNormalValue(prop: string, value: unknown) {
+    const key = Reactive.getKey(prop);
+    this.#element[key] = value;
   }
 
   #createReactiveProperty(prop: string, initialValue: any) {

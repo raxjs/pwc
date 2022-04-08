@@ -59,19 +59,19 @@ function getNestedCustomElement() {
 function getReactiveCustomElement() {
   return class CustomElement extends HTMLElement {
     @reactive
-    accessor text = 'hello';
+    accessor #text = 'hello';
     @reactive
-    accessor className = 'red';
+    accessor #className = 'red';
     @reactive
-    accessor data = {
+    accessor #data = {
       name: 'jack',
     };
     changedClassName = false;
 
     onClick() {
-      this.data.name += '!';
-      this.text += '?';
-      this.className = this.changedClassName ? 'red' : 'green';
+      this.#data.name += '!';
+      this.#text += '?';
+      this.#className = this.changedClassName ? 'red' : 'green';
       this.changedClassName = !this.changedClassName;
     }
     get template() {
@@ -81,15 +81,15 @@ function getReactiveCustomElement() {
           [
             {
               name: 'class',
-              value: this.className,
+              value: this.#className,
             },
             {
               name: 'onclick',
               value: this.onClick.bind(this),
             }
           ],
-          this.text,
-          this.data.name,
+          this.#text,
+          this.#data.name,
         ],
       ];
     }

@@ -10,6 +10,10 @@ export function isPrimitive(value: unknown) {
   return value === null || (typeof value !== 'object' && typeof value !== 'function');
 }
 
+export function isFunction(value: unknown) {
+  return typeof value === 'function';
+}
+
 export function isObject(value: unknown) {
   return typeof value === 'object';
 }

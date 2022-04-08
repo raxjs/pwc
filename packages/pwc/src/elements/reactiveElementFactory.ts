@@ -3,7 +3,7 @@ import { TEXT_COMMENT_DATA, PWC_PREFIX, PLACEHOLDER_COMMENT_DATA } from '../cons
 import { Reactive } from '../reactivity/reactive';
 import type { ReactiveNode } from './reactiveNode';
 import { AttributedNode, TextNode } from './reactiveNode';
-import { shallowEqual, generateUid, isPrivate, shallowCloneAndFreeze } from '../utils';
+import { shallowEqual, generateUid } from '../utils';
 import { enqueueJob } from './sheduler';
 
 export default (Definition) => {
@@ -109,21 +109,12 @@ export default (Definition) => {
       return this.#reactive.getValue(prop);
     }
 
-    setValue(prop: string, val: unknown, forceUpdate = true) {
-      if (isPrivate(prop)) {
-        this.#reactive.setReactiveValue(prop, val);
-      } else {
-        // Public prop should not be reactive
-        this.#reactive.setValue(prop, shallowCloneAndFreeze(val));
-      }
-
-      if (forceUpdate) {
-        this.requestUpdate();
-      }
+    setValue(prop: string, value: unknown) {
+      this.#reactive.setValue(prop, value);
     }
 
-    initValue(prop: string, val: unknown) {
-      this.setValue(prop, val, false);
+    initValue(prop: string, value: unknown) {
+      this.#reactive.initValue(prop, value);
     }
   };
 };
