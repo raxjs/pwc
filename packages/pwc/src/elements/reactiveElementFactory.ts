@@ -25,9 +25,7 @@ export default (Definition) => {
     // Custom element native lifecycle
     connectedCallback() {
       if (!this.#initialized) {
-        if (this.__init_task__) {
-          this.__init_task__();
-        }
+        this.#triggleInitTask();
         this.#currentTemplate = this.template || [];
         const [template, values = []] = this.#currentTemplate;
 
@@ -45,6 +43,10 @@ export default (Definition) => {
     // Extension methods
     _getInitialState() {
       return this.#initialized;
+    }
+
+    #triggleInitTask() {
+      this.__init_task__?.();
     }
 
     #createTemplate(source: string): Node {

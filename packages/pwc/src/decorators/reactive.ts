@@ -9,8 +9,11 @@ export function reactive(value, { kind, name }) {
   return {
     get() {
       if (this._getReflectProperties().has(name)) {
-        return attributeGetter.call(this, name);
+        const attrValue = attributeGetter.call(this, name);
+        // if not set attribute value, return default value
+        if (attrValue !== null) return attrValue;
       }
+
       return this.getReactiveValue(name);
     },
     set(val) {
@@ -21,7 +24,7 @@ export function reactive(value, { kind, name }) {
       }
     },
     init(initialValue) {
-      this.setReactiveValue(name, initialValue);
+      this.initReactiveValue(name, initialValue);
       return initialValue;
     },
   };

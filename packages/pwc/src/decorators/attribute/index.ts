@@ -21,7 +21,7 @@
  */
 import { throwError, throwMinifiedError } from '../../error';
 import { validateAccessor } from '../validateAccessor';
-import type { ReflectProperties } from '../../type';
+import type { ReflectProperties, Attribute } from '../../type';
 import { isBoolean } from '../../utils';
 import { attributeSetter } from './setter';
 import { attributeGetter } from './getter';
@@ -60,10 +60,15 @@ export function attribute(attrName: string) {
           isBoolean: isBooleanValue,
         });
 
+        const attr = {
+          name: attrName,
+          value: attrValue,
+        };
+
         if (isBooleanValue) {
-          initialValue = handleBooleanAttribute(initialValue, attrValue);
+          initialValue = handleBooleanAttribute(initialValue, attr);
         } else {
-          initialValue = handleCommonAttribute(initialValue, attrValue);
+          initialValue = handleCommonAttribute(this, initialValue, attr);
         }
 
         return initialValue;
@@ -85,7 +90,7 @@ function validateReflectedAttr(reflectProperties: ReflectProperties, name: strin
 /**
  * Docs: https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#boolean-attribute
  */
-function handleBooleanAttribute(initialValue: boolean, attrValue: unknown) {
+function handleBooleanAttribute(initialValue: boolean, attr: Attribute) {
   if (__DEV__) {
     if (initialValue !== false) {
       throwError(
@@ -94,10 +99,12 @@ function handleBooleanAttribute(initialValue: boolean, attrValue: unknown) {
     }
   }
 
-  return attrValue !== null;
+  return attr.value !== null;
 }
 
-function handleCommonAttribute(initialValue: string, attrValue: string) {
-  if (attrValue === null) return initialValue;
-  return attrValue;
+function handleCommonAttribute(el: Element, initialValue: string, attr: Attribute) {
+  if (attr.value === null) {
+    return initialValue;
+  }
+  return attr.value;
 }

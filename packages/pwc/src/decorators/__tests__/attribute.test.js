@@ -82,7 +82,7 @@ describe('attribute decorator', () => {
     );
   });
 
-  it('should be right with mix two decorators', () => {
+  it('should be right with mix two decorators', async () => {
     @customElement('custom-element-4')
     class CustomElement extends HTMLElement {
       @reactive
@@ -93,26 +93,33 @@ describe('attribute decorator', () => {
       }
     }
 
-    document.body.innerHTML = '<custom-element-4 attr-name="outside value" />';
-    const el = document.getElementsByTagName('custom-element-4')[0];
+    const el = document.createElement('custom-element-4');
+    el.setAttribute('attr-name', 'outside value');
+    document.body.appendChild(el);
+
     expect(el.attrName).toEqual('outside value');
     el.attrName = 'changed value';
     expect(el.getAttribute('attr-name')).toEqual('changed value');
+    await nextTick();
+    expect(el.innerHTML).toEqual('<div>changed value<!--?pwc_t--></div>');
+  });
 
-    @customElement('custom-element-5')
-    class CustomElement1 extends HTMLElement {
-      @attribute('attr-name')
-      @reactive
-      accessor attrName = 'default value';
-      get template() {
-        return html`<div>${this.attrName}</div>`;
+  it('should throw error without accessor', () => {
+    expect(() => {
+      @customElement('custom-element-5')
+      class CustomElement extends HTMLElement {
+        @attribute('attr-name')
+        attrName = 'default value';
+        get template() {
+          return html`<div>${this.attrName}</div>`;
+        }
       }
-    }
+    }).toThrowError(`The attribute decorator should be added to the class field with accessor, like:
 
-    document.body.innerHTML = '<custom-element-5 attr-name="outside value" />';
-    const el1 = document.getElementsByTagName('custom-element-5')[0];
-    expect(el1.attrName).toEqual('outside value');
-    el1.attrName = 'changed value';
-    expect(el1.getAttribute('attr-name')).toEqual('changed value');
+      class extends HTMLElement {
+        @attribute('attr-name')
+        accessor attrName
+      }
+  `);
   });
 });
