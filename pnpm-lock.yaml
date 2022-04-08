@@ -84,6 +84,7 @@ importers:
       rollup-plugin-css-only: ^3.1.0
       rollup-plugin-livereload: ^2.0.5
       rollup-plugin-pwc: workspace:*
+      rollup-plugin-sourcemaps: ^0.6.3
       sirv-cli: ^2.0.2
     devDependencies:
       '@rollup/plugin-commonjs': 21.0.2_rollup@2.70.1
@@ -93,6 +94,7 @@ importers:
       rollup-plugin-css-only: 3.1.0_rollup@2.70.1
       rollup-plugin-livereload: 2.0.5
       rollup-plugin-pwc: link:../../packages/rollup-plugin-pwc
+      rollup-plugin-sourcemaps: 0.6.3_7bc046d319eaca763ee7da14d7bdb013
       sirv-cli: 2.0.2
 
   examples/nest-component:
@@ -104,6 +106,7 @@ importers:
       rollup-plugin-css-only: ^3.1.0
       rollup-plugin-livereload: ^2.0.5
       rollup-plugin-pwc: workspace:*
+      rollup-plugin-sourcemaps: ^0.6.3
       sirv-cli: ^2.0.2
     devDependencies:
       '@rollup/plugin-commonjs': 21.0.2_rollup@2.70.1
@@ -113,6 +116,7 @@ importers:
       rollup-plugin-css-only: 3.1.0_rollup@2.70.1
       rollup-plugin-livereload: 2.0.5
       rollup-plugin-pwc: link:../../packages/rollup-plugin-pwc
+      rollup-plugin-sourcemaps: 0.6.3_7bc046d319eaca763ee7da14d7bdb013
       sirv-cli: 2.0.2
 
   examples/project:
@@ -124,6 +128,7 @@ importers:
       rollup-plugin-css-only: ^3.1.0
       rollup-plugin-livereload: ^2.0.5
       rollup-plugin-pwc: workspace:*
+      rollup-plugin-sourcemaps: ^0.6.3
       sirv-cli: ^2.0.2
     devDependencies:
       '@rollup/plugin-commonjs': 21.0.2_rollup@2.70.1
@@ -133,6 +138,7 @@ importers:
       rollup-plugin-css-only: 3.1.0_rollup@2.70.1
       rollup-plugin-livereload: 2.0.5
       rollup-plugin-pwc: link:../../packages/rollup-plugin-pwc
+      rollup-plugin-sourcemaps: 0.6.3_7bc046d319eaca763ee7da14d7bdb013
       sirv-cli: 2.0.2
 
   examples/runtime:
@@ -144,6 +150,7 @@ importers:
       rollup-plugin-css-only: ^3.1.0
       rollup-plugin-livereload: ^2.0.5
       rollup-plugin-pwc: workspace:*
+      rollup-plugin-sourcemaps: ^0.6.3
       sirv-cli: ^2.0.2
     devDependencies:
       '@rollup/plugin-commonjs': 21.0.2_rollup@2.70.1
@@ -153,6 +160,7 @@ importers:
       rollup-plugin-css-only: 3.1.0_rollup@2.70.1
       rollup-plugin-livereload: 2.0.5
       rollup-plugin-pwc: link:../../packages/rollup-plugin-pwc
+      rollup-plugin-sourcemaps: 0.6.3_7bc046d319eaca763ee7da14d7bdb013
       sirv-cli: 2.0.2
 
   examples/word-count:
@@ -164,6 +172,7 @@ importers:
       rollup-plugin-css-only: ^3.1.0
       rollup-plugin-livereload: ^2.0.5
       rollup-plugin-pwc: workspace:*
+      rollup-plugin-sourcemaps: ^0.6.3
       sirv-cli: ^2.0.2
     devDependencies:
       '@rollup/plugin-commonjs': 21.0.2_rollup@2.70.1
@@ -173,6 +182,7 @@ importers:
       rollup-plugin-css-only: 3.1.0_rollup@2.70.1
       rollup-plugin-livereload: 2.0.5
       rollup-plugin-pwc: link:../../packages/rollup-plugin-pwc
+      rollup-plugin-sourcemaps: 0.6.3_7bc046d319eaca763ee7da14d7bdb013
       sirv-cli: 2.0.2
 
   packages/pwc:
@@ -2966,6 +2976,12 @@ packages:
     resolution: {integrity: sha1-x57Zf380y48robyXkLzDZkdLS3k=}
     dev: false
 
+  /atob/2.1.2:
+    resolution: {integrity: sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==}
+    engines: {node: '>= 4.5.0'}
+    hasBin: true
+    dev: true
+
   /autoprefixer/10.4.4_postcss@8.4.12:
     resolution: {integrity: sha512-Tm8JxsB286VweiZ5F0anmbyGiNI3v3wGv3mz9W+cxEDYB/6jbnj6GM9H9mK3wIL8ftgl+C07Lcwb8PG5PCCPzA==}
     engines: {node: ^10 || ^12 || >=14}
@@ -3754,6 +3770,11 @@ packages:
   /decimal.js/10.3.1:
     resolution: {integrity: sha512-V0pfhfr8suzyPGOx3nmq4aHqabehUZn6Ch9kyFpV79TGDTWFmHqUqXdabR7QHqxzrYolF4+tVmJhUG4OURg5dQ==}
     dev: false
+
+  /decode-uri-component/0.2.0:
+    resolution: {integrity: sha1-6zkTMzRYd1y4TNGh+uBiEGu4dUU=}
+    engines: {node: '>=0.10'}
+    dev: true
 
   /dedent/0.7.0:
     resolution: {integrity: sha1-JJXduvbrh0q7Dhvp3yLS5aVEMmw=}
@@ -7986,6 +8007,22 @@ packages:
       - ts-node
     dev: true
 
+  /rollup-plugin-sourcemaps/0.6.3_7bc046d319eaca763ee7da14d7bdb013:
+    resolution: {integrity: sha512-paFu+nT1xvuO1tPFYXGe+XnQvg4Hjqv/eIhG8i5EspfYYPBKL57X7iVbfv55aNVASg3dzWvES9dmWsL2KhfByw==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      '@types/node': '>=10.0.0'
+      rollup: '>=0.31.2'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+    dependencies:
+      '@rollup/pluginutils': 3.1.0_rollup@2.70.1
+      '@types/node': 17.0.21
+      rollup: 2.70.1
+      source-map-resolve: 0.6.0
+    dev: true
+
   /rollup-pluginutils/2.8.2:
     resolution: {integrity: sha512-EEp9NhnUkwY8aif6bxgovPHMoMoNr2FulJziTndpt5H9RdwC47GSGuII9XxpSdzVGM0GWrNPHV6ie1LTNJPaLQ==}
     dependencies:
@@ -8151,6 +8188,14 @@ packages:
   /source-map-js/1.0.2:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
     engines: {node: '>=0.10.0'}
+
+  /source-map-resolve/0.6.0:
+    resolution: {integrity: sha512-KXBr9d/fO/bWo97NXsPIAW1bFSBOuCnjbNTBMO7N59hsv5i9yzRDfcYwwt0l04+VqnKC+EwzvJZIP/qkuMgR/w==}
+    deprecated: See https://github.com/lydell/source-map-resolve#deprecated
+    dependencies:
+      atob: 2.1.2
+      decode-uri-component: 0.2.0
+    dev: true
 
   /source-map-support/0.5.21:
     resolution: {integrity: sha512-uBHU3L3czsIyYXKX88fdrGovxdSCoTGDRZ6SYXtSRxLZUzHg5P/66Ht6uoUlHu9EZod+inXhKo3qQgwXUT/y1w==}
