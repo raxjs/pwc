@@ -1,4 +1,4 @@
-import { isPrivate, shallowCloneAndFreeze } from '../utils';
+import { isArray, isObject, isPrivate, shallowCloneAndFreeze } from '../utils';
 import { getProxyHandler } from './handler';
 
 interface ReactiveType {
@@ -7,7 +7,6 @@ interface ReactiveType {
   setValue: (prop: string, value: unknown, forceUpdate: boolean) => void;
 
   getValue: (prop: string) => unknown;
-
 
   // The reactive property if changed will request a update
   requestUpdate: () => void;
@@ -26,7 +25,7 @@ export class Reactive implements ReactiveType {
   }
 
   requestUpdate() {
-    this.#element?.requestUpdate();
+    this.#element?._requestUpdate();
   }
 
   initValue(prop: string, value: unknown) {
@@ -52,7 +51,7 @@ export class Reactive implements ReactiveType {
   }
 
   #setReactiveValue(prop: string, value: unknown) {
-    if (typeof value === 'object') {
+    if (isArray(prop) || isObject(prop)) {
       this.#createReactiveProperty(prop, value);
     } else {
       this.#setNormalValue(prop, value);

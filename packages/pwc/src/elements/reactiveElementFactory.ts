@@ -98,22 +98,22 @@ export default (Definition) => {
       this.#currentTemplate = [strings, values];
     }
 
-    requestUpdate(): void {
+    _requestUpdate(): void {
       enqueueJob({
         uid: this.#uid,
         run: this.#performUpdate.bind(this),
       });
     }
 
-    getValue(prop: string): unknown {
+    _getValue(prop: string): unknown {
       return this.#reactive.getValue(prop);
     }
 
-    setValue(prop: string, value: unknown) {
+    _setValue(prop: string, value: unknown) {
       this.#reactive.setValue(prop, value);
     }
 
-    initValue(prop: string, value: unknown) {
+    _initValue(prop: string, value: unknown) {
       this.#reactive.initValue(prop, value);
     }
   };

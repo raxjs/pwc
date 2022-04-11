@@ -1,21 +1,35 @@
-import { isArray, isFunction, isPrimitive } from './common';
+import { isArray, isObject, isMap, isSet } from './common';
 
+// Shallow Clone the Property value and Freeze it
+// Attention, this only clone Set\Map\Array\Object([Object, Object])
+// and freeze Array\Object props
 export function shallowCloneAndFreeze(value: any) {
-  if (isPrimitive(value) || isFunction(value)) {
-    return value;
+  let props: any;
+
+  if (isSet(value)) {
+    props = new Set(value);
+    return props;
+  }
+
+  if (isMap(value)) {
+    props = new Map(value);
+    return props;
   }
 
   if (isArray(value)) {
-    const props = [...value];
+    props = [...value];
     Object.freeze(props);
     return props;
   }
-  const props = {};
-  for (let propName in value) {
-    props[propName] = value[propName];
+
+  if (isObject(value)) {
+    for (let propName in value) {
+      props[propName] = value[propName];
+    }
+
+    Object.freeze(props);
+    return props;
   }
 
-  Object.freeze(props);
-
-  return props;
+  return value;
 }
