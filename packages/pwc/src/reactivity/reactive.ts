@@ -51,7 +51,7 @@ export class Reactive implements ReactiveType {
   }
 
   #setReactiveValue(prop: string, value: unknown) {
-    if (isArray(prop) || isObject(prop)) {
+    if (isArray(value) || isObject(value)) {
       this.#createReactiveProperty(prop, value);
     } else {
       this.#setNormalValue(prop, value);

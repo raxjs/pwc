@@ -18,7 +18,7 @@ class MockReactiveElement {
   get data() {
     return this.reactive.getValue('#data');
   }
-  requestUpdate() {
+  _requestUpdate() {
     this.isUpdating = true;
   }
 }
@@ -40,7 +40,7 @@ class MockNotReactiveElement {
   get data() {
     return this.reactive.getValue('data');
   }
-  requestUpdate() {
+  _requestUpdate() {
     this.isUpdating = true;
   }
 }

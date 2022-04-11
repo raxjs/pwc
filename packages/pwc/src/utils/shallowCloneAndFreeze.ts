@@ -23,6 +23,7 @@ export function shallowCloneAndFreeze(value: any) {
   }
 
   if (isObject(value)) {
+    props = {};
     for (let propName in value) {
       props[propName] = value[propName];
     }

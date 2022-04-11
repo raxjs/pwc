@@ -15,7 +15,7 @@ export function isFunction(value: unknown) {
 }
 
 export function isObject(value: unknown) {
-  return Object.prototype.toString.call(value) === '[object Object]]';
+  return Object.prototype.toString.call(value) === '[object Object]';
 }
 
 export function isSet(value: unknown) {
