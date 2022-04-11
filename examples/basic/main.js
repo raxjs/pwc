@@ -1,17 +1,15 @@
-import { reactive, customElement } from 'pwc';
+import { reactive, customElement, html } from 'pwc';
 
 class Child extends HTMLElement {
-  privatename = 'Child';
-  connectedCallback() {
-    super.connectedCallback();
-    console.log('connected');
-  }
+  @reactive
+  accessor title = 'Child';
   get template() {
-    return ['<div><!--?pwc_t--></div>', ['Child']];
+    return html`<div>${this.title}</div>`;
   }
 }
 
 window.customElements.define('child-element', Child);
+
 @customElement('custom-element')
 class CustomElement extends HTMLElement {
   changedClassName = false;
@@ -35,27 +33,9 @@ class CustomElement extends HTMLElement {
     this.#className = this.changedClassName ? 'red' : 'green';
     this.changedClassName = !this.changedClassName;
   }
-  // <div class={{className}} @click={{onClick}} >{{text}} - {{name}} <child-element name={{name}}/></div>
   get template() {
-    return [
-      '<!--?pwc_p--><div><!--?pwc_t--> - <!--?pwc_t--><!--?pwc_p--><child-element/></div><!--?pwc_p--><div>click</div>',
-      [
-        [{
-          name: 'click',
-          value: this.#className
-        }],
-        this.#text,
-        this.#data.name,
-        [{
-          name: 'obj',
-          value: this.#data,
-        }],
-        [{
-          name: 'onclick',
-          capture: true,
-          value: this.onClick.bind(this),
-        }]
-      ],
-    ];
+    return html`
+      <div class="${this.#className}" onClick=${this.onClick.bind(this)}>${this.#text} - ${this.#data.name}<child-element title=${this.#data.name}></child-element></div>
+    `;
   }
 }

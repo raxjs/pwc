@@ -1,5 +1,5 @@
 {
-  "name": "project",
+  "name": "edit-word",
   "version": "0.0.0",
   "scripts": {
     "start": "rollup -c -w",
