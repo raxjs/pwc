@@ -1,26 +1,25 @@
 <template>
   <div class="content">
-    <button @click="{{#addCount}}">+</button>
-    {{ #count }}
-    {{ publicField }}
-    <button @click="{{reduceCount}}">-</button>
+    <button @click="{{this.#addCount}}">+</button>
+    {{ this.#count }}
+    {{ this.publicField }}
+    <button @click="{{this.reduceCount}}">-</button>
   </div>
 </template>
 
 <script>
 
 export default class CustomComponent extends HTMLElement {
-  #count = 0;
+  #count = 1010;
 
   publicField = 'pwc';
 
-
-  #addCount() {
-    this.count = this.count + 1;
+  #addCount = () => {
+    this.#count = this.#count + 1;
   }
 
-  reduceCount() {
-    this.count = this.count - 1;
+  reduceCount = () => {
+    this.#count = this.#count - 1;
   }
 }
 </script>
