@@ -66,7 +66,7 @@ class CustomElement extends HTMLElement {
 
 // customEl.itemTitle 返回值为 custom title
 // customEl.getAttribute('attr-item-title') 返回值为 custom title
-<custom-element attr-item-title='custom title'></custom-element>
+<custom-element attr-item-title="custom title"></custom-element>
 ```
 
 
