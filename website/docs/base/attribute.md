@@ -84,7 +84,8 @@ class CustomElement extends HTMLElement {
 
 `attribute` 和 `property` 的具体反射逻辑如下图所示：
 
-<img src='https://img.alicdn.com/imgextra/i3/O1CN01ge2ehT21BmDWLW9JF_!!6000000006947-2-tps-2774-1622.png' />
+<a target="_blank" href="https://img.alicdn.com/imgextra/i3/O1CN01ge2ehT21BmDWLW9JF_!!6000000006947-2-tps-2774-1622.png"><img src='https://img.alicdn.com/imgextra/i3/O1CN01ge2ehT21BmDWLW9JF_!!6000000006947-2-tps-2774-1622.png' /></a>
+
 
 
 ## 什么时候需要用到 attribute 反射？🙈
