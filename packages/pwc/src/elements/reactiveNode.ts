@@ -20,9 +20,12 @@ export class TextNode implements ReactiveNode {
 
 export class AttributedNode implements ReactiveNode {
   #el: Element;
+  isCustomEl: boolean;
+
   constructor(commentNode: Comment, initialAttrs: Attributes) {
     this.#el = commentNode.nextSibling as Element;
     if (window.customElements.get(this.#el.localName)) {
+      this.isCustomEl = true;
       // @ts-ignore
       this.#el.__init_task__ = () => {
         this.#commitAttributes(initialAttrs, true);
@@ -34,6 +37,11 @@ export class AttributedNode implements ReactiveNode {
 
   commitValue(value: Attributes) {
     this.#commitAttributes(value);
+
+    // Any updating should trigger the child components's update method
+    if (this.isCustomEl && (this.#el as any)._requestUpdate) {
+      (this.#el as any)._requestUpdate();
+    }
   }
 
   #commitAttributes(value: Attributes, isInitial = false) {

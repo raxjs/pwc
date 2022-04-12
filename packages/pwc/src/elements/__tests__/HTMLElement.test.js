@@ -1,5 +1,5 @@
 import '../native/HTMLElement';
-import { reactive } from '../../decorators/reactive';
+import { reactive, customElement } from '../../decorators';
 import { nextTick } from '../sheduler';
 import { compileTemplateInRuntime as html } from '@pwc/compiler';
 
@@ -135,7 +135,7 @@ describe('Render HTMLElement', () => {
     const container = document.getElementById('reactive-container');
     container.click();
 
-    nextTick(() => {
+    await nextTick(() => {
       expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="reactive-container" class="green">hello?<!--?pwc_t--> - jack!<!--?pwc_t--></div>');
     });
   });
@@ -161,4 +161,132 @@ describe('Render HTMLElement', () => {
       done();
     });
   });
+});
+
+
+
+describe('Render nested components', () => {
+  const mockChildFn = jest.fn().mockImplementation((obj) => {
+    return html`<div id="child-container"><div onClick=${obj.callback}>${obj.title} - ${obj.data.name} - ${obj.items.join(',')}</div></div>`;
+  })
+  @customElement('child-element')
+  class ChildElement extends HTMLElement {
+    @reactive
+    accessor title = 'Child Element';
+
+    @reactive
+    accessor data = { };
+
+    items = [];
+
+    get template() {
+      return mockChildFn(this);
+    }
+  }
+
+
+  let index = 0;
+
+  @customElement('parent-element')
+  class ParentElement extends HTMLElement {
+    @reactive
+    accessor #title = 'Hello';
+
+    @reactive
+    accessor #data = { name: 'World' };
+
+    @reactive
+    accessor #items = [];
+
+    #callback() {
+      console.log('Click in ChildElement');
+    }
+
+    onClick() {
+      switch(index) {
+        case 0:
+          this.#title += '!';
+          break;
+        case 1:
+          this.#data.name += '!';
+          break;
+        case 2:
+          this.#items.push(index);
+          break;
+        default:
+          break;
+      }
+
+      index++;
+    }
+
+    get template() {
+      return html`
+      <button id="parent-btn" onClick=${this.onClick.bind(this)}>Click</button>
+      <child-element
+        title=${this.#title}
+        data=${this.#data}
+        items=${this.#items}
+        callback=${this.#callback}
+      ></child-element>`;
+    }
+  }
+  
+  const element = document.createElement('parent-element');
+  document.body.appendChild(element);
+
+  it('any reactive data should trigger the update of child components', async () => {
+    const parentBtn = document.getElementById('parent-btn');
+    const childElement = document.getElementById('child-container');
+    expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello<!--?pwc_t--> - World<!--?pwc_t--> - <!--?pwc_t--></div>');
+    expect(mockChildFn).toBeCalledTimes(1);
+
+    // primity type
+    parentBtn.click();
+    await nextTick(() => {
+      expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello!<!--?pwc_t--> - World<!--?pwc_t--> - <!--?pwc_t--></div>');
+      expect(mockChildFn).toBeCalledTimes(2);
+    });
+
+    // object type
+    parentBtn.click();
+    await nextTick(() => {
+      expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello!<!--?pwc_t--> - World!<!--?pwc_t--> - <!--?pwc_t--></div>');
+      expect(mockChildFn).toBeCalledTimes(3);
+    });
+
+    // array type
+    parentBtn.click();
+    await nextTick(() => {
+      expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello!<!--?pwc_t--> - World!<!--?pwc_t--> - 2<!--?pwc_t--></div>');
+      expect(mockChildFn).toBeCalledTimes(4);
+    });
+  });
+
+  it('a direct setter of property with the reactive decorator should trigger the update of components', async () => {
+    const childComponent = document.getElementsByTagName('child-element')[0];
+    const childElement = document.getElementById('child-container');
+
+    // with reactive decorator
+    childComponent.title = 'Hello';
+    await nextTick(() => {
+      expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello<!--?pwc_t--> - World!<!--?pwc_t--> - 2<!--?pwc_t--></div>');
+      expect(mockChildFn).toBeCalledTimes(5);
+    });
+
+    // with reactive decorator
+    childComponent.data = { name: 'Child Element' };
+    await nextTick(() => {
+      expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello<!--?pwc_t--> - Child Element<!--?pwc_t--> - 2<!--?pwc_t--></div>');
+      expect(mockChildFn).toBeCalledTimes(6);
+    });
+
+    // without reactive decorator
+    childComponent.items = [1];
+    await nextTick(() => {
+      expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello<!--?pwc_t--> - Child Element<!--?pwc_t--> - 2<!--?pwc_t--></div>');
+      expect(mockChildFn).toBeCalledTimes(6);
+    });
+  });
+
 });

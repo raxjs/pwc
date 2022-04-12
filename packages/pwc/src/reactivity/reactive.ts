@@ -29,7 +29,7 @@ export class Reactive implements ReactiveType {
   }
 
   initValue(prop: string, value: unknown) {
-    this.setValue(prop, value);
+    this.setValue(prop, value, false);
   }
 
   getValue(prop: string) {

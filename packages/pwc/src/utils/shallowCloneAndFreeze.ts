@@ -4,30 +4,22 @@ import { isArray, isObject, isMap, isSet } from './common';
 // Attention, this only clone Set\Map\Array\Object([Object, Object])
 // and freeze Array\Object props
 export function shallowCloneAndFreeze(value: any) {
-  let props: any;
-
   if (isSet(value)) {
-    props = new Set(value);
-    return props;
+    return new Set(value);
   }
 
   if (isMap(value)) {
-    props = new Map(value);
-    return props;
+    return new Map(value);
   }
 
   if (isArray(value)) {
-    props = [...value];
+    const props = [...value];
     Object.freeze(props);
     return props;
   }
 
   if (isObject(value)) {
-    props = {};
-    for (let propName in value) {
-      props[propName] = value[propName];
-    }
-
+    const props = Object.assign({}, value);
     Object.freeze(props);
     return props;
   }

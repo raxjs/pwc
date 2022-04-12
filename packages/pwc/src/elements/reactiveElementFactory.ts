@@ -99,6 +99,9 @@ export default (Definition) => {
     }
 
     _requestUpdate(): void {
+      if (!this.#initialized) {
+        return;
+      }
       enqueueJob({
         uid: this.#uid,
         run: this.#performUpdate.bind(this),
