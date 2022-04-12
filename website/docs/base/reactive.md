@@ -66,9 +66,9 @@ class CustomComponent extends HTMLElement {
 </script>
 ```
 
-### 深度响应
+### 深响应
 
-在 PWC 中，私有属性的响应式为深度响应。当属性为 `Array` 或 `Object`（此处的 Object 指 `toString` 结果为 `[Object, Object]`） 类型时，在该属性上的任何修改都会被检测到:
+在 PWC 中，私有属性的响应式为深响应。当属性为数组 或 `Plain Object` 类型时，在该属性上的任何修改都会被检测到:
 
 ```js
 class CustomComponent extends HTMLElement {
