@@ -1,8 +1,8 @@
 import { isArray, isObject, isMap, isSet } from './common';
 
 // Shallow Clone the Property value and Freeze it
-// Attention, this only clone Set\Map\Array\Object([Object, Object])
-// and freeze Array\Object props
+// Attention, it only clones Set\Map\Array\Object([Object, Object])
+// and freezes Array\Object props
 export function shallowCloneAndFreeze(value: any) {
   if (isSet(value)) {
     return new Set(value);

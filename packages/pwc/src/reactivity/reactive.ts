@@ -8,7 +8,7 @@ interface ReactiveType {
 
   getValue: (prop: string) => unknown;
 
-  // The reactive property if changed will request a update
+  // If the reactive property changes, it  will request a update
   requestUpdate: () => void;
 }
 

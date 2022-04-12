@@ -137,8 +137,6 @@ el.data.name = 'Tom'; // 深层修改，不会被检测到
 
 例如：[Element](https://developer.mozilla.org/en-US/docs/Web/API/Element) 中的 `className` 表示其节点的类名，在自定义组件时，应当避免创建同名公共属性。
 
-:::
-
 ## 什么属性应该被设置为响应式
 
 在开发时可能会遇到困惑，不知道组件的什么属性应当设置为响应式，这时可根据以下两条准则进行设置：
