@@ -5,7 +5,7 @@ import * as babelParser from '@babel/parser';
 import type { ValueDescriptor } from '../compileTemplate';
 import { isEventName } from '../utils';
 
-const THIS_EXPRESSION_REG = /^this[\.|\[]/;
+const THIS_EXPRESSION_REG = /^this[.|[]/;
 
 function isThisExpression(expression: string): boolean {
   return THIS_EXPRESSION_REG.test(expression);
@@ -23,7 +23,7 @@ function getThisMemberExpressionPropertyName(ast: t.MemberExpression): string | 
     } else if (t.isPrivateName(ast.property)) {
       return `#${ast.property.id.name}`;
     }
-  } else if (t.isMemberExpression(ast.object)){
+  } else if (t.isMemberExpression(ast.object)) {
     return getThisMemberExpressionPropertyName(ast.object);
   }
   return null;
@@ -50,7 +50,8 @@ function getClassPropertyName(expression: string): string | null {
 
 function extractClassPropertyUsedInTemplate(values: ValueDescriptor) {
   const classPropertyUsedInTemplate = [];
-  const shouldCollectProperty = classPropertyName => classPropertyName && !classPropertyUsedInTemplate.includes(classPropertyName);
+  const shouldCollectProperty = classPropertyName =>
+    classPropertyName && !classPropertyUsedInTemplate.includes(classPropertyName);
 
   values.forEach(each => {
     if (typeof each === 'string') {
