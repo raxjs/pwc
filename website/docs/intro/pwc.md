@@ -77,7 +77,7 @@ PWC **推荐使用单文件组件**的形式进行开发，如果你熟悉 Vue�
 
 从上面的例子，你可以发现 PWC 在用法上有以下特点：
 
-- PWC 是[直接扩展的 `HTMLElement` 等基础类](../template/render)，开发者可以使用 Web Component 原有的全部能力
+- PWC 是[直接扩展的 `HTMLElement` 等基础类](../template/base)，开发者可以使用 Web Component 原有的全部能力
 - 开发者在 `template` 模板中使用到的组件属性，默认就[具备响应式的能力](../base/reactive)
 - 快速便捷的[事件绑定](../template/event)方式，开发者可以通过 `@` 修饰符标识需要绑定的事件
 - 开发者可以[直接在 `style` 标签内写样式](../base/style)，并且工程会默认将 style 里样式进行 hash，避免样式污染
