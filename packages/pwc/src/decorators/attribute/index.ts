@@ -6,14 +6,16 @@
  * 2. Attribute has two kinds: (1) Boolean attribute; (2) Common attribute
  *
  *  (1) Boolean attribute:
- *     - property getter: if attribute value is null, it will return false, else return true
+ *     - property getter: if attribute value is null, it will return false, else return true;
+ *                        if attribute value has been changed, it will return the changed boolean value
  *     - property setter: not reflect to attribute, more detail see InputElement checked property
  *     - property init:  the default value must be false,
  *                       and the return value depends on attribute value,
  *                       attribute value is null return false, else return true
  * (2) Common attribute:
- *     - property getter: directly return attribute value
- *     - property setter: directly set attribute
+ *     - property getter: if attribute value has been changed, it will return the changed value,
+ *                        else return attribute value
+ *     - property setter: not reflect to attribute
  *     - property init: if attribute value is null, return default value; else return attribute value
  *
  *  Minify code:
@@ -25,13 +27,19 @@ import type { ReflectProperties, Attribute } from '../../type';
 import { isBoolean } from '../../utils';
 import { attributeSetter } from './setter';
 import { attributeGetter } from './getter';
+import { validatePrivate } from './validatePrivate';
 
 const __DEV__ = process.env.NODE_ENV !== 'production';
 
 export function attribute(attrName: string) {
-  return (value, { kind, name }) => {
+  return (value, { kind, name, isPrivate }) => {
     // Validate accessor operator
     validateAccessor(kind, `@attribute('${attrName}')`, name);
+
+    // Validate private class field
+    if (__DEV__) {
+      validatePrivate(isPrivate);
+    }
 
     return {
       get() {
@@ -55,11 +63,6 @@ export function attribute(attrName: string) {
         // Validate the repeated attribute name
         validateReflectedAttr(reflectProperties, name, attrName);
 
-        reflectProperties.set(name, {
-          attrName,
-          isBoolean: isBooleanValue,
-        });
-
         const attr = {
           name: attrName,
           value: attrValue,
@@ -70,6 +73,12 @@ export function attribute(attrName: string) {
         } else {
           initialValue = handleCommonAttribute(this, initialValue, attr);
         }
+
+        reflectProperties.set(name, {
+          attrName,
+          isBoolean: isBooleanValue,
+          initialValue,
+        });
 
         return initialValue;
       },

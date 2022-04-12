@@ -1,8 +1,16 @@
+import { hasOwnProperty } from '../../utils';
+
 export function attributeGetter(name: string) {
-  const { isBoolean, attrName } = this._getReflectProperties().get(name);
-  const attrValue = this.getAttribute(attrName);
-  if (isBoolean) {
-    return attrValue !== null;
+  const store = this._getReflectProperties().get(name);
+  const { isBoolean, attrName, initialValue } = store;
+
+  // Store value is highest weight
+  if (hasOwnProperty(store, 'value')) {
+    return store.value;
   }
-  return attrValue;
+
+  const attrValue = this.getAttribute(attrName);
+  if (attrValue === null && initialValue !== undefined) return initialValue;
+
+  return isBoolean || attrValue;
 }

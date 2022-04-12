@@ -1,9 +1,9 @@
 export function attributeSetter(val: unknown, name: string) {
-  // Boolean attribute not reflect to attribute
-  const { isBoolean, attrName } = this._getReflectProperties().get(name);
-  if (isBoolean && val === false) {
-    this.removeAttribute(attrName);
+  // property not reflect to attribute
+  const store = this._getReflectProperties().get(name);
+  if (store.isBoolean) {
+    store.value = Boolean(val);
   } else {
-    this.setAttribute(attrName, val);
+    store.value = val;
   }
 }

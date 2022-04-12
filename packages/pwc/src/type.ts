@@ -28,4 +28,6 @@ export type Warning = ((template: string, ...args: any[]) => void);
 export type ReflectProperties = Map<string, {
   attrName: string;
   isBoolean: boolean;
+  value?: unknown;
+  initialValue: unknown;
 }>;

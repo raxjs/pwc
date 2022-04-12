@@ -22,15 +22,7 @@ describe('attribute decorator', () => {
     const el = document.getElementsByTagName(localName)[0];
     expect(el.attrName).toEqual('outside value');
     el.attrName = 'changed value';
-    expect(el.getAttribute('attr-name')).toEqual('changed value');
-    // set object
-    el.attrName = {
-      x: 1,
-    };
-    expect(el.getAttribute('attr-name')).toEqual('[object Object]');
-    // set array
-    el.attrName = [1, 2, 3];
-    expect(el.getAttribute('attr-name')).toEqual('1,2,3');
+    expect(el.getAttribute('attr-name')).toEqual('outside value');
   });
 
   it('should reflect boolean attribute', () => {
@@ -50,7 +42,6 @@ describe('attribute decorator', () => {
           <custom-element-1 attr-toggle=${true}></custom-element-1>`;
       }
     }
-
     document.body.innerHTML = `<${parentLocalName} />`;
     const el = document.getElementsByTagName(childLocalName)[0];
     expect(el.toggle).toEqual(false);
@@ -72,11 +63,15 @@ describe('attribute decorator', () => {
 
     // change property
     el.toggle = false;
-    expect(el.getAttribute('attr-toggle')).toEqual(null);
+    expect(el.getAttribute('attr-toggle')).toEqual('[object Object]');
 
     // render with parent
     const el1 = document.getElementsByTagName(childLocalName)[1];
     expect(el1.toggle).toEqual(true);
+    // change property
+    el1.toggle = false;
+    expect(el1.toggle).toEqual(false);
+    expect(el1.getAttribute('attr-toggle')).toEqual('true');
   });
 
   it('should get right property value when first render', () => {
@@ -124,7 +119,7 @@ describe('attribute decorator', () => {
 
     expect(el.attrName).toEqual('outside value');
     el.attrName = 'changed value';
-    expect(el.getAttribute('attr-name')).toEqual('changed value');
+    expect(el.getAttribute('attr-name')).toEqual('outside value');
     await nextTick();
     expect(el.innerHTML).toEqual('<div>changed value<!--?pwc_t--></div>');
   });

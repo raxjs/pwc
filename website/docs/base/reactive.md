@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 0
 ---
 
 # 响应式更新
@@ -31,25 +31,12 @@ A: 带有 `accessor` 关键字的属性会自动生成 `setter` 和 `getter`。 
 
 ::: 
 
-### 反射到 Attributes 上
+:::caution 注意事项
 
-```js
-import { reactive } from 'pwc';
+- 当属性上存在多个装饰器时，一定要保证 `reactive` 装饰器在
 
-class CustomElement extends HTMLElement {
-  @reactive
-  @attribute('attr-data')
-  accessor data = 'custom';
-}
-```
+::: 
 
-渲染后的视图：
-
-```html
-<custom-element attr-data="custom"></custom-element>
-```
-
-// TODO 类型介绍
 
 ## 使用范围
 
