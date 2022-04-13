@@ -1,8 +1,8 @@
 <template>
-  <form class="{{editVisiblityClass}}">
-    <input class="editInput" value="{{editValue}}" @input="{{onInput}}" @blur="{{onBlur}}" />
+  <form class="{{this.editVisiblityClass}}">
+    <input class="editInput" value="{{this.editValue}}" @input="{{this.onInput}}" @blur="{{this.onBlur}}" />
   </form>
-  <span @click="{{onClick}}" class="{{textVisiblityClass}}">{{editValue}}</span>
+  <span @click="{{this.onClick}}" class="{{this.textVisiblityClass}}">{{this.editValue}}</span>
 </template>
 
 <script>
@@ -17,17 +17,17 @@
 
     textVisiblityClass = 'show';
 
-    onClick() {
+    onClick = () => {
       this.editable = true;
       this.editVisiblityClass = 'show';
       this.textVisiblityClass = 'hide';
     }
 
-    onInput(event) {
+    onInput = (event) => {
       this.editValue = event.srcElement.value;
     }
 
-    onBlur() {
+    onBlur = () => {
       this.editable = false;
       this.editVisiblityClass = 'hide';
       this.textVisiblityClass = 'show';

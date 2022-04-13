@@ -1,5 +1,5 @@
 <template>
-  <article contenteditable="" @input="{{onInput}}" id="article">
+  <article contenteditable="" @input="{{this.onInput}}" id="article">
     <h2>Sample heading</h2>
 
     <p>
@@ -21,7 +21,7 @@
       enim accumsan feugiat et sed augue. Donec nisl metus, sollicitudin eu tempus a, scelerisque sed diam.
     </p>
   </article>
-  <p>{{count}}</p>
+  <p>{{this.count}}</p>
 </template>
 
 <script>
@@ -40,7 +40,7 @@
       this.count = countWords(this.articleNode);
     }
 
-    onInput(event) {
+    onInput = (event) => {
       this.count = countWords(this.articleNode);
     }
   }
