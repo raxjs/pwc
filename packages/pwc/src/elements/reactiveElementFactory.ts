@@ -1,4 +1,4 @@
-import type { ElementTemplate, PWCElement, RootElement } from '../type';
+import type { ElementTemplate, PWCElement, ReflectProperties, RootElement } from '../type';
 import { TEXT_COMMENT_DATA, PWC_PREFIX, PLACEHOLDER_COMMENT_DATA } from '../constants';
 import { Reactive } from '../reactivity/reactive';
 import type { ReactiveNode } from './reactiveNode';
@@ -19,6 +19,8 @@ export default (Definition: PWCElement) => {
     #reactiveNodes: ReactiveNode[];
     // Reactive instance
     #reactive: Reactive = new Reactive(this);
+    // Reflect properties
+    #reflectProperties: ReflectProperties = new Map();
     // Init task
     #initTask: () => void;
 
@@ -120,6 +122,10 @@ export default (Definition: PWCElement) => {
 
     _initValue(prop: string, value: unknown) {
       this.#reactive.initValue(prop, value);
+    }
+
+    _getReflectProperties() {
+      return this.#reflectProperties;
     }
   };
 };

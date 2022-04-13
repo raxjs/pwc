@@ -34,7 +34,7 @@ PWC 中的属性绑定可帮助你设置 HTML 元素或 PWC 组件的属性值�
 
 上述示例中，img 的 `src` 属性将与 PWC 组件中的 `imageUrl` 值保持同步。
 
-Attribute 与 Property 绑定均使用以上语法。关于二者区别，可参考[//TODO](./reactive)
+Attribute 与 Property 绑定均使用以上语法。关于二者区别，可参考[//TODO](../base/reactive)
 
 ### 指令
 

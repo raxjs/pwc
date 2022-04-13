@@ -27,3 +27,12 @@ export interface CustomHTMLBaseElement extends HTMLBaseElement {
   template?: ElementTemplate;
   shadowOptions: ShadowRootInit;
 }
+
+export type Warning = ((template: string, ...args: any[]) => void);
+
+export type ReflectProperties = Map<string, {
+  attrName: string;
+  isBoolean: boolean;
+  value?: unknown;
+  initialValue: unknown;
+}>;
