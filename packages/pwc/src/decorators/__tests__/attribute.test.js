@@ -25,7 +25,7 @@ describe('attribute decorator', () => {
     expect(el.getAttribute('attr-name')).toEqual('outside value');
   });
 
-  it('should reflect boolean attribute', () => {
+  it('should reflect boolean attribute', async () => {
     const childLocalName = genLocalName();
     const parentLocalName = genLocalName();
 
@@ -43,6 +43,7 @@ describe('attribute decorator', () => {
       }
     }
     document.body.innerHTML = `<${parentLocalName} />`;
+    await nextTick();
     const el = document.getElementsByTagName(childLocalName)[0];
     expect(el.toggle).toEqual(false);
     // set null
@@ -74,7 +75,7 @@ describe('attribute decorator', () => {
     expect(el1.getAttribute('attr-toggle')).toEqual('true');
   });
 
-  it('should get right property value when first render', () => {
+  it('should get right property value when first render', async () => {
     const childLocalName = genLocalName();
     const parentLocalName = genLocalName();
     @customElement(childLocalName)
@@ -96,6 +97,7 @@ describe('attribute decorator', () => {
 
     const el = document.createElement(parentLocalName);
     document.body.appendChild(el);
+    await nextTick();
     expect(el.innerHTML).toEqual(
       `<!--?pwc_p--><${childLocalName} item-title="title"><div>title<!--?pwc_t--></div></${childLocalName}>`,
     );

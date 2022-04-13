@@ -41,7 +41,12 @@ class CustomElement extends HTMLElement {
   @reactive
   accessor #className = 'red';
 
-  onClick = () => {
+  connectedCallback() {
+    super.connectedCallback();
+    console.log('parent connected');
+  }
+
+  onClick() {
     this.#data.name += '!';
     this.#text += '?';
     this.className = this.className === 'green' ? 'red' : 'green';
