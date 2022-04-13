@@ -1,62 +1,41 @@
-import { reactive, customElement } from 'pwc';
+import { reactive, customElement, html } from 'pwc';
+
+class Child extends HTMLElement {
+  @reactive
+  accessor title = 'Child';
+  get template() {
+    return html`<div>${this.title}</div>`;
+  }
+}
+
+window.customElements.define('child-element', Child);
 
 @customElement('custom-element')
 class CustomElement extends HTMLElement {
   changedClassName = false;
 
   @reactive
-  accessor data = {
-    name: 'jack',
+  accessor #data = {
+    name: 'jack!',
   };
 
   @reactive
-  accessor text = 'hello';
+  accessor #text = 'hello';
   @reactive
-  accessor className = 'red';
+  accessor #className = 'red';
 
   connectedCallback() {
     super.connectedCallback();
   }
   onClick() {
-    // console.log(this.data);
-    this.data.name += '!';
-    this.text += '?';
-    this.className = this.changedClassName ? 'red' : 'green';
+    this.#data.name += '!';
+    this.#text += '?';
+    this.#className = this.changedClassName ? 'red' : 'green';
     this.changedClassName = !this.changedClassName;
-    // this.names.push('Tom');
-  }
-  // <div class={{className}} @click={{onClick}} >{{text}} - {{name}} <child-element name={{name}}/></div>
-  get template() {
-    return [
-      '<!--?pwc_p--><div><!--?pwc_t--> - <!--?pwc_t--><!--?pwc_p--><child-element/></div>',
-      [
-        {
-          class: this.className,
-          onclick: {
-            handler: this.onClick.bind(this),
-            capture: true,
-          },
-        },
-        this.text,
-        this.data.name,
-        {
-          name: this.data.name,
-        },
-      ],
-    ];
-  }
-}
-
-
-class Child extends HTMLElement {
-  privatename = 'Child';
-  connectedCallback() {
-    super.connectedCallback();
-    console.log('connected');
   }
   get template() {
-    return ['<div><!--?pwc_t--></div>', ['Child']];
+    return html`
+      <div class="${this.#className}" onClick=${this.onClick.bind(this)}>${this.#text} - ${this.#data.name}<child-element title=${this.#data.name}></child-element></div>
+    `;
   }
 }
-
-window.customElements.define('child-element', Child);

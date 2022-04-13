@@ -1,10 +1,5 @@
-import { hasOwnProperty, isArray } from '../utils';
+import { hasOwnProperty, isArray, toRaw } from '../utils';
 import { ReactiveFlags } from '../constants';
-
-function toRaw(observed: object): object {
-  const raw = observed && observed[ReactiveFlags.RAW];
-  return raw ? toRaw(raw) : observed;
-}
 
 function get(
   target: object,

@@ -1,5 +1,6 @@
 import { isEventName } from '../utils/isEventName';
 import type { Attributes } from '../type';
+import { toRaw } from '../utils';
 
 export function commitAttributes(element: Element, attrs: Attributes, isInitial = false) {
   for (const attr of attrs) {
@@ -12,7 +13,7 @@ export function commitAttributes(element: Element, attrs: Attributes, isInitial 
       element.addEventListener(name.slice(2).toLowerCase(), value, capture);
     } else if (name in element) {
       // Verify that there is a target property on the element
-      element[name] = value;
+      element[name] = toRaw(value);
     } else {
       element.setAttribute(name, value);
     }

@@ -1,0 +1,29 @@
+<template>
+  <div class="child">
+    <span>子组件：{{ data.count }}</span>
+    <button @click={{#addCount}}>+</button>
+    <button @click={{reduceCount}}>-</button>
+  </div>
+</template>
+
+<script>
+import { reactive } from 'pwc';
+export default class ChildComponent extends HTMLElement {
+  @reactive
+  accessor data = {};
+
+  #addCount() {
+    this.data.count++;
+  }
+
+  reduceCount() {
+    this.data.count--;
+  }
+}
+</script>
+
+<style>
+.child {
+  color: blue;
+}
+</style>
