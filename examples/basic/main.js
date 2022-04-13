@@ -1,9 +1,27 @@
-import { reactive, customElement } from 'pwc';
+import { reactive, customElement, html, nextTick } from 'pwc';
+
+@customElement('child-element')
+class Child extends HTMLElement {
+  name = 'Child';
+
+  @reactive
+  accessor itemtitle = 'default title';
+
+  connectedCallback() {
+    super.connectedCallback();
+    console.log('child connected');
+  }
+
+  get template() {
+    return html`<div>
+      Child ${this.name}
+      <div>parent class name is ${this.itemtitle}</div>
+    </div>`;
+  }
+}
 
 @customElement('custom-element')
 class CustomElement extends HTMLElement {
-  changedClassName = false;
-
   @reactive
   accessor data = {
     name: 'jack',
@@ -11,52 +29,29 @@ class CustomElement extends HTMLElement {
 
   @reactive
   accessor text = 'hello';
+
   @reactive
   accessor className = 'red';
 
   connectedCallback() {
     super.connectedCallback();
+    console.log('parent connected');
   }
-  onClick() {
-    // console.log(this.data);
+
+  onClick = () => {
     this.data.name += '!';
     this.text += '?';
-    this.className = this.changedClassName ? 'red' : 'green';
-    this.changedClassName = !this.changedClassName;
-    // this.names.push('Tom');
-  }
-  // <div class={{className}} @click={{onClick}} >{{text}} - {{name}} <child-element name={{name}}/></div>
+    this.className = this.className === 'green' ? 'red' : 'green';
+  };
+
   get template() {
-    return [
-      '<!--?pwc_p--><div><!--?pwc_t--> - <!--?pwc_t--><!--?pwc_p--><child-element/></div>',
-      [
-        {
-          class: this.className,
-          onclick: {
-            handler: this.onClick.bind(this),
-            capture: true,
-          },
-        },
-        this.text,
-        this.data.name,
-        {
-          name: this.data.name,
-        },
-      ],
-    ];
+    return html`<div class=${this.className} @click=${this.onClick}>
+      ${this.text}
+      <child-element name=${this.data.name} itemtitle=${'outside title'}></child-element>
+      <div>Parent: ${this.data.name}</div>
+    </div>`;
   }
 }
 
 
-class Child extends HTMLElement {
-  privatename = 'Child';
-  connectedCallback() {
-    super.connectedCallback();
-    console.log('connected');
-  }
-  get template() {
-    return ['<div><!--?pwc_t--></div>', ['Child']];
-  }
-}
 
-window.customElements.define('child-element', Child);

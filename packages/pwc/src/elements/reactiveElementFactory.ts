@@ -1,40 +1,50 @@
-import type { ElementTemplate, PWCElement } from '../type';
+import type { ElementTemplate, PWCElement, RootElement } from '../type';
 import { TEXT_COMMENT_DATA, PWC_PREFIX, PLACEHOLDER_COMMENT_DATA } from '../constants';
 import { Reactive } from '../reactivity/reactive';
 import type { ReactiveNode } from './reactiveNode';
 import { AttributedNode, TextNode } from './reactiveNode';
 import { shallowEqual, generateUid } from '../utils';
-import { enqueueJob } from './sheduler';
+import { enqueueJob, nextTick } from './sheduler';
 
-export default (Definition) => {
-  return class extends Definition implements PWCElement {
+export default (Definition: PWCElement) => {
+  return class extends Definition {
     #uid: number = generateUid();
     // Component initial state
     #initialized = false;
-    // The root fragment
-    #fragment: Node;
+    // The root element
+    #root: RootElement;
     // Template info
     #currentTemplate: ElementTemplate;
     // Reactive nodes
     #reactiveNodes: ReactiveNode[];
     // Reactive instance
     #reactive: Reactive = new Reactive(this);
+    // Init task
+    #initTask: () => void;
+
+    get template() {
+      return [] as ElementTemplate;
+    }
 
     // Custom element native lifecycle
     connectedCallback() {
       if (!this.#initialized) {
-        if (this.__init_task__) {
-          this.__init_task__();
-        }
-        this.#currentTemplate = this.template || [];
-        const [template, values = []] = this.#currentTemplate;
-
-        this.#fragment = this.#createTemplate(template);
-
-        this.#initRenderTemplate(this.#fragment, values);
-        this.appendChild(this.#fragment);
+        this.#initTask = () => {
+          this.#currentTemplate = this.template || [];
+          const [template, values = []] = this.#currentTemplate;
+          this.#root = this.shadowRoot || this;
+          this.#root.innerHTML = template;
+          this.#initRenderTemplate(this.#root, values);
+          this.#initialized = true;
+        };
+        // Avoid child component connectedCallback triggle before parent component
+        nextTick(() => {
+          if (this.#initTask) {
+            this.#initTask();
+            this.#initTask = null;
+          }
+        });
       }
-      this.#initialized = true;
     }
     disconnectedCallback() {}
     attributeChangedCallback() {}
@@ -45,16 +55,7 @@ export default (Definition) => {
       return this.#initialized;
     }
 
-    #createTemplate(source: string): Node {
-      const template = document.createElement('template');
-
-      // TODO: xss
-      template.innerHTML = source;
-
-      return template.content.cloneNode(true);
-    }
-
-    #initRenderTemplate(fragment: Node, values) {
+    #initRenderTemplate(fragment: RootElement, values) {
       const nodeIterator = document.createNodeIterator(fragment, NodeFilter.SHOW_COMMENT, {
         acceptNode(node) {
           if ((node as Comment).data?.includes(PWC_PREFIX)) {

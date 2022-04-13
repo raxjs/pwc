@@ -22,14 +22,7 @@ export class AttributedNode implements ReactiveNode {
   #el: Element;
   constructor(commentNode: Comment, initialAttrs: Attributes) {
     this.#el = commentNode.nextSibling as Element;
-    if (window.customElements.get(this.#el.localName)) {
-      // @ts-ignore
-      this.#el.__init_task__ = () => {
-        this.#commitAttributes(initialAttrs, true);
-      };
-    } else {
-      this.#commitAttributes(initialAttrs, true);
-    }
+    this.#commitAttributes(initialAttrs, true);
   }
 
   commitValue(value: Attributes) {

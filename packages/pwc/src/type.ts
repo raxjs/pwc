@@ -1,9 +1,13 @@
-export interface PWCElement {
-  connectedCallback?: () => void;
-  disconnectedCallback?: () => void;
-  attributeChangedCallback?: (name: string, oldValue: any, newValue: any) => void;
-  adoptedCallback?: () => void;
+export interface PWCElement extends Element {
+  connectedCallback(): void;
+  disconnectedCallback(): void;
+  attributeChangedCallback(name: string, oldValue: any, newValue: any): void;
+  adoptedCallback(): void;
+  prototype: PWCElement;
+  new(): PWCElement;
 }
+
+export type RootElement = PWCElement | ShadowRoot;
 
 export interface Attribute {
   name: string;

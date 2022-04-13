@@ -97,12 +97,13 @@ function getReactiveCustomElement() {
 }
 
 describe('Render HTMLElement', () => {
-  it('should render simple element', () => {
+  it('should render simple element', async () => {
     const CustomElement = getSimpleCustomElement();
     const mockClick = jest.spyOn(CustomElement.prototype, 'onClick');
     window.customElements.define('custom-element', CustomElement);
     const element = document.createElement('custom-element');
     document.body.appendChild(element);
+    await nextTick();
     expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="container">hello<!--?pwc_t--> - jack<!--?pwc_t--></div>');
 
     const container = document.getElementById('container');
@@ -110,12 +111,13 @@ describe('Render HTMLElement', () => {
     expect(mockClick).toBeCalled();
   });
 
-  it('should render nested elements', () => {
+  it('should render nested elements', async () => {
     const CustomElement = getNestedCustomElement();
     const mockClick = jest.spyOn(CustomElement.prototype, 'onClick');
     window.customElements.define('custom-nested-element', CustomElement);
     const element = document.createElement('custom-nested-element');
     document.body.appendChild(element);
+    await nextTick();
     expect(element.innerHTML).toEqual(
       '<!--?pwc_p--><div id="nested-container">hello<!--?pwc_t--> <div>This is title<!--?pwc_t--></div> nested<!--?pwc_t--></div>',
     );
@@ -130,6 +132,7 @@ describe('Render HTMLElement', () => {
     window.customElements.define('custom-reactive-element', CustomElement);
     const element = document.createElement('custom-reactive-element');
     document.body.appendChild(element);
+    await nextTick();
     expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="reactive-container" class="red">hello<!--?pwc_t--> - jack<!--?pwc_t--></div>');
 
     const container = document.getElementById('reactive-container');
@@ -140,13 +143,17 @@ describe('Render HTMLElement', () => {
     });
   });
 
-  it('should trigger template method as expected', (done) => {
+  it('should trigger template method as expected', async () => {
     const mockFn = jest.fn().mockImplementation((text) => {
       return html`<div>${text}</div>`;
     });
     class CustomElement extends HTMLElement {
       @reactive
       accessor text = 'hello';
+      constructor() {
+        super();
+        this.text = 'constructor';
+      }
       get template() {
         return mockFn(this.text);
       }
@@ -154,11 +161,11 @@ describe('Render HTMLElement', () => {
     window.customElements.define('custom-runtime-component', CustomElement);
     const element = document.createElement('custom-runtime-component');
     document.body.appendChild(element);
+    await nextTick();
+    expect(element.text).toEqual('constructor');
     expect(mockFn).toBeCalledTimes(1);
     element.text = 'world';
-    nextTick(() => {
-      expect(mockFn).toBeCalledTimes(2);
-      done();
-    });
+    await nextTick();
+    expect(mockFn).toBeCalledTimes(2);
   });
 });
