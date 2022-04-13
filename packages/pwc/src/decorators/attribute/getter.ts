@@ -10,7 +10,9 @@ export function attributeGetter(name: string) {
   }
 
   const attrValue = this.getAttribute(attrName);
-  if (attrValue === null && initialValue !== undefined) return initialValue;
+  if (attrValue === null && initialValue !== undefined) {
+    return initialValue;
+  }
 
   return isBoolean || attrValue;
 }

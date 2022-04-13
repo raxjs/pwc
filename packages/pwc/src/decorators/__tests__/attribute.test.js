@@ -143,4 +143,19 @@ describe('attribute decorator', () => {
       }
   `);
   });
+
+  it('should work without initialValue', async () => {
+    @customElement('custom-element-a')
+    class CustomElement extends HTMLElement {
+      @attribute('attr-name')
+      accessor attrName;
+      get template() {
+        return html`<div>${this.attrName}</div>`;
+      }
+    }
+    document.body.innerHTML = '<custom-element-a attr-name="outside value"></custom-element-a>';
+    await nextTick();
+    const el = document.getElementsByTagName('custom-element-a')[0];
+    expect(el.attrName).toEqual('outside value');
+  });
 });
