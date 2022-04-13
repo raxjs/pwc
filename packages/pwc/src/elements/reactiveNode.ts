@@ -7,6 +7,7 @@ export interface ReactiveNode {
 
 export class TextNode implements ReactiveNode {
   #el: Text;
+
   constructor(commentNode: Comment, initialValue: string) {
     const textNode = document.createTextNode(initialValue);
     this.#el = textNode;
@@ -20,10 +21,13 @@ export class TextNode implements ReactiveNode {
 
 export class AttributedNode implements ReactiveNode {
   #el: Element;
+  #root: PWCElement;
   #isCustomEl: boolean;
 
-  constructor(commentNode: Comment, initialAttrs: Attributes) {
+  constructor(commentNode: Comment, initialAttrs: Attributes, rootNode: PWCElement) {
     this.#el = commentNode.nextSibling as Element;
+    this.#root = rootNode;
+
     if (window.customElements.get(this.#el.localName)) {
       this.#isCustomEl = true;
       // @ts-ignore
@@ -45,6 +49,6 @@ export class AttributedNode implements ReactiveNode {
   }
 
   #commitAttributes(value: Attributes, isInitial = false) {
-    commitAttributes(this.#el, value, isInitial);
+    commitAttributes(this.#el, value, isInitial, this.#root);
   }
 }
