@@ -33,6 +33,7 @@ export default (Definition: PWCElement) => {
           this.#currentTemplate = this.template || [];
           const [template, values = []] = this.#currentTemplate;
           this.#root = this.shadowRoot || this;
+          // TODO: xss
           this.#root.innerHTML = template;
           this.#initRenderTemplate(this.#root, values);
           this.#initialized = true;
