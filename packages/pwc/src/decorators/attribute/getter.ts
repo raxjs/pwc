@@ -4,7 +4,7 @@ export function attributeGetter(name: string) {
   const store = this._getReflectProperties().get(name);
   const { isBoolean, attrName, initialValue } = store;
 
-  // Store value is highest weight
+  // Store value has highest weight
   if (hasOwnProperty(store, 'value')) {
     return store.value;
   }
