@@ -1,21 +1,12 @@
 import type { File } from '@babel/types';
 import * as t from '@babel/types';
 import babelTraverse from '@babel/traverse';
-import { isPrivateField } from '../utils';
 
-import type { CompileTemplateResult } from '../compileTemplate';
+import type { CompileTemplateResult, AttributeDescriptor } from '../compileTemplate';
 
-function createObjectProperty(key, value, isEvent = false) {
+function createObjectProperty(key, value) {
   if (key === 'value') {
-    let valueExpression;
-    if (isEvent) {
-      // this.xxx.bind(this)
-      valueExpression = t.callExpression(t.memberExpression(createThisMemberExpression(value, !isPrivateField(value)), t.identifier('bind')), [t.thisExpression()]);
-    } else {
-      // this.xxx
-      valueExpression = createThisMemberExpression(value, !isPrivateField(value));
-    }
-    return t.objectProperty(t.identifier(key), valueExpression);
+    return t.objectProperty(t.identifier(key), createIdentifier(value));
   } else if (key === 'name') {
     return t.objectProperty(t.identifier(key), t.stringLiteral(value));
   } else if (key === 'capture') {
@@ -23,10 +14,9 @@ function createObjectProperty(key, value, isEvent = false) {
   }
 }
 
-function createObjectExpression(obj: object) {
-  const isEvent = 'capture' in obj;
+function createObjectExpression(obj: AttributeDescriptor) {
   return t.objectExpression(Object.entries(obj).map(([key, value]) => {
-    return createObjectProperty(key, value, isEvent);
+    return createObjectProperty(key, value);
   }));
 }
 
@@ -34,14 +24,9 @@ function createArrayExpression(elements) {
   return t.arrayExpression(elements);
 }
 
-// If computed is true, return this['xxx']
-// else return this.xxx
-function createThisMemberExpression(value, computed = true) {
-  if (computed) {
-    return t.memberExpression(t.thisExpression(), t.stringLiteral(value), computed);
-  } else {
-    return t.memberExpression(t.thisExpression(), t.identifier(value), computed);
-  }
+// this.xxx
+function createIdentifier(value) {
+  return t.identifier(value);
 }
 
 /**
@@ -74,7 +59,7 @@ export default function genGetTemplateMethod(ast: File, templateResult: CompileT
           const templateValuesExpression = createArrayExpression(values.map(val => {
             if (typeof val === 'string') {
               // 1 variables
-              return createThisMemberExpression(val, !isPrivateField(val));
+              return createIdentifier(val);
             } else {
               // 2. events and props
               /*
