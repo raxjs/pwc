@@ -99,23 +99,26 @@ export default (Definition: PWCElement) => {
       this.#currentTemplate = [strings, values];
     }
 
-    requestUpdate(): void {
+    _requestUpdate(): void {
+      if (!this.#initialized) {
+        return;
+      }
       enqueueJob({
         uid: this.#uid,
         run: this.#performUpdate.bind(this),
       });
     }
 
-    getReactiveValue(prop: string): unknown {
-      return this.#reactive.getReactiveValue(prop);
+    _getValue(prop: string): unknown {
+      return this.#reactive.getValue(prop);
     }
 
-    setReactiveValue(prop: string, val: unknown) {
-      this.#reactive.setReactiveValue(prop, val);
+    _setValue(prop: string, value: unknown) {
+      this.#reactive.setValue(prop, value);
     }
 
-    initReactiveValue(prop: string, val: unknown) {
-      this.#reactive.initReactiveValue(prop, val);
+    _initValue(prop: string, value: unknown) {
+      this.#reactive.initValue(prop, value);
     }
   };
 };

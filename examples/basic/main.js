@@ -1,57 +1,40 @@
-import { reactive, customElement, html, nextTick } from 'pwc';
+import { reactive, customElement, html } from 'pwc';
 
-@customElement('child-element')
 class Child extends HTMLElement {
-  name = 'Child';
-
   @reactive
-  accessor itemtitle = 'default title';
-
-  connectedCallback() {
-    super.connectedCallback();
-    console.log('child connected');
-  }
-
+  accessor title = 'Child';
   get template() {
-    return html`<div>
-      Child ${this.name}
-      <div>parent class name is ${this.itemtitle}</div>
-    </div>`;
+    return html`<div>${this.title}</div>`;
   }
 }
+
+window.customElements.define('child-element', Child);
 
 @customElement('custom-element')
 class CustomElement extends HTMLElement {
   @reactive
-  accessor data = {
-    name: 'jack',
+  accessor #data = {
+    name: 'jack!',
   };
 
   @reactive
-  accessor text = 'hello';
-
+  accessor #text = 'hello';
   @reactive
-  accessor className = 'red';
+  accessor #className = 'red';
 
   connectedCallback() {
     super.connectedCallback();
     console.log('parent connected');
   }
-
-  onClick = () => {
-    this.data.name += '!';
-    this.text += '?';
-    this.className = this.className === 'green' ? 'red' : 'green';
-  };
-
+  onClick() {
+    this.#data.name += '!';
+    this.#text += '?';
+    this.#className = this.changedClassName ? 'red' : 'green';
+    this.changedClassName = !this.changedClassName;
+  }
   get template() {
-    return html`<div class=${this.className} @click=${this.onClick}>
-      ${this.text}
-      <child-element name=${this.data.name} itemtitle=${'outside title'}></child-element>
-      <div>Parent: ${this.data.name}</div>
-    </div>`;
+    return html`
+      <div class="${this.#className}" onClick=${this.onClick.bind(this)}>${this.#text} - ${this.#data.name}<child-element title=${this.#data.name}></child-element></div>
+    `;
   }
 }
-
-
-

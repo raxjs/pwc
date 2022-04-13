@@ -1,12 +1,14 @@
+import { isArray, isObject, isPrivate, shallowCloneAndFreeze } from '../utils';
 import { getProxyHandler } from './handler';
-import { isObject } from '../utils';
 
 interface ReactiveType {
-  setReactiveValue: (prop: string, val: unknown) => void;
+  initValue: (prop: string, value: unknown) => void;
 
-  getReactiveValue: (prop: string) => unknown;
+  setValue: (prop: string, value: unknown, forceUpdate: boolean) => void;
 
-  // The reactive property if changed will request a update
+  getValue: (prop: string) => unknown;
+
+  // If the reactive property changes, it  will request a update
   requestUpdate: () => void;
 }
 
@@ -23,35 +25,46 @@ export class Reactive implements ReactiveType {
   }
 
   requestUpdate() {
-    this.#element?.requestUpdate();
+    this.#element?._requestUpdate();
   }
 
-  getReactiveValue(prop: string) {
+  initValue(prop: string, value: unknown) {
+    this.setValue(prop, value, false);
+  }
+
+  getValue(prop: string) {
     const key = Reactive.getKey(prop);
     return this.#element[key];
   }
 
-  initReactiveValue(prop: string, value: unknown) {
-    const key = Reactive.getKey(prop);
-
-    if (isObject(value)) {
-      this.#createReactiveProperty(key, value);
+  setValue(prop: string, value: unknown, forceUpdate = true) {
+    if (isPrivate(prop)) {
+      this.#setReactiveValue(prop, value);
     } else {
-      this.#element[key] = value;
+      // Clone and Freeze public props and it should not be reactive
+      this.#setNormalValue(prop, shallowCloneAndFreeze(value));
     }
-  }
 
-  setReactiveValue(prop: string, value: unknown) {
-    if (this.#element._getInitialState()) {
-      this.initReactiveValue(prop, value);
+    if (forceUpdate) {
       this.requestUpdate();
-    } else {
-      // For Object.defineProperty case
-      this.initReactiveValue(prop, value);
     }
   }
 
-  #createReactiveProperty(key: string, initialValue: any) {
+  #setReactiveValue(prop: string, value: unknown) {
+    if (isArray(value) || isObject(value)) {
+      this.#createReactiveProperty(prop, value);
+    } else {
+      this.#setNormalValue(prop, value);
+    }
+  }
+
+  #setNormalValue(prop: string, value: unknown) {
+    const key = Reactive.getKey(prop);
+    this.#element[key] = value;
+  }
+
+  #createReactiveProperty(prop: string, initialValue: any) {
+    const key = Reactive.getKey(prop);
     this.#element[key] = new Proxy(initialValue, this.#proxyHandler);
   }
 }
