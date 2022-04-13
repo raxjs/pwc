@@ -135,12 +135,11 @@ describe('Render HTMLElement', () => {
     const container = document.getElementById('reactive-container');
     container.click();
 
-    await nextTick(() => {
-      expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="reactive-container" class="green">hello?<!--?pwc_t--> - jack!<!--?pwc_t--></div>');
-    });
+    await nextTick();
+    expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="reactive-container" class="green">hello?<!--?pwc_t--> - jack!<!--?pwc_t--></div>');
   });
 
-  it('should trigger template method as expected', (done) => {
+  it('should trigger template method as expected', async () => {
     const mockFn = jest.fn().mockImplementation((text) => {
       return html`<div>${text}</div>`;
     });
@@ -156,10 +155,8 @@ describe('Render HTMLElement', () => {
     document.body.appendChild(element);
     expect(mockFn).toBeCalledTimes(1);
     element.text = 'world';
-    nextTick(() => {
-      expect(mockFn).toBeCalledTimes(2);
-      done();
-    });
+    await nextTick();
+    expect(mockFn).toBeCalledTimes(2);
   });
 });
 
@@ -243,24 +240,21 @@ describe('Render nested components', () => {
 
     // primity type
     parentBtn.click();
-    await nextTick(() => {
-      expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello!<!--?pwc_t--> - World<!--?pwc_t--> - <!--?pwc_t--></div>');
-      expect(mockChildFn).toBeCalledTimes(2);
-    });
+    await nextTick();
+    expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello!<!--?pwc_t--> - World<!--?pwc_t--> - <!--?pwc_t--></div>');
+    expect(mockChildFn).toBeCalledTimes(2);
 
     // object type
     parentBtn.click();
-    await nextTick(() => {
-      expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello!<!--?pwc_t--> - World!<!--?pwc_t--> - <!--?pwc_t--></div>');
-      expect(mockChildFn).toBeCalledTimes(3);
-    });
+    await nextTick();
+    expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello!<!--?pwc_t--> - World!<!--?pwc_t--> - <!--?pwc_t--></div>');
+    expect(mockChildFn).toBeCalledTimes(3);
 
     // array type
     parentBtn.click();
-    await nextTick(() => {
-      expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello!<!--?pwc_t--> - World!<!--?pwc_t--> - 2<!--?pwc_t--></div>');
-      expect(mockChildFn).toBeCalledTimes(4);
-    });
+    await nextTick();
+    expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello!<!--?pwc_t--> - World!<!--?pwc_t--> - 2<!--?pwc_t--></div>');
+    expect(mockChildFn).toBeCalledTimes(4);
   });
 
   it('a direct setter of property with the reactive decorator should trigger the update of components', async () => {
@@ -269,24 +263,21 @@ describe('Render nested components', () => {
 
     // with reactive decorator
     childComponent.title = 'Hello';
-    await nextTick(() => {
-      expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello<!--?pwc_t--> - World!<!--?pwc_t--> - 2<!--?pwc_t--></div>');
-      expect(mockChildFn).toBeCalledTimes(5);
-    });
+    await nextTick();
+    expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello<!--?pwc_t--> - World!<!--?pwc_t--> - 2<!--?pwc_t--></div>');
+    expect(mockChildFn).toBeCalledTimes(5);
 
     // with reactive decorator
     childComponent.data = { name: 'Child Element' };
-    await nextTick(() => {
-      expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello<!--?pwc_t--> - Child Element<!--?pwc_t--> - 2<!--?pwc_t--></div>');
-      expect(mockChildFn).toBeCalledTimes(6);
-    });
+    await nextTick();
+    expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello<!--?pwc_t--> - Child Element<!--?pwc_t--> - 2<!--?pwc_t--></div>');
+    expect(mockChildFn).toBeCalledTimes(6);
 
     // without reactive decorator
     childComponent.items = [1];
-    await nextTick(() => {
-      expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello<!--?pwc_t--> - Child Element<!--?pwc_t--> - 2<!--?pwc_t--></div>');
-      expect(mockChildFn).toBeCalledTimes(6);
-    });
+    await nextTick();
+    expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello<!--?pwc_t--> - Child Element<!--?pwc_t--> - 2<!--?pwc_t--></div>');
+    expect(mockChildFn).toBeCalledTimes(6);
   });
 
 });
