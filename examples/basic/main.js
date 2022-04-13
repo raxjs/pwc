@@ -28,29 +28,29 @@ class Child extends HTMLElement {
 @customElement('custom-element')
 class CustomElement extends HTMLElement {
   @reactive
-  accessor data = {
-    name: 'jack',
+  accessor #data = {
+    name: 'jack!',
   };
 
   @reactive
-  accessor text = 'hello';
+  accessor #text = 'hello';
 
   @attribute('custom')
   accessor custom = false;
 
   @reactive
-  accessor className = 'red';
+  accessor #className = 'red';
 
   onClick = () => {
-    this.data.name += '!';
-    this.text += '?';
+    this.#data.name += '!';
+    this.#text += '?';
     this.className = this.className === 'green' ? 'red' : 'green';
   };
 
   get template() {
     return html`<div class=${this.className} @click=${this.onClick}>
-      ${this.text} - ${this.data.name}
-      <child-element name=${this.data.name} checked=${true} data-class-name=${this.className} />
+      ${this.#text} - ${this.#data.name}
+      <child-element name=${this.#data.name} checked=${true} data-class-name=${this.className} />
     </div>`;
   }
 }

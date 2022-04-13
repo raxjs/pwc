@@ -14,17 +14,17 @@ export function reactive(value, { kind, name }) {
         if (attrValue !== null) return attrValue;
       }
 
-      return this.getReactiveValue(name);
+      return this._getValue(name);
     },
     set(val) {
-      this.setReactiveValue(name, val);
+      this._setValue(name, val);
       // Set reflected attribute
       if (this._getReflectProperties().has(name)) {
         attributeSetter.call(this, val, name);
       }
     },
     init(initialValue) {
-      this.initReactiveValue(name, initialValue);
+      this._initValue(name, initialValue);
       return initialValue;
     },
   };

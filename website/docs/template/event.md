@@ -18,7 +18,7 @@ sidebar_position: 2
 
 ```html
 <template>
-  <button @click="{{onSave}}">Save</button>
+  <button @click="{{this.onSave}}">Save</button>
 </template>
 ```
 

@@ -3,6 +3,7 @@ export interface PWCElement {
   disconnectedCallback?: () => void;
   attributeChangedCallback?: (name: string, oldValue: any, newValue: any) => void;
   adoptedCallback?: () => void;
+  _requestUpdate?: () => void;
 }
 
 export interface Attribute {

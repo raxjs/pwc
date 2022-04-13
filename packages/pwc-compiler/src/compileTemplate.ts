@@ -1,6 +1,6 @@
 import * as parse5 from 'parse5';
 import type { SFCDescriptor, ElementNode } from './parse';
-import { dfs, isEvent, isBindings, getEventInfo, BINDING_REGEXP, GLOBAL_BINDING_REGEXP } from './utils';
+import { dfs, isEventNameInTemplate, isBindings, getEventInfo, BINDING_REGEXP, INTERPOLATION_REGEXP } from './utils';
 
 export interface AttributeDescriptor {
   name: string;
@@ -46,7 +46,7 @@ function extractAttributeBindings(node: ElementNode): Array<AttributeDescriptor>
 
           hasInsertComment = true;
         }
-        if (isEvent(attr.name)) {
+        if (isEventNameInTemplate(attr.name)) {
           // events
           const { eventName, isCapture } = getEventInfo(attr.name);
           tempAttributeDescriptor.push({
@@ -77,7 +77,7 @@ function extractTextInterpolation(node): Array<string> {
   // Example:
   // Before: aaa {{name}} bbb => a single text node with value 'aaa {{name}} bbb'
   // After: aaa <!--?pwc_t--> bbb => text node + comment node + text node
-  node.value = node.value.replace(GLOBAL_BINDING_REGEXP, (source, p1) => {
+  node.value = node.value.replace(INTERPOLATION_REGEXP, (source, p1) => {
     tempTextInterpolation.push(p1);
     return TEXT_COMMENT_DATA;
   });

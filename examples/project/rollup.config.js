@@ -3,6 +3,7 @@ const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const livereload = require('rollup-plugin-livereload');
 const css = require('rollup-plugin-css-only');
 const pwc = require('rollup-plugin-pwc').default;
+const sourcemaps = require('rollup-plugin-sourcemaps');
 
 
 const production = !process.env.ROLLUP_WATCH;
@@ -40,6 +41,7 @@ module.exports = {
   plugins: [
     pwc({ include: /\.pwc$/ }),
     css({ output: 'index.css' }),
+    sourcemaps(),
     nodeResolve(),
     commonjs(),
     !production && serve(),

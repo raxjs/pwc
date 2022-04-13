@@ -13,6 +13,22 @@ export function isBoolean(value: unknown) {
   return typeof value === 'boolean';
 }
 
+export function isFunction(value: unknown) {
+  return typeof value === 'function';
+}
+
 export function isObject(value: unknown) {
-  return typeof value === 'object';
+  return Object.prototype.toString.call(value) === '[object Object]';
+}
+
+export function isSet(value: unknown) {
+  return value instanceof Set;
+}
+
+export function isMap(value: unknown) {
+  return value instanceof Map;
+}
+
+export function isPrivate(name: string) {
+  return name.startsWith('#');
 }

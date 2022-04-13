@@ -42,9 +42,9 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "@babel/core": "^7.17.5",
+    "@babel/core": "^7.17.9",
     "@babel/generator": "^7.17.7",
-    "@babel/parser": "^7.17.3",
+    "@babel/parser": "^7.17.9",
     "@babel/plugin-proposal-decorators": "^7.17.2",
     "@babel/traverse": "^7.17.3",
     "@babel/types": "^7.17.0",
@@ -55,9 +55,9 @@
   },
   "devDependencies": {
     "@ice/pkg-cli": "^1.0.0-beta.4",
+    "@rollup/plugin-typescript": "^8.3.1",
     "core-js": "^3.21.1",
     "regenerator-runtime": "^0.13.9",
-    "@rollup/plugin-typescript": "^8.3.1",
     "rollup": "^2.69.0",
     "tslib": "^2.3.1"
   }

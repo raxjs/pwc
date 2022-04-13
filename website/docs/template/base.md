@@ -15,10 +15,10 @@ PWC 使用基于 HTML 的模板语法来定义组件渲染的内容。你可以�
 文本插值允许你将动态字符串值合并到 HTML 模板中。通过插值，你可以动态更改应用视图中显示的内容。插值使用双花括号 `{{` 和 `}}` （即 Mustache 语法）作为定界符：
 
 ```html
-<span>Current Player: {{ currentPlayer }}</span>
+<span>Current Player: {{ this.currentPlayer }}</span>
 ```
 
-对应 PWC 组件上的 `currentPlayer` 值将替换模板中的 `{{ currentPlayer }}`。当 `currentPlayer` 的值发生变更时，视图内容同样会更新。
+模板中在文本插值内使用的 `this` 即为当前的 PWC 组件。因此对应 PWC 组件上的 `currentPlayer` 值将替换模板中的 `{{ this.currentPlayer }}`。当 `this.currentPlayer` 的值发生变更时，视图内容同样会更新。
 
 ### 使用 JavaScript 表达式（模板表达式）
 
@@ -29,7 +29,7 @@ PWC 使用基于 HTML 的模板语法来定义组件渲染的内容。你可以�
 PWC 中的属性绑定可帮助你设置 HTML 元素或 PWC 组件的属性值。使用属性绑定时，需要用双引号内使用 Mustache 语法：
 
 ```html
-<img src="{{imageUrl}}" />
+<img src="{{this.imageUrl}}" />
 ```
 
 上述示例中，img 的 `src` 属性将与 PWC 组件中的 `imageUrl` 值保持同步。
@@ -57,7 +57,7 @@ export default class CustomComponent extends HTMLElement {
 }
 ```
 
-运行时模板的写法与单文件组件 `<template>` 模板存在差异，你需要手动从 `pwc` 中引入 `html` 方法，然后用[带标签的模板字符串](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#tagged_templates)的形式书写模板。属性绑定和文本插值均改为使用标准的模板字符串占位符形式（即 `${expression}`）。此外，在单文件组件 `<template>` 中，你可以直接使用 PWC 组件上定义的变量（即省略 `this`），但是在运行时模板中使用 PWC 组件变量必须使用完整方式，示例如下：
+运行时模板的写法与单文件组件 `<template>` 模板存在差异，你需要手动从 `pwc` 中引入 `html` 方法，然后用[带标签的模板字符串](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#tagged_templates)的形式书写模板。属性绑定和文本插值均改为使用标准的模板字符串占位符形式（即 `${expression}`）。示例如下：
 
 ```js
 import { html } from 'pwc';
