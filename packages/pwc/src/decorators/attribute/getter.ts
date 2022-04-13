@@ -14,5 +14,6 @@ export function attributeGetter(name: string) {
     return initialValue;
   }
 
+  // Boolean attribute should return Boolean(attrValue), but the result must be true, because attribute has been set
   return isBoolean || attrValue;
 }
