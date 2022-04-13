@@ -20,10 +20,11 @@ export class TextNode implements ReactiveNode {
 
 export class AttributedNode implements ReactiveNode {
   #el: Element;
-  #isCustomEl: boolean;
+  #elIsCustom: boolean;
 
   constructor(commentNode: Comment, initialAttrs: Attributes) {
     this.#el = commentNode.nextSibling as Element;
+    this.#elIsCustom = Boolean(window.customElements.get(this.#el.localName));
     this.#commitAttributes(initialAttrs, true);
   }
 
@@ -31,7 +32,7 @@ export class AttributedNode implements ReactiveNode {
     this.#commitAttributes(value);
 
     // Any updating should trigger the child components's update method
-    if (this.#isCustomEl && (this.#el as PWCElement)._requestUpdate) {
+    if (this.#elIsCustom && (this.#el as PWCElement)._requestUpdate) {
       (this.#el as PWCElement)._requestUpdate();
     }
   }
