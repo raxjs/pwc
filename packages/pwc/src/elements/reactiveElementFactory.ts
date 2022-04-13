@@ -38,7 +38,7 @@ export default (Definition: PWCElement) => {
           this.#initRenderTemplate(this.#root, values);
           this.#initialized = true;
         };
-        // Avoid child component connectedCallback triggle before parent component
+        // Avoid that child component connectedCallback triggers before parent component
         nextTick(() => {
           if (this.#initTask) {
             this.#initTask();
