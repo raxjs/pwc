@@ -12,8 +12,6 @@ window.customElements.define('child-element', Child);
 
 @customElement('custom-element')
 class CustomElement extends HTMLElement {
-  changedClassName = false;
-
   @reactive
   accessor #data = {
     name: 'jack!',
@@ -26,6 +24,7 @@ class CustomElement extends HTMLElement {
 
   connectedCallback() {
     super.connectedCallback();
+    console.log('parent connected');
   }
   onClick() {
     this.#data.name += '!';
