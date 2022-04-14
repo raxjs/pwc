@@ -26,7 +26,7 @@ enum MemberExpLexState {
 }
 const whitespaceRE = /\s+[.[]\s*|\s*[.[]\s+/g;
 const validFirstIdentCharRE = /[A-Za-z_$\xA0-\uFFFF]/;
-const validIdentCharRE = /[.?\w$\xA0-\uFFFF]/;
+const validIdentCharRE = /[.?#\w$\xA0-\uFFFF]/;
 
 /**
  * Forked from @vue/compiler-core
