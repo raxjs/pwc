@@ -4,7 +4,7 @@ const livereload = require('rollup-plugin-livereload');
 const css = require('rollup-plugin-css-only');
 const pwc = require('rollup-plugin-pwc').default;
 const sourcemaps = require('rollup-plugin-sourcemaps');
-
+const replace = require('@rollup/plugin-replace');
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -44,6 +44,9 @@ module.exports = {
     sourcemaps(),
     nodeResolve(),
     commonjs(),
+    replace({
+      'process.env.NODE_ENV': production ? '"production"' : '"development"',
+    }),
     !production && serve(),
     // !production && livereload('public'),
 

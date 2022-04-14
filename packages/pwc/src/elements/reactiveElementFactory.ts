@@ -77,7 +77,7 @@ export default (Definition: PWCElement) => {
           const textElement = new TextNode(currentComment as Comment, values[index]);
           this.#reactiveNodes.push(textElement);
         } else if ((currentComment as Comment).data === PLACEHOLDER_COMMENT_DATA) {
-          const attributedElement = new AttributedNode(currentComment as Comment, values[index]);
+          const attributedElement = new AttributedNode(currentComment as Comment, values[index], this);
           this.#reactiveNodes.push(attributedElement);
         }
 
