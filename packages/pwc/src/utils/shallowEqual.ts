@@ -1,5 +1,6 @@
-import { isPrimitive, hasOwnProperty, is } from './common';
+import { hasOwnProperty, is } from './common';
 import { isEventName } from './isEventName';
+import { isPrimitive } from './checkTypes';
 
 export function shallowEqual(valueA: any, valueB: any) {
   if (typeof valueA !== typeof valueB) {

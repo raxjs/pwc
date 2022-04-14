@@ -2,30 +2,6 @@ export function hasOwnProperty(target, key) {
   return Object.prototype.hasOwnProperty.call(target, key);
 }
 
-export function isArray(arg: any) {
-  return Array.isArray(arg);
-}
-
-export function isPrimitive(value: unknown) {
-  return value === null || (typeof value !== 'object' && typeof value !== 'function');
-}
-
-export function isFunction(value: unknown) {
-  return typeof value === 'function';
-}
-
-export function isObject(value: unknown) {
-  return Object.prototype.toString.call(value) === '[object Object]';
-}
-
-export function isSet(value: unknown) {
-  return value instanceof Set;
-}
-
-export function isMap(value: unknown) {
-  return value instanceof Map;
-}
-
 export function is(prev, curr): boolean {
   // SameValue algorithm
   if (prev === curr) {
@@ -36,8 +12,4 @@ export function is(prev, curr): boolean {
     // Step 6.a: NaN == NaN
     return prev !== prev && curr !== curr; // eslint-disable-line no-self-compare
   }
-}
-
-export function isPrivate(name: string) {
-  return name.startsWith('#');
 }

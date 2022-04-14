@@ -1,4 +1,4 @@
-import { isArray, isObject, isMap, isSet } from './common';
+import { isArray, isObject, isMap, isSet } from './checkTypes';
 
 // Shallow Clone the Property value and Freeze it
 // Attention, it only clones Set\Map\Array\Object([Object, Object])
