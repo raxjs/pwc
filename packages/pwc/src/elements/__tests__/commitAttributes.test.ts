@@ -136,7 +136,7 @@ describe('Set element attribute/property/event handler', () => {
     commitAttributes(div, attrs, true);
     div.click();
     expect(mockClickHandler).toBeCalledTimes(1);
-    commitAttributes(div, attrs);
+    commitAttributes(div, attrs, false);
     div.click();
     expect(mockClickHandler).toBeCalledTimes(2);
   });

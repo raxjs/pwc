@@ -1,8 +1,8 @@
 <template>
   <div class="child">
-    <span>子组件：{{ data.count }}</span>
-    <button @click={{#addCount}}>+</button>
-    <button @click={{reduceCount}}>-</button>
+    <span>子组件：{{ this.data.count }}</span>
+    <button @click={{this.#addCount}}>+</button>
+    <button @click={{this.reduceCount}}>-</button>
   </div>
 </template>
 
