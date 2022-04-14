@@ -33,10 +33,6 @@ function createTextNode(value) {
   };
 }
 
-function generateCompoundExpression(hasMultipleStatements, exp) {
-  return `() => ${hasMultipleStatements ? '{' : '('}${exp}${hasMultipleStatements ? '}' : ')'}`;
-}
-
 // with side effect in changing node structure
 function extractAttributeBindings(node: ElementNode): Array<AttributeDescriptor> {
   const tempAttributeDescriptor = [];
@@ -59,10 +55,12 @@ function extractAttributeBindings(node: ElementNode): Array<AttributeDescriptor>
             const isMemberExp = isMemberExpression(expression);
             const isInlineStatement = !(isMemberExp || fnExpRE.test(expression));
             const hasMultipleStatements = expression.includes(';');
-
+            if (hasMultipleStatements) {
+              // TODO: throw error
+            }
             if (isInlineStatement) {
               // Use function to block wrap the inline statement expression
-              expression = generateCompoundExpression(hasMultipleStatements, expression);
+              expression = `() => (${expression})`;
             }
           } else {
             expression = '() => {}';

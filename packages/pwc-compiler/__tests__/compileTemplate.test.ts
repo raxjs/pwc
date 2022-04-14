@@ -173,22 +173,6 @@ describe('compileTemplate', () => {
     ]);
   });
 
-  it('compile a template with multiple javascript expressions in event bindings', () => {
-    const { descriptor } = parse('<template><div @click="{{ count1++;count2++; }}"></div></template>');
-    const { templateString, values} = compileTemplateAST(descriptor.template.ast);
-
-    expect(templateString).toBe('<!--?pwc_p--><div></div>');
-    expect(values).toEqual([
-      [
-        {
-          name: 'onclick',
-          value: '() => {count1++;count2++;}',
-          capture: false
-        }
-      ],
-    ]);
-  });
-
   it('compile a template with calling methods in event bindings', () => {
     const { descriptor } = parse(`<template><div @click="{{ say('hello') }}"></div></template>`);
     const { templateString, values} = compileTemplateAST(descriptor.template.ast);
@@ -199,22 +183,6 @@ describe('compileTemplate', () => {
         {
           name: 'onclick',
           value: `() => (say('hello'))`,
-          capture: false
-        }
-      ],
-    ]);
-  });
-
-  it('compile a template with multiple calling methods in event bindings', () => {
-    const { descriptor } = parse(`<template><div @click="{{ say('hello');say('bye'); }}"></div></template>`);
-    const { templateString, values} = compileTemplateAST(descriptor.template.ast);
-
-    expect(templateString).toBe('<!--?pwc_p--><div></div>');
-    expect(values).toEqual([
-      [
-        {
-          name: 'onclick',
-          value: `() => {say('hello');say('bye');}`,
           capture: false
         }
       ],
