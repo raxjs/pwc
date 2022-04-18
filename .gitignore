@@ -30,9 +30,9 @@ coverage
 *.temp.json
 
 # Packages
-packages/*/lib/
-packages/*/es/
-packages/*/esnext/
+packages/*/cjs/
+packages/*/esm/
+packages/*/es2017/
 
 # Dist
 dist/

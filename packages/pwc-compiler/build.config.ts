@@ -4,13 +4,7 @@ export default defineConfig({
   sourceMaps: 'inline',
 
   transform: {
+    formats: ['cjs', 'esm', 'es2017'],
     excludes: ['**/__tests__/**'],
-  },
-
-  bundle: {
-    development: true,
-    formats: ['umd', 'es2017'],
-    filename: 'pwc',
-    externals: false,
-  },
+  }
 });

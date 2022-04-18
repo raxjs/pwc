@@ -4,12 +4,12 @@
   "author": "Rax Team",
   "homepage": "https://github.com/raxjs/pwc#readme",
   "license": "MIT",
-  "main": "lib/index.js",
-  "module": "es/index.js",
+  "main": "cjs/index.js",
+  "module": "esm/index.js",
   "files": [
-    "lib",
-    "es/",
-    "esnext/",
+    "cjs/",
+    "esm/",
+    "es2017/",
     "README.md"
   ],
   "repository": {
@@ -17,8 +17,8 @@
     "url": "git+https://github.com/raxjs/pwc.git"
   },
   "scripts": {
-    "start": "pkg-cli start",
-    "build": "pkg-cli build",
+    "start": "ice-pkg start",
+    "build": "ice-pkg build",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "bugs": {
@@ -29,12 +29,12 @@
     "npm": ">=3.0.0"
   },
   "devDependencies": {
-    "@ice/pkg-cli": "^1.0.0-beta.4",
+    "@ice/pkg": "^1.0.0-rc.0",
     "@rollup/plugin-typescript": "^8.3.1",
-    "rollup": "^2.69.0",
-    "tslib": "^2.3.1",
     "core-js": "^3.21.1",
-    "regenerator-runtime": "^0.13.9"
+    "regenerator-runtime": "^0.13.9",
+    "rollup": "^2.69.0",
+    "tslib": "^2.3.1"
   },
   "dependencies": {
     "@babel/core": "^7.17.9",
@@ -43,6 +43,7 @@
     "@babel/plugin-proposal-decorators": "^7.17.9",
     "@babel/plugin-proposal-private-methods": "^7.16.11",
     "@pwc/compiler": "^1.0.0",
+    "@swc/helpers": "^0.3.8",
     "querystring": "^0.2.1",
     "rollup-pluginutils": "^2.8.2"
   }

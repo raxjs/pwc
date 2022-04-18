@@ -5,7 +5,7 @@
     "preinstall": "npx only-allow pnpm",
     "setup": "npm run clean && pnpm install --reporter=append-only  --registry=https://registry.npmjs.org/ && npm run build",
     "clean": "rm -rf node_modules && rm -rf ./**/*/node_modules && npm run clean:result",
-    "clean:result": "rm -rf ./packages/*/lib ./packages/*/es ./packages/*/esnext ./packages/*/dist",
+    "clean:result": "rm -rf ./packages/*/cjs ./packages/*/esm ./packages/*/es2017 ./packages/*/dist",
     "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx ./",
     "lint:fix": "npm run lint -- --fix",
     "lint:diff": "esno ./scripts/lint-diff.ts",

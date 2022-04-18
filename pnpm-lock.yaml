@@ -197,7 +197,7 @@ importers:
 
   packages/pwc:
     specifiers:
-      '@ice/pkg-cli': ^1.0.0-beta.4
+      '@ice/pkg': ^1.0.0-rc.0
       '@pwc/compiler': ^1.0.0
       '@swc/helpers': ^0.3.8
       core-js: ^3.21.1
@@ -208,7 +208,7 @@ importers:
       core-js: 3.21.1
       regenerator-runtime: 0.13.9
     devDependencies:
-      '@ice/pkg-cli': 1.0.0-beta.4_a6c6dd237c765d4264cabf8f5210df7b
+      '@ice/pkg': 1.0.0-rc.0
 
   packages/pwc-compiler:
     specifiers:
@@ -218,8 +218,9 @@ importers:
       '@babel/plugin-proposal-decorators': ^7.17.2
       '@babel/traverse': ^7.17.3
       '@babel/types': ^7.17.0
-      '@ice/pkg-cli': ^1.0.0-beta.4
+      '@ice/pkg': 1.0.0-rc.0
       '@rollup/plugin-typescript': ^8.3.1
+      '@swc/helpers': ^0.3.8
       core-js: ^3.21.1
       parse5: ^6.0.1
       postcss: ^8.4.12
@@ -235,12 +236,13 @@ importers:
       '@babel/plugin-proposal-decorators': 7.17.9_@babel+core@7.17.9
       '@babel/traverse': 7.17.9
       '@babel/types': 7.17.0
+      '@swc/helpers': 0.3.8
       parse5: 6.0.1
       postcss: 8.4.12
       rfdc: 1.3.0
       source-map: 0.7.3
     devDependencies:
-      '@ice/pkg-cli': 1.0.0-beta.4_a6c6dd237c765d4264cabf8f5210df7b
+      '@ice/pkg': 1.0.0-rc.0
       '@rollup/plugin-typescript': 8.3.1_8fb0118e9d69f3600cbb8f144f7d456c
       core-js: 3.21.1
       regenerator-runtime: 0.13.9
@@ -254,9 +256,10 @@ importers:
       '@babel/plugin-proposal-class-static-block': ^7.17.6
       '@babel/plugin-proposal-decorators': ^7.17.9
       '@babel/plugin-proposal-private-methods': ^7.16.11
-      '@ice/pkg-cli': ^1.0.0-beta.4
+      '@ice/pkg': ^1.0.0-rc.0
       '@pwc/compiler': ^1.0.0
       '@rollup/plugin-typescript': ^8.3.1
+      '@swc/helpers': ^0.3.8
       core-js: ^3.21.1
       querystring: ^0.2.1
       regenerator-runtime: ^0.13.9
@@ -270,10 +273,11 @@ importers:
       '@babel/plugin-proposal-decorators': 7.17.9_@babel+core@7.17.9
       '@babel/plugin-proposal-private-methods': 7.16.11_@babel+core@7.17.9
       '@pwc/compiler': link:../pwc-compiler
+      '@swc/helpers': 0.3.8
       querystring: 0.2.1
       rollup-pluginutils: 2.8.2
     devDependencies:
-      '@ice/pkg-cli': 1.0.0-beta.4_a6c6dd237c765d4264cabf8f5210df7b
+      '@ice/pkg': 1.0.0-rc.0
       '@rollup/plugin-typescript': 8.3.1_8fb0118e9d69f3600cbb8f144f7d456c
       core-js: 3.21.1
       regenerator-runtime: 0.13.9
@@ -1853,49 +1857,46 @@ packages:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
     dev: false
 
-  /@ice/pkg-cli/1.0.0-beta.4_a6c6dd237c765d4264cabf8f5210df7b:
-    resolution: {integrity: sha512-JW4lyK/ylB5NiNWIkk+/r4exoepBE4yjX+dDOCfoHu+MnElu2zy3I4C8Uk3ilS5pDNcHlo5pN+17kwKyctAxLA==}
+  /@ice/pkg-plugin-component/1.0.0-rc.0:
+    resolution: {integrity: sha512-yN6Qnpm308Rhqmr6lG5SblkdAtb8BhwBhmqHAQDISKQ3gtOJ0o+wjZlAengGqSgkwwOiXXi/tfZpXb0hD8lV/Q==}
+    dependencies:
+      consola: 2.15.3
+      fs-extra: 10.0.1
+    dev: true
+
+  /@ice/pkg/1.0.0-rc.0:
+    resolution: {integrity: sha512-DtChTL3kpUOZhs3JrnWUnPrQAfvw5hX6ChpIpJVa7EPpL+QxEWLKhzTtYZLTfptcQoBRYcvM391OXT8Ie1XfGA==}
     hasBin: true
-    peerDependencies:
-      core-js: ^3.21.1
-      regenerator-runtime: ^0.13.9
     dependencies:
       '@babel/core': 7.17.9
       '@babel/parser': 7.17.9
-      '@ice/pkg-plugin-compoent': 1.0.0-beta.4
+      '@ice/pkg-plugin-component': 1.0.0-rc.0
       '@rollup/plugin-alias': 3.1.9_rollup@2.70.1
       '@rollup/plugin-commonjs': 21.0.3_rollup@2.70.1
       '@rollup/plugin-node-resolve': 13.2.0_rollup@2.70.1
       '@rollup/pluginutils': 4.2.0
       '@swc/core': 1.2.165
+      '@swc/helpers': 0.3.8
       acorn: 8.7.0
       autoprefixer: 10.4.4_postcss@8.4.12
       build-scripts: 2.0.0-17
       cac: 6.7.12
       chokidar: 3.5.3
       consola: 2.15.3
-      core-js: 3.21.1
       debug: 4.3.4
       deepmerge: 4.2.2
+      escape-string-regexp: 5.0.0
       fs-extra: 10.0.1
       globby: 11.1.0
       magic-string: 0.25.9
       picocolors: 1.0.0
       postcss: 8.4.12
-      regenerator-runtime: 0.13.9
       rollup: 2.70.1
       rollup-plugin-postcss: 4.0.2_postcss@8.4.12
       typescript: 4.6.3
     transitivePeerDependencies:
       - supports-color
       - ts-node
-    dev: true
-
-  /@ice/pkg-plugin-compoent/1.0.0-beta.4:
-    resolution: {integrity: sha512-sPgWraqvl293ZXtS2dvtwRfl+6ZULBBMwCWC7yDxDhxsFzOCttF+Rb71bA4ryusQBpDhlpVOI63ghU0RwE6qrQ==}
-    dependencies:
-      consola: 2.15.3
-      fs-extra: 10.0.1
     dev: true
 
   /@istanbuljs/load-nyc-config/1.1.0:
@@ -2377,7 +2378,6 @@ packages:
 
   /@swc/helpers/0.3.8:
     resolution: {integrity: sha512-aWItSZvJj4+GI6FWkjZR13xPNPctq2RRakzo+O6vN7bC2yjwdg5EFpgaSAUn95b7BGSgcflvzVDPoKmJv24IOg==}
-    dev: false
 
   /@swc/jest/0.2.20_@swc+core@1.2.165:
     resolution: {integrity: sha512-5qSUBYY1wyIMn7p0Vl9qqV4hMI69oJwZCIPUpBsTFWN2wlwn6RDugzdgCn+bLXVYh+Cxi8bJcZ1uumDgsoL+FA==}
@@ -2763,7 +2763,6 @@ packages:
   /ansi-regex/5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
     engines: {node: '>=8'}
-    dev: false
 
   /ansi-styles/3.2.1:
     resolution: {integrity: sha512-VT0ZI6kZRdTh8YyJw3SMbYm/u+NqfsAxEpWO0Pf9sq8/e94WxxOpPKx9FR1FlyCtOVDNOQ+8ntlqFxiRc+r5qA==}
@@ -3819,7 +3818,6 @@ packages:
 
   /emoji-regex/8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
-    dev: false
 
   /emoji-regex/9.2.2:
     resolution: {integrity: sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg==}
@@ -4116,6 +4114,11 @@ packages:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
     dev: false
+
+  /escape-string-regexp/5.0.0:
+    resolution: {integrity: sha512-/veY75JbMK4j1yjvuUxuVsiS/hr/4iHs9FTT6cgTexxdE0Ly/glccBAkloH/DofkjRbZU3bnoj38mOmhkZ0lHw==}
+    engines: {node: '>=12'}
+    dev: true
 
   /escodegen/2.0.0:
     resolution: {integrity: sha512-mmHKys/C8BFUGI+MAWNcSYoORYLMdPzjrknd2Vc+bUsjN5bXcr8EhrNB+UTqfL1y3I9c4fw2ihgtMPQLBRiQxw==}
@@ -5110,7 +5113,6 @@ packages:
   /is-fullwidth-code-point/3.0.0:
     resolution: {integrity: sha512-zymm5+u+sCsSWyD9qNaejV3DFvhCKclKdizYaJUuHA83RLjb7nSuGnddCHGv0hk+KY7BMAlsWeK4Ueg6EV6XQg==}
     engines: {node: '>=8'}
-    dev: false
 
   /is-generator-fn/2.1.0:
     resolution: {integrity: sha512-cTIB4yPYL/Grw0EaSzASzg6bBy9gqCofvWN8okThAYIxKJZC+udlRAmGbM0XLeniEJSs8uEgHPGuHSe1XsOLSQ==}
@@ -8040,7 +8042,6 @@ packages:
       emoji-regex: 8.0.0
       is-fullwidth-code-point: 3.0.0
       strip-ansi: 6.0.1
-    dev: false
 
   /string.prototype.matchall/4.0.7:
     resolution: {integrity: sha512-f48okCX7JiwVi1NXCVWcFnZgADDC/n2vePlQ/KUCNqCikLLilQvwjMO8+BHVKvgzH0JB0J9LEPgxOGT02RoETg==}
@@ -8092,7 +8093,6 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       ansi-regex: 5.0.1
-    dev: false
 
   /strip-bom/3.0.0:
     resolution: {integrity: sha1-IzTBjpx1n3vdVv3vfprj1YjmjtM=}
@@ -8717,7 +8717,7 @@ packages:
   /wide-align/1.1.5:
     resolution: {integrity: sha512-eDMORYaPNZ4sQIuuYPDHdQvf4gyCF9rEEV/yPxGfwPkRodwEgiMUUXTx/dex+Me0wxx53S+NgUHaP7y3MGlDmg==}
     dependencies:
-      string-width: 1.0.2
+      string-width: 4.2.3
     dev: true
 
   /word-wrap/1.2.3:
