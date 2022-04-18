@@ -27,8 +27,10 @@ export function compileScript(descriptor: SFCDescriptor): SFCScriptCompileResult
   }
 
   const { code, map } = generate(ast, {
-    sourceMaps: false,
+    sourceMaps: true,
     decoratorsBeforeExport: true,
+    filename,
+    sourceFileName: filename
   });
 
   // TODO: source map
