@@ -6,5 +6,5 @@ export default defineConfig({
   transform: {
     formats: ['cjs', 'esm', 'es2017'],
     excludes: ['**/__tests__/**'],
-  }
+  },
 });
