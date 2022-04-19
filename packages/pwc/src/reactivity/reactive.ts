@@ -1,4 +1,4 @@
-import { isArray, isObject, isPrivate, shallowClone } from '../utils';
+import { isArray, isPlainObject, isPrivate, shallowClone } from '../utils';
 import { getProxyHandler } from './handler';
 
 interface ReactiveType {
@@ -51,7 +51,7 @@ export class Reactive implements ReactiveType {
   }
 
   #setReactiveValue(prop: string, value: unknown) {
-    if (isArray(value) || isObject(value)) {
+    if (isArray(value) || isPlainObject(value)) {
       this.#createReactiveProperty(prop, value);
     } else {
       this.#setNormalValue(prop, value);

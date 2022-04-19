@@ -1,4 +1,4 @@
-import { isArray, isObject, isMap, isSet } from './checkTypes';
+import { isArray, isPlainObject, isMap, isSet } from './checkTypes';
 
 // Shallow Clone the Property value
 // Attention, it only clones Set\Map\Array\Plain Object
@@ -15,7 +15,7 @@ export function shallowClone(value: any) {
     return [...value];
   }
 
-  if (isObject(value)) {
+  if (isPlainObject(value)) {
     return Object.assign({}, value);
   }
 
