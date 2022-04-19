@@ -1,4 +1,4 @@
-import { isArray, isObject, isPrivate, shallowCloneAndFreeze } from '../utils';
+import { isArray, isObject, isPrivate, shallowClone } from '../utils';
 import { getProxyHandler } from './handler';
 
 interface ReactiveType {
@@ -41,8 +41,8 @@ export class Reactive implements ReactiveType {
     if (isPrivate(prop)) {
       this.#setReactiveValue(prop, value);
     } else {
-      // Clone and Freeze public props and it should not be reactive
-      this.#setNormalValue(prop, shallowCloneAndFreeze(value));
+      // It should shallow clone public props to prevent effects of passing by reference
+      this.#setReactiveValue(prop, shallowClone(value));
     }
 
     if (forceUpdate) {
