@@ -50,7 +50,7 @@ class CustomElement extends HTMLElement {
 }
 ```
 
-2. 使用 `Object.defineProperty` 方案时，对对象属性的直接赋值会导致监听功能丢失。
+2. 使用 `Object.defineProperty` 方案时，对象属性的直接赋值会导致监听功能丢失。
 
 ```js
 class CustomElement extends HTMLElement {
@@ -74,7 +74,7 @@ class CustomElement extends HTMLElement {
 
 ## 更新流程
 
-![flow](https://img.alicdn.com/imgextra/i3/O1CN01a1DimY1Fe58sIWvYT_!!6000000000511-0-tps-830-462.jpg)
+![flow](https://img.alicdn.com/imgextra/i3/O1CN01XBI2yI1UswDxSEXvH_!!6000000002574-2-tps-786-420.png)
 
 更新是异步的。当一个响应式属性发生变更时，会在更新任务列表中塞入当前组件的更新任务。若某个组件发生多次更新时，只会保留一个更新任务。
 
@@ -106,9 +106,13 @@ function nextTick(callback?: () => void): Promise<void>
 <template>
   <div @click={{this.handleClick}}>{{this.#count}}</div>
 </template>
+
+
 <script>
+
 import { reactive, nextTick } from 'pwc';
-class CustomElement extends HTMLElement {
+
+export class CustomElement extends HTMLElement {
   @reactive
   accessor #count = 0;
 
@@ -137,7 +141,10 @@ function toRaw<T>(proxy: T): T
 <template>
   <div @click={{this.handleClick}}>{{this.#data.count}}</div>
 </template>
+
+
 <script>
+
 import { reactive, toRaw } from 'pwc';
 
 class CustomElement extends HTMLElement {
