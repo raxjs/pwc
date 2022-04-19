@@ -1,11 +1,11 @@
 import type { File } from '@babel/types';
-import autoAddAccessor from './autoAddAccessor';
-import autoAddReactiveDecorator from './autoAddReactiveDecorator';
-import autoAddCustomElementDecorator from './autoAddCustomElementDecorator';
-import autoInjectImportPWC from './autoInjectImportPWC';
-import genGetTemplateMethod from './genGetTemplateMethod';
+import autoAddAccessor from './autoAddAccessor.js';
+import autoAddReactiveDecorator from './autoAddReactiveDecorator.js';
+import autoAddCustomElementDecorator from './autoAddCustomElementDecorator.js';
+import autoInjectImportPWC from './autoInjectImportPWC.js';
+import genGetTemplateMethod from './genGetTemplateMethod.js';
 
-import type { CompileTemplateResult } from '../compileTemplate';
+import type { CompileTemplateResult } from '../compileTemplate.js';
 
 export interface TransformScriptOptions {
   templateString: string | null;

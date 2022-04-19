@@ -4,9 +4,12 @@
   "scripts": {
     "start": "rollup -c -w",
     "build": "rollup -c",
+    "start-pkg": "pice-pkg start",
+    "build-pkg": "ice-pkg build",
     "serve": "sirv public --no-clear"
   },
   "devDependencies": {
+    "@ice/pkg": "^1.0.0-rc.0",
     "@rollup/plugin-commonjs": "^21.0.2",
     "@rollup/plugin-node-resolve": "^13.1.3",
     "@rollup/plugin-replace": "^4.0.0",
@@ -17,5 +20,10 @@
     "rollup-plugin-pwc": "workspace:*",
     "rollup-plugin-sourcemaps": "^0.6.3",
     "sirv-cli": "^2.0.2"
+  },
+  "dependencies": {
+    "@ampproject/remapping": "^2.1.2",
+    "core-js": "^3.21.1",
+    "regenerator-runtime": "^0.13.9"
   }
 }

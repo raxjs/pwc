@@ -1,8 +1,8 @@
 import generate from '@babel/generator';
 import rfdc from 'rfdc';
-import type { SFCDescriptor, SFCScriptBlock } from './parse';
-import { compileTemplate } from './compileTemplate';
-import transformScript from './transform';
+import type { SFCDescriptor, SFCScriptBlock } from './parse.js';
+import { compileTemplate } from './compileTemplate.js';
+import transformScript from './transform/index.js';
 
 const deepClone = rfdc();
 
@@ -26,7 +26,7 @@ export function compileScript(descriptor: SFCDescriptor): SFCScriptCompileResult
     transformScript(ast, { templateString: null });
   }
 
-  const { code, map } = generate(ast, {
+  const { code, map } = generate.default(ast, {
     sourceMaps: false,
     decoratorsBeforeExport: true,
   });

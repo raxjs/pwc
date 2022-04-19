@@ -1,5 +1,5 @@
 import type { File } from '@babel/types';
-import * as t from '@babel/types';
+import t from '@babel/types';
 import babelTraverse from '@babel/traverse';
 
 // e.g. import { reactive, customElement } from 'pwc'
@@ -18,7 +18,7 @@ function createImportSpecifier(importedName) {
 const shouldImportedFromPWC = ['customElement', 'reactive'];
 
 export default function autoInjectImportPWC(ast: File, shouldImportReactive: boolean): void {
-  babelTraverse(ast, {
+  babelTraverse.default(ast, {
     Program(path) {
       let hasImportPWC = false;
       const hasImportedFromPWC = shouldImportedFromPWC.reduce((prev, cur) => {

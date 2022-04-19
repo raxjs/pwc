@@ -1,5 +1,5 @@
 import type { File } from '@babel/types';
-import * as t from '@babel/types';
+import t from '@babel/types';
 import babelTraverse from '@babel/traverse';
 
 import type { CompileTemplateResult, AttributeDescriptor } from '../compileTemplate';
@@ -47,7 +47,7 @@ function cretateGetTemplateClassMethod(returnExpression) {
 }
 
 export default function genGetTemplateMethod(ast: File, templateResult: CompileTemplateResult): void {
-  babelTraverse(ast, {
+  babelTraverse.default(ast, {
     ClassDeclaration(path) {
       // export default class
       if (t.isExportDefaultDeclaration(path.parent)) {
