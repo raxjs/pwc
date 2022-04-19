@@ -1,6 +1,6 @@
 ## PWC
 
-渐进式 Web Component 解决方案。
+渐进式 Web Components 解决方案。
 
 > ⚠️ 仍在开发中，请勿使用。
 
