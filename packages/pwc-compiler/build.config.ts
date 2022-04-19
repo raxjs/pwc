@@ -6,11 +6,4 @@ export default defineConfig({
   transform: {
     excludes: ['**/__tests__/**'],
   },
-
-  bundle: {
-    development: true,
-    formats: ['umd', 'es2017'],
-    filename: 'pwc',
-    externals: false,
-  },
 });

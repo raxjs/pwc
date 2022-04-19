@@ -1,8 +1,8 @@
 build/
 node_modules/
-es/
-lib/
-esnext/
+esm/
+cjs/
+es2017/
 dist/
 
 coverage/
