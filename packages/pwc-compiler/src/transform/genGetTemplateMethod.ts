@@ -24,9 +24,8 @@ function createArrayExpression(elements) {
   return t.arrayExpression(elements);
 }
 
-// this.xxx
 function createIdentifier(value) {
-  return t.identifier(value);
+  return value === '' ? t.stringLiteral('') : t.identifier(value);
 }
 
 /**
