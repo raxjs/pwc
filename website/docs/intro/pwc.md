@@ -10,12 +10,13 @@ TODO: 性能数据图
 
 ## Web Components 的优势 🤠
 
-谈到 UI Framework，开发者往往会想到 React/Vue/Angular 等等社区优秀的产品。究其本质，是提供一套组件化的 UI 描述能力，帮助开发者更好的开发应用。而 Web Components 是完全不同的技术，是浏览器原生支持的组件化能力，也就是说开发者不再需要在内存中创建 Virtual Component，就可以将页面的模块进行抽象复用。
+谈到 UI Framework，开发者往往会想到 React/Vue/Angular 等等社区优秀的产品。究其本质，是提供一套组件化的 UI 描述能力，帮助开发者更好的开发应用。而 Web Components 是完全不同的技术，是浏览器原生支持的组件化能力，也就是说开发者不再需要在内存中创建 Virtual DOM，就可以将页面的模块进行抽象复用。
 
-- **低内存占用、高性能**。 Web Components 是浏览器原生支持的组件化能力。所以在运行时**不存在 VDOM**，进而可以大幅减少组件状态变化时的复杂计算以及简化更新逻辑，在中低端设备上 Web Components 会有更加突出的表现
-- **组件能够轻松在其他框架中使用**。使用 Web Components 技术开发的组件可以像使用 `div` 这样的原生标签一样在 React/Vue 项目中使用，所以开发者完全可以根据自己的需求，在有需求的地方使用它
+- **原生支持组件化能力**。 Web Components 是浏览器原生支持的组件化能力。所以在运行时**不需要用 VDOM 进行组件化**，进而可以大幅减少组件状态变化时的复杂计算以及简化更新逻辑，在中低端设备上 Web Components 会有更加突出的表现
+- **组件能够轻松在其他框架中使用**。使用 Web Components 技术开发的组件可以像使用 `div` 这样的原生标签一样在 React/Vue 项目中使用，所以开发者完全可以根据自己的需求使用它
+- **良好的可读性**。可以直接在 Chrome DevTools 查看组件结构而不需要 React DevTools 这样的扩展
 
-## 为什么不直接使用 Web Components ? 🫣
+## 为什么不直接使用 Web Components ? 😟
 
 Web Components 拥有以上如此有吸引力的特点，为什么一直没有被重视或者被更广泛的使用呢？
 
@@ -40,7 +41,7 @@ window.customElements.define('custom-element', CustomElement);
 
 ### 更新组件必须直接使用 DOM API
 
-众所周知，Virtual DOM 除了提供组件化的能力外，还可以将视图变更的操作进行批次处理，避免频繁操作 DOM 所带来的的性能损耗。
+开发者不得不直接使用复杂而繁琐的声明式 DOM API 进行视图修改，造成组件性能存在极大的不确定性。
 
 ```javascript
 class CustomElement extends HTMLElement {
@@ -116,10 +117,6 @@ Web Components 的优势之一是通过 shadow DOM 创造一个隔离环境，�
 
 在清楚的知道 Web Components 能够带来巨大价值的背景下，PWC 的理念应运而生。PWC 希望能够渐进式增强 Web Components，通过完全不影响其原有特性的方式来解决开发过程中现存的各种问题，并进一步争取将部分增强的能力标准化并成为 W3C 标准的一部分。
 
-<a href='https://img.alicdn.com/imgextra/i4/O1CN01IbUQQY1woBLyJ3zEA_!!6000000006354-2-tps-3262-938.png'>
-<img src='https://img.alicdn.com/imgextra/i4/O1CN01IbUQQY1woBLyJ3zEA_!!6000000006354-2-tps-3262-938.png' />
-</a>
-
 ### 便捷的视图创建方式
 
 PWC 为 `HTMLElement` 等基类演进了 `template` 属性，开发者可以快速为自己的组件创建一个视图。
@@ -153,7 +150,7 @@ class CustomElement extends HTMLElement {
 
 ### 响应式系统
 
-针对如果快速将数据反应到视图变更这个常见需求，PWC 提供了一套响应式系统帮助开发者快速将数据和视图产生绑定关系。
+针对如何快速将数据反应到视图变更这个常见需求，PWC 提供了一套响应式系统帮助开发者快速将数据和视图产生绑定关系。
 
 ```javascript
 import { html, reactive, customElement } from 'pwc';
@@ -183,17 +180,17 @@ class CustomElement extends HTMLElement {
 为了让开发者不再需要获取 DOM 节点再进行事件绑定，PWC 扩展了事件绑定方式：
 
 ```javascript
-import { html, customElement } from 'pwc';
-
-const helloMsg = 'Hello world';
+import { html, customElement, reactive } from 'pwc';
 
 @customElement('custom-element')
 class CustomElement extends HTMLElement {
+  @reactive
+  accessor #helloMsg = 'Hello world';
   onClick() {
     console.log('Clicked!!!');
   }
   get template() {
-    return html`<div @click=${this.onClick}>${helloMsg}</div>`;
+    return html`<div @click=${this.onClick}>${this.#helloMsg}</div>`;
   }
 }
 ```
@@ -209,16 +206,14 @@ class CustomElement extends HTMLElement {
 
 为此，PWC 提供了单文件组件的形式在构建阶段来解决上述的问题。
 
-**单文件组件：**
-
 ```html
 <template>
   <div class="container">{{this.#count}}</div>
-  <Child.localName></Child.localName>
+  <Child></Child>
 </template>
 
 <script>
-  import Child from './Child';
+  import { LocalName: Child } from './Child';
 
   export default class Count extends HTMLElement {
     #count = 0;
@@ -235,16 +230,6 @@ class CustomElement extends HTMLElement {
 </style>
 ```
 
-**在 React 中使用时：**
-
-```jsx
-import Count from 'pwc-count';
-
-export default function App() {
-  return <Count.localName />;
-}
-```
-
 :::info 优势
 
 - 可以引入更多编译时优化，标准的 `template` 结构可以在编译时就解析出来完整的 HTML 结构，从而引入更多涉及到性能方面的优化，同时开发者不再需要主动加上 `reactive` 装饰器
@@ -257,7 +242,11 @@ export default function App() {
 
 ## 什么时候选择 PWC ? 👨‍💻‍
 
-- **对中低端机（或嵌入式设备）性能有要求**。得益于浏览器原生的组件能力以及 MVVM 的架构设计，在运行时**不存在 VDOM**，进而可以大幅减少组件状态变化时的复杂计算以及简化更新逻辑，从而实现**低内存占用、高性能**的特点，在中低端设备上 PWC 会有更加突出的表现
-- **希望提升首屏渲染速度，且对接入 SSR 没有强诉求**。当我们提到优化首屏渲染时间，往往会想到 Server Side Render，通过云端直出 HTML 结构来达到目的。SSR 同样会引入复杂的接入流程，以及较高的使用成本。这个时候，PWC 可能是另一个好的选择。PWC 简单的渲染流程，以及轻量的运行时，可以让纯客户端渲染的时间大大减少
-- **让开发的物料不再被框架升级所困扰**。当业务到达一定量级后，会有沉淀业务域物料的诉求，这些物料会被应用广泛依赖。并且当功能迭代稳定之后，长时间内不会有新的变更。社区内大部分的 UI Framework 都存在 break change 的演进，这些演进将会导致存量物料存在极大的升级成本。而通过 PWC 开发的组件将不再被这个问题困扰，PWC 是在 Web Components 基础用法上根据 W3C 标准和 JavaScript 语言新特性提供渐进式增强的能力，输入和输出拥有绝对的确定性
-- **组件能够轻松在其他框架中使用，并且具备响应式能力**。组件可以像使用 `div` 这样的原生标签一样在 React/Vue 项目中使用，同时组件所接收的响应式属性也可以直接触发视图变更。所以，你完全可以在任意现有的 Web App 中直接使用 PWC，并且具备良好的性能以及状态管理能力
+<a href='https://img.alicdn.com/imgextra/i4/O1CN01IbUQQY1woBLyJ3zEA_!!6000000006354-2-tps-3262-938.png'>
+<img src='https://img.alicdn.com/imgextra/i4/O1CN01IbUQQY1woBLyJ3zEA_!!6000000006354-2-tps-3262-938.png' />
+</a>
+
+- **对中低端机（或嵌入式设备）性能有要求**。Web Components 本身**低内存占用**的特点以及 PWC 轻量的响应式系统可以让开发的组件在这些设备上有优异的表现
+- **提升首屏渲染速度，且无需接入 SSR**。一般情况会使用 Server Side Render 作为优化首屏渲染时间的方式，但接入 SSR 有较高的成本。这个时候，PWC 可能是另一个好的选择。PWC 简单的渲染流程，以及轻量的运行时，可以让 CSR 的时间大大减少
+- **让开发的物料不再被框架升级所困扰**。业务的公共物料不再被 UI Framework  break change 所困扰。PWC 是在 Web Components 基础用法上根据 W3C 标准和 JavaScript 语言新特性提供渐进式增强的能力，输入和输出拥有绝对的确定性
+- **组件能够轻松在其他框架中使用，并且具备响应式能力**。组件可以像使用 `div` 这样的原生标签一样在 React/Vue 项目中使用，同时组件所接收的响应式属性也可以直接触发视图变更
