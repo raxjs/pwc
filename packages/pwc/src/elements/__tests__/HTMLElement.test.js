@@ -17,7 +17,7 @@ function getSimpleCustomElement() {
           [
             {
               name: 'onclick',
-              value: this.onClick.bind(this),
+              value: this.onClick,
             }
           ],
           this.text,
@@ -44,7 +44,7 @@ function getNestedCustomElement() {
           [
             {
               name: 'onclick',
-              value: this.onClick.bind(this),
+              value: this.onClick,
             }
           ],
           this.text,
@@ -85,7 +85,7 @@ function getReactiveCustomElement() {
             },
             {
               name: 'onclick',
-              value: this.onClick.bind(this),
+              value: this.onClick,
             }
           ],
           this.#text,
@@ -184,6 +184,8 @@ describe('Render nested components', () => {
     accessor data = { };
 
     items = [];
+
+    callback() {}
 
     get template() {
       return mockChildFn(this);
