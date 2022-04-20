@@ -105,7 +105,7 @@ class Parent extends HTMLElement {
 window.customElements.define('parent-element', Parent);
 ```
 
-### 样式隔离必须用到 shadow DOM
+### 低版本浏览器容易产生样式冲突
 
 Web Components 的优势之一是通过 shadow DOM 创造一个隔离环境，但是对于有兼容低端机诉求的业务而言无法开启 shadow DOM。这就导致开发者通过 Web Components 开发的组件在一定程度上会面临样式冲突的可能性。
 
