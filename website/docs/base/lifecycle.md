@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # 生命周期
 
-PWC 开发的组件完全遵守 Web Component 标准的生命周期。[MDN 上关于组件标准的生命周期可以看这篇文档](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements#using_the_lifecycle_callbacks)。
+PWC 开发的组件完全遵守 Web Components 标准的生命周期。[MDN 上关于组件标准的生命周期可以看这篇文档](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements#using_the_lifecycle_callbacks)。
 
 :::note
 
