@@ -176,6 +176,8 @@ class CustomElement extends HTMLElement {
 }
 ```
 
+> PWC 将 Web Components 基类中具有响应式的[私有属性](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_class_fields)作为组件内部状态
+
 ### 事件绑定
 
 为了让开发者不再需要获取 DOM 节点再进行事件绑定，PWC 扩展了事件绑定方式：
