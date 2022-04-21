@@ -29,8 +29,6 @@ import { attributeSetter } from './setter';
 import { attributeGetter } from './getter';
 import { validatePrivate } from './validatePrivate';
 
-const __DEV__ = process.env.NODE_ENV !== 'production';
-
 export function attribute(attrName: string) {
   return (value, { kind, name, isPrivate }) => {
     // Validate accessor operator

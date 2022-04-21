@@ -4,7 +4,6 @@
  * 1: repeated reflect attribute name
  */
 import type { Warning } from './type';
-import { NOOP } from './utils';
 
 function createMinifiedError(type, code) {
   return new Error(`${type}: #${code}.`);
@@ -33,10 +32,8 @@ export function throwError(message) {
   throw Error(`${message}`);
 }
 
-export let warning: Warning = NOOP;
-
-if (process.env.NODE_ENV !== 'production') {
-  warning = (template: string, ...args: any[]): void => {
+export const warning: Warning = function (template: string, ...args: any[]): void {
+  if (__DEV__) {
     if (typeof console !== 'undefined') {
       let argsWithFormat = args.map((item) => `${item}`);
       argsWithFormat.unshift(`Warning: ${template}`);
@@ -51,5 +48,5 @@ if (process.env.NODE_ENV !== 'production') {
       const message = `Warning: ${template.replace(/%s/g, () => args[argIndex++])}`;
       throw new Error(message);
     } catch (error) {}
-  };
-}
+  }
+};

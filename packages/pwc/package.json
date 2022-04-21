@@ -4,7 +4,7 @@
   "author": "Rax Team",
   "homepage": "https://github.com/raxjs/pwc#readme",
   "license": "MIT",
-  "main": "es/index.js",
+  "main": "esm/index.js",
   "files": [
     "esm/",
     "es2017/",

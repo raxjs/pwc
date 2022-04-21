@@ -15,7 +15,8 @@
     "benchmark": "esno ./scripts/benchmarks/index.ts",
     "start": "pnpm run start --parallel --filter \"./packages\"",
     "build": "pnpm run build -r --filter \"./packages\"",
-    "prepare-husky": "husky install"
+    "prepare-husky": "husky install",
+    "coverage": "codecov"
   },
   "dependencies": {
     "@applint/spec": "^1.2.0",
@@ -45,6 +46,7 @@
     "local-web-server": "^4.1.0",
     "prettier": "^2.6.0",
     "stylelint": "^14.6.0",
-    "typescript": "^4.6.2"
+    "typescript": "^4.6.2",
+    "codecov": "^3.8.3"
   }
 }
