@@ -10,4 +10,7 @@ module.exports = {
   transform: {
     '\\.(js|ts|jsx|tsx)$': 'babel-jest',
   },
+  globals: {
+    __DEV__: !process.env.PRODUCTION,
+  },
 };
