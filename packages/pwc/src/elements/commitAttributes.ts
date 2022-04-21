@@ -11,7 +11,7 @@ export function commitAttributes(element: Element, attrs: Attributes, opt?: {
   const {
     isInitial = false,
     isSVG = false,
-    rootElement
+    rootElement,
   } = opt || {};
   for (const attr of attrs) {
     const { name, value } = attr;
@@ -31,7 +31,8 @@ export function commitAttributes(element: Element, attrs: Attributes, opt?: {
       // Bind the rootElement to ensure the handler context is the element itself
       element.addEventListener(eventName, value.bind(rootElement), capture);
     } else if (isSVG) {
-      // Svg elements must be set as attributes
+      // https://svgwg.org/svg2-draft/struct.html#InterfaceSVGSVGElement
+      // Svg elements must be set as attributes, all properties is read only
       element.setAttribute(name, value);
     } else if (name in element) {
       // Verify that there is a target property on the element
