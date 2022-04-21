@@ -1,5 +1,4 @@
 export const EMPTY_OBJECT = {};
-export const NOOP = () => {};
 
 export function isArray(arg: any) {
   return Array.isArray(arg);
