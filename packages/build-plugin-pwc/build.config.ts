@@ -1,6 +1,9 @@
-import { defineConfig } from '@ice/pkg-cli';
+import { defineConfig } from '@ice/pkg';
 
 export default defineConfig({
   sourceMaps: 'inline',
-  exclude: ['**/__tests__/**'],
+  transform: {
+    formats: ['esm', 'es2017'],
+    excludes: ['**/__tests__/**'],
+  },
 });

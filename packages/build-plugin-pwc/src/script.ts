@@ -33,6 +33,7 @@ export function resolveScript(
     pluginContext.error(createRollupError(descriptor.filename, err));
   }
   // Use babel to transform syntax like decorators
+  // TODO: remove this step
   const { code, map } = transformSync(resolved.content, {
     filename: resolved.filename,
     plugins: [
@@ -46,7 +47,7 @@ export function resolveScript(
     // inputSourceMap: resolved.map
   });
 
-
+  // TODO:set resolved
   cache.set(descriptor, {
     ...resolved,
     content: code,

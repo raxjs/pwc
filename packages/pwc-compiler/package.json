@@ -4,8 +4,9 @@
   "author": "Rax Team",
   "homepage": "https://github.com/raxjs/pwc#readme",
   "license": "MIT",
-  "main": "cjs/index.js",
+  "main": "esm/index.js",
   "module": "esm/index.js",
+  "type": "module",
   "exports": {
     ".": {
       "es": "./esm/index.js",

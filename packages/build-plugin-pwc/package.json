@@ -4,7 +4,8 @@
   "author": "Rax Team",
   "homepage": "https://github.com/raxjs/pwc#readme",
   "license": "MIT",
-  "main": "cjs/index.js",
+  "type": "module",
+  "main": "esm/index.js",
   "module": "esm/index.js",
   "files": [
     "lib",
@@ -43,6 +44,7 @@
     "@babel/plugin-proposal-decorators": "^7.17.9",
     "@babel/plugin-proposal-private-methods": "^7.16.11",
     "@pwc/compiler": "^1.0.0",
+    "@swc/helpers": "^0.3.8",
     "querystring": "^0.2.1",
     "rollup-pluginutils": "^2.8.2"
   }

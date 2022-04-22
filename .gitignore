@@ -34,6 +34,11 @@ packages/*/cjs/
 packages/*/esm/
 packages/*/es2017/
 
+# Examples
+examples/*/esm/
+examples/*/es2017/
+examples/*/dist/
+
 # Dist
 dist/
 !**/frameworks/**/dist

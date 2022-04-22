@@ -8,9 +8,9 @@ const BuildPluginPWC = (api) => {
       ...config,
       rollupPlugins: [
         pwc({ include: /\.pwc$/ }),
-      ]
-    }
+      ],
+    };
   });
-}
+};
 
 export default BuildPluginPWC;
