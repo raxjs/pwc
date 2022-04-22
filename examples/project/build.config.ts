@@ -1,4 +1,4 @@
-import { defineConfig } from '@ice/pkg-cli';
+import { defineConfig } from '@ice/pkg';
 // import pwc from 'build-plugin-pwc';
 
 export default defineConfig({
