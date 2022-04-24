@@ -1,10 +1,6 @@
 // When attribute name startsWith @ in template, it should be an event
-export function isEventNameInTemplate(name: string): boolean {
-  return name.startsWith('@');
-}
-
 export function isEventName(name: string): boolean {
-  return name.startsWith('on');
+  return name.startsWith('@');
 }
 
 export function isPrivateField(field: string): boolean {
@@ -102,4 +98,8 @@ export function isMemberExpression(path: string): boolean {
     }
   }
   return !currentOpenBracketCount && !currentOpenParensCount;
+}
+
+export function isBoolean(val: unknown): boolean {
+  return typeof val === 'boolean';
 }

@@ -33,7 +33,7 @@ describe('compileTemplate', () => {
     expect(values).toEqual([
       [
         {
-          name: 'onclick',
+          name: '@click',
           value: 'handleClick',
           capture: false,
         }
@@ -50,7 +50,7 @@ describe('compileTemplate', () => {
     expect(values).toEqual([
       [
         {
-          name: 'onclick',
+          name: '@click',
           value: 'this.handleClick',
           capture: false,
         }
@@ -67,7 +67,7 @@ describe('compileTemplate', () => {
     expect(values).toEqual([
       [
         {
-          name: 'onclick',
+          name: '@click',
           value: 'handleClick',
           capture: true,
         }
@@ -165,7 +165,7 @@ describe('compileTemplate', () => {
     expect(values).toEqual([
       [
         {
-          name: 'onclick',
+          name: '@click',
           value: '() => (count++)',
           capture: false
         }
@@ -181,7 +181,7 @@ describe('compileTemplate', () => {
     expect(values).toEqual([
       [
         {
-          name: 'onclick',
+          name: '@click',
           value: `() => (say('hello'))`,
           capture: false
         }
@@ -197,7 +197,7 @@ describe('compileTemplate', () => {
     expect(values).toEqual([
       [
         {
-          name: 'onclick',
+          name: '@click',
           value: `(event) => warn('', event)`,
           capture: false
         }

@@ -146,7 +146,11 @@ export default class CustomElement extends HTMLElement {
     const result = compileScript(descriptor);
 
     expect(result.content).toContain(`get template() {
-    return [\"\\n  <p><!--?pwc_t--></p>\\n\", [this.#text]];
+    return {
+      templateString: \"\\n  <p><!--?pwc_t--></p>\\n\",
+      templateData: [this.#text],
+      template: true
+    };
   }`);
   });
 
@@ -169,7 +173,11 @@ export default class CustomElement extends HTMLElement {
   data = {};
 
   get template() {
-    return ["\\n  <p><!--?pwc_t--></p>\\n", [this.#text]];
+    return {
+      templateString: "\\n  <p><!--?pwc_t--></p>\\n",
+      templateData: [this.#text],
+      template: true
+    };
   }
 
 }`);
@@ -196,7 +204,11 @@ export default class CustomElement extends HTMLElement {
   };
 
   get template() {
-    return ["\\n  <p><!--?pwc_t--></p>\\n  <p><!--?pwc_t--></p>\\n  <p><!--?pwc_t--></p>\\n", [this.data.name, this.arr[0], this.nestedData.obj1.obj2.age]];
+    return {
+      templateString: "\\n  <p><!--?pwc_t--></p>\\n  <p><!--?pwc_t--></p>\\n  <p><!--?pwc_t--></p>\\n",
+      templateData: [this.data.name, this.arr[0], this.nestedData.obj1.obj2.age],
+      template: true
+    };
   }
 
 }`);
@@ -214,7 +226,11 @@ export default class CustomElement extends HTMLElement {
   accessor insideName = '';
 
   get template() {
-    return ["\\n  <p><!--?pwc_t--></p>\\n  <p><!--?pwc_t--></p>\\n", [outsideName, this.insideName]];
+    return {
+      templateString: "\\n  <p><!--?pwc_t--></p>\\n  <p><!--?pwc_t--></p>\\n",
+      templateData: [outsideName, this.insideName],
+      template: true
+    };
   }
 
 }`);
@@ -228,7 +244,11 @@ export default class CustomElement extends HTMLElement {
 @customElement(\"custom-element\")
 export default class CustomElement extends HTMLElement {
   get template() {
-    return [\"\\n  <p>hello</p>\\n\", []];
+    return {
+      templateString: "\\n  <p>hello</p>\\n",
+      templateData: [],
+      template: true
+    };
   }
 
 }`);
@@ -242,7 +262,11 @@ export default class CustomElement extends HTMLElement {
 @customElement('custom-element')
 export default class CustomElement extends HTMLElement {
   get template() {
-    return [\"\\n  <p>hello</p>\\n\", []];
+    return {
+      templateString: "\\n  <p>hello</p>\\n",
+      templateData: [],
+      template: true
+    };
   }
 
 }`);
@@ -279,27 +303,31 @@ export default class CustomElement extends HTMLElement {
   };
 
   get template() {
-    return ["\\n  <!--?pwc_p--><div>\\n    <div><!--?pwc_t--></div>\\n    <div><!--?pwc_t--></div>\\n    <div><!--?pwc_t--></div>\\n    <div><!--?pwc_t--></div>\\n    <div><!--?pwc_t--></div>\\n  </div>\\n", [[{
-      name: "attr1",
-      value: this.#data1
-    }, {
-      name: "attr2",
-      value: this.#data2.name1
-    }, {
-      name: "attr3",
-      value: this.data3.arr1[0]
-    }, {
-      name: "attr4",
-      value: this['data-five']
-    }, {
-      name: "onclick",
-      value: this.#fn,
-      capture: false
-    }, {
-      name: "oninput",
-      value: this.methods.fn2,
-      capture: false
-    }], this.#data1, this.#data2.name1, this.data3.arr1[0], this.data4.obj1.name2, this['data-five']]];
+    return {
+      templateString: "\\n  <!--?pwc_p--><div>\\n    <div><!--?pwc_t--></div>\\n    <div><!--?pwc_t--></div>\\n    <div><!--?pwc_t--></div>\\n    <div><!--?pwc_t--></div>\\n    <div><!--?pwc_t--></div>\\n  </div>\\n",
+      templateData: [[{
+        name: "attr1",
+        value: this.#data1
+      }, {
+        name: "attr2",
+        value: this.#data2.name1
+      }, {
+        name: "attr3",
+        value: this.data3.arr1[0]
+      }, {
+        name: "attr4",
+        value: this['data-five']
+      }, {
+        name: "@click",
+        value: this.#fn,
+        capture: false
+      }, {
+        name: "@input",
+        value: this.methods.fn2,
+        capture: false
+      }], this.#data1, this.#data2.name1, this.data3.arr1[0], this.data4.obj1.name2, this['data-five']],
+      template: true
+    };
   }
 
 }`);

@@ -1,6 +1,6 @@
 import * as parse5 from 'parse5';
 import type { SFCDescriptor, ElementNode } from './parse';
-import { dfs, isEventNameInTemplate, isBindings, isMemberExpression, getEventInfo, BINDING_REGEXP, INTERPOLATION_REGEXP } from './utils';
+import { dfs, isEventName, isBindings, isMemberExpression, getEventInfo, BINDING_REGEXP, INTERPOLATION_REGEXP } from './utils';
 
 export interface AttributeDescriptor {
   name: string;
@@ -47,7 +47,7 @@ function extractAttributeBindings(node: ElementNode): Array<AttributeDescriptor>
 
           hasInsertComment = true;
         }
-        if (isEventNameInTemplate(attr.name)) {
+        if (isEventName(attr.name)) {
           // events
           const { eventName, isCapture } = getEventInfo(attr.name);
           let expression = attr.value.replace(BINDING_REGEXP, '$1').trim();
@@ -67,7 +67,7 @@ function extractAttributeBindings(node: ElementNode): Array<AttributeDescriptor>
           }
 
           tempAttributeDescriptor.push({
-            name: `on${eventName}`,
+            name: `@${eventName}`,
             value: expression,
             capture: isCapture,
           });
