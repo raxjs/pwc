@@ -79,13 +79,13 @@ export default function genGetTemplateMethod(ast: File, templateResult: CompileT
               return createArrayExpression(val.map(attr => {
                 const attributeObjectExpression = {
                   name: t.stringLiteral(attr.name),
-                  value: createIdentifier(attr.value)
-                }
+                  value: createIdentifier(attr.value),
+                };
                 if (isBoolean(attr.capture)) {
                   attributeObjectExpression['capture'] = t.booleanLiteral(attr.capture);
                 }
                 return createObjectExpression(attributeObjectExpression);
-              }
+              },
               ));
             }
           }));
