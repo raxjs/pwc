@@ -1,10 +1,11 @@
-import type { ElementTemplate, PWCElement, ReflectProperties, RootElement } from '../type';
-import { TEXT_COMMENT_DATA, PWC_PREFIX, PLACEHOLDER_COMMENT_DATA } from '../constants';
+import type { ElementTemplate, PWCElement, PWCElementTemplate, ReflectProperties, RootElement } from '../type';
 import { Reactive } from '../reactivity/reactive';
 import type { ReactiveNode } from './reactiveNode';
-import { AttributedNode, TextNode } from './reactiveNode';
 import { shallowEqual, generateUid } from '../utils';
 import { enqueueJob, nextTick } from './sheduler';
+import { initRenderTemplate } from './initRenderTemplate';
+import { getTemplateInfo } from './getTemplateInfo';
+import { validateElementTemplate } from './validateElementTemplate';
 
 export default (Definition: PWCElement) => {
   return class extends Definition {
@@ -16,7 +17,7 @@ export default (Definition: PWCElement) => {
     // Template info
     #currentTemplate: ElementTemplate;
     // Reactive nodes
-    #reactiveNodes: ReactiveNode[];
+    #reactiveNodes: ReactiveNode[] = [];
     // Reactive instance
     #reactive: Reactive = new Reactive(this);
     // Reflect properties
@@ -25,19 +26,22 @@ export default (Definition: PWCElement) => {
     #initTask: () => void;
 
     get template() {
-      return [] as ElementTemplate;
+      return {} as ElementTemplate;
     }
 
     // Custom element native lifecycle
     connectedCallback() {
       if (!this.#initialized) {
         this.#initTask = () => {
-          this.#currentTemplate = this.template || [];
-          const [template, values = []] = this.#currentTemplate;
+          this.#currentTemplate = this.template || {};
+          if (__DEV__) {
+            validateElementTemplate(this.#currentTemplate);
+          }
+          const { templateString, templateData } = getTemplateInfo(this.#currentTemplate);
           this.#root = this.shadowRoot || this;
           // TODO: xss
-          this.#root.innerHTML = template;
-          this.#initRenderTemplate(this.#root, values);
+          this.#root.innerHTML = templateString;
+          initRenderTemplate(this.#root, templateData, this.#reactiveNodes);
           this.#initialized = true;
         };
         // Avoid that child component connectedCallback triggers before parent component
@@ -58,48 +62,31 @@ export default (Definition: PWCElement) => {
       return this.#initialized;
     }
 
-    #initRenderTemplate(fragment: RootElement, values) {
-      const nodeIterator = document.createNodeIterator(fragment, NodeFilter.SHOW_COMMENT, {
-        acceptNode(node) {
-          if ((node as Comment).data?.includes(PWC_PREFIX)) {
-            return NodeFilter.FILTER_ACCEPT;
-          }
-          return NodeFilter.FILTER_REJECT;
-        },
-      });
-      let currentComment: Node;
-      let index = 0;
-      this.#reactiveNodes = [];
-
-      while ((currentComment = nodeIterator.nextNode())) {
-        // Insert dynamic text node
-        if ((currentComment as Comment).data === TEXT_COMMENT_DATA) {
-          const textElement = new TextNode(currentComment as Comment, values[index]);
-          this.#reactiveNodes.push(textElement);
-        } else if ((currentComment as Comment).data === PLACEHOLDER_COMMENT_DATA) {
-          const attributedElement = new AttributedNode(currentComment as Comment, values[index], this);
-          this.#reactiveNodes.push(attributedElement);
-        }
-
-        index++;
-      }
-    }
-
     #performUpdate() {
-      const [oldStrings, oldValues] = this.#currentTemplate;
-      const [strings, values] = this.template;
+      const {
+        templateString: oldTemplateString,
+        templateData: oldTemplateData,
+      } = this.#currentTemplate as PWCElementTemplate;
+      const currentElementTemplate = this.template;
+      if (__DEV__) {
+        validateElementTemplate(currentElementTemplate);
+      }
+      const { templateString, templateData } = getTemplateInfo(currentElementTemplate);
 
       // While template strings is constant with prev ones,
       // it should just update node values and attributes
-      if (oldStrings === strings) {
-        for (let index = 0; index < oldValues.length; index++) {
-          if (!shallowEqual(oldValues[index], values[index])) {
-            this.#reactiveNodes[index].commitValue(values[index]);
+      if (oldTemplateString === templateString) {
+        for (let index = 0; index < oldTemplateData.length; index++) {
+          if (!shallowEqual(oldTemplateData[index], templateData[index])) {
+            this.#reactiveNodes[index].commitValue(templateData[index]);
           }
         }
       }
       // It will trigger get template method if there use this.template
-      this.#currentTemplate = [strings, values];
+      this.#currentTemplate = {
+        templateData,
+        templateString,
+      };
     }
 
     _requestUpdate(): void {
