@@ -91,6 +91,7 @@ const multipleKindsOfUsingBindingsComponent = `
     attr3="{{this.data3.arr1[0]}}"
     attr4="{{this['data-five']}}"
     @click="{{this.#fn}}"
+    onevent="{{this.#fn}}"
     @input="{{this.methods.fn2}}"
   >
     <div>{{ this.#data1 }}</div>
@@ -318,12 +319,15 @@ export default class CustomElement extends HTMLElement {
         name: "attr4",
         value: this['data-five']
       }, {
-        name: "@click",
-        value: this.#fn,
+        name: "onclick",
+        handler: this.#fn,
         capture: false
       }, {
-        name: "@input",
-        value: this.methods.fn2,
+        name: "onevent",
+        value: this.#fn
+      }, {
+        name: "oninput",
+        handler: this.methods.fn2,
         capture: false
       }], this.#data1, this.#data2.name1, this.data3.arr1[0], this.data4.obj1.name2, this['data-five']],
       template: true

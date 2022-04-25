@@ -1,10 +1,11 @@
 import * as parse5 from 'parse5';
 import type { SFCDescriptor, ElementNode } from './parse';
-import { dfs, isEventName, isBindings, isMemberExpression, getEventInfo, BINDING_REGEXP, INTERPOLATION_REGEXP } from './utils';
+import { dfs, isEventNameInTemplate, isBindings, isMemberExpression, getEventInfo, BINDING_REGEXP, INTERPOLATION_REGEXP } from './utils';
 
 export interface AttributeDescriptor {
   name: string;
-  value: string;
+  value?: string;
+  handler?: string;
   capture?: boolean;
 }
 
@@ -35,7 +36,7 @@ function createTextNode(value) {
 
 // with side effect in changing node structure
 function extractAttributeBindings(node: ElementNode): Array<AttributeDescriptor> {
-  const tempAttributeDescriptor = [];
+  const tempAttributeDescriptor: Array<AttributeDescriptor> = [];
   // Extract attribute bindings
   if (node.attrs?.length > 0) {
     let hasInsertComment = false; // Should only insert comment node before current node once
@@ -47,7 +48,7 @@ function extractAttributeBindings(node: ElementNode): Array<AttributeDescriptor>
 
           hasInsertComment = true;
         }
-        if (isEventName(attr.name)) {
+        if (isEventNameInTemplate(attr.name)) {
           // events
           const { eventName, isCapture } = getEventInfo(attr.name);
           let expression = attr.value.replace(BINDING_REGEXP, '$1').trim();
@@ -67,14 +68,13 @@ function extractAttributeBindings(node: ElementNode): Array<AttributeDescriptor>
           }
 
           tempAttributeDescriptor.push({
-            name: `@${eventName}`,
-            value: expression,
+            name: `on${eventName}`,
+            handler: expression,
             capture: isCapture,
           });
         } else {
           // attributes
           let expression = attr.value.replace(BINDING_REGEXP, '$1').trim();
-
           tempAttributeDescriptor.push({
             name: attr.name,
             value: expression,

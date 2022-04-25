@@ -67,7 +67,7 @@ export default function genGetTemplateMethod(ast: File, templateResult: CompileT
                 [
                   {
                     name: 'onclick',
-                    value: 'onClick',
+                    handler: 'onClick',
                     capture: true,
                   },
                   {
@@ -77,13 +77,18 @@ export default function genGetTemplateMethod(ast: File, templateResult: CompileT
                 ]
               */
               return createArrayExpression(val.map(attr => {
-                const attributeObjectExpression = {
-                  name: t.stringLiteral(attr.name),
-                  value: createIdentifier(attr.value),
-                };
-                if (isBoolean(attr.capture)) {
-                  attributeObjectExpression['capture'] = t.booleanLiteral(attr.capture);
-                }
+                const attributeEntries = Object.entries(attr).map(([key, val]) => {
+                  let expression;
+                  if (key === 'name') {
+                    expression = t.stringLiteral(val);
+                  } else if (key === 'value' || key === 'handler') {
+                    expression = createIdentifier(val);
+                  } else if (key === 'capture') {
+                    expression = t.booleanLiteral(val);
+                  }
+                  return [key, expression];
+                });
+                const attributeObjectExpression = Object.fromEntries(attributeEntries);
                 return createObjectExpression(attributeObjectExpression);
               },
               ));

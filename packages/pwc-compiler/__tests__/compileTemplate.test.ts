@@ -33,8 +33,8 @@ describe('compileTemplate', () => {
     expect(values).toEqual([
       [
         {
-          name: '@click',
-          value: 'handleClick',
+          name: 'onclick',
+          handler: 'handleClick',
           capture: false,
         }
       ],
@@ -50,8 +50,8 @@ describe('compileTemplate', () => {
     expect(values).toEqual([
       [
         {
-          name: '@click',
-          value: 'this.handleClick',
+          name: 'onclick',
+          handler: 'this.handleClick',
           capture: false,
         }
       ],
@@ -67,14 +67,31 @@ describe('compileTemplate', () => {
     expect(values).toEqual([
       [
         {
-          name: '@click',
-          value: 'handleClick',
+          name: 'onclick',
+          handler: 'handleClick',
           capture: true,
         }
       ],
       'text'
     ]);
   });
+
+  it('compile a template with an attribute start with on', () => {
+    const { descriptor } = parse('<template><custom-component onevent="{{handleEvent}}">{{text}}</custom-component></template>');
+    const { templateString, values} = compileTemplateAST(descriptor.template.ast);
+
+    expect(templateString).toBe('<!--?pwc_p--><custom-component><!--?pwc_t--></custom-component>');
+    expect(values).toEqual([
+      [
+        {
+          name: 'onevent',
+          value: 'handleEvent'
+        }
+      ],
+      'text'
+    ]);
+  });
+
 
   it('compile a template with attributes', () => {
     const { descriptor } = parse('<template><p class="{{className}}">{{text}}</p></template>');
@@ -165,8 +182,8 @@ describe('compileTemplate', () => {
     expect(values).toEqual([
       [
         {
-          name: '@click',
-          value: '() => (count++)',
+          name: 'onclick',
+          handler: '() => (count++)',
           capture: false
         }
       ],
@@ -181,8 +198,8 @@ describe('compileTemplate', () => {
     expect(values).toEqual([
       [
         {
-          name: '@click',
-          value: `() => (say('hello'))`,
+          name: 'onclick',
+          handler: `() => (say('hello'))`,
           capture: false
         }
       ],
@@ -197,8 +214,8 @@ describe('compileTemplate', () => {
     expect(values).toEqual([
       [
         {
-          name: '@click',
-          value: `(event) => warn('', event)`,
+          name: 'onclick',
+          handler: `(event) => warn('', event)`,
           capture: false
         }
       ],
