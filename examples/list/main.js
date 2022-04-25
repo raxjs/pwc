@@ -1,4 +1,4 @@
-import { reactive, customElement, html, list } from 'pwc';
+import { reactive, customElement, html } from 'pwc';
 
 @customElement('custom-element')
 class CustomElement extends HTMLElement {
@@ -9,11 +9,11 @@ class CustomElement extends HTMLElement {
     return {
       templateString: '<div>map: <!--?pwc_t--></div>',
       templateData: [
-        {
+        [1, 3, 2].map((i) => ({
           templateString: 'title is <!--?pwc_t-->',
-          templateData: [this.#title],
+          templateData: [i],
           template: true
-        }
+        }))
       ],
       template: true
     };
