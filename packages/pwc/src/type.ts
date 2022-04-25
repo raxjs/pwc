@@ -5,7 +5,7 @@ export interface PWCElement extends Element {
   adoptedCallback(): void;
   _requestUpdate(): void;
   prototype: PWCElement;
-  new(): PWCElement;
+  new (): PWCElement;
 }
 
 export type RootElement = PWCElement | ShadowRoot;
@@ -19,20 +19,31 @@ export interface Attribute {
 
 export type Attributes = Attribute[];
 
-export type TemplateValue = Attributes | string;
+export type TemplateDataType = Attributes | string | ElementTemplate[];
 
-export type ElementTemplate = [] | [string] | [string, TemplateValue[]];
+export type TemplateStringType = string;
+
+export type PWCElementTemplate = {
+  templateString?: TemplateStringType;
+  templateData?: TemplateDataType[];
+  template?: boolean;
+};
+
+export type ElementTemplate = PWCElementTemplate | string;
 
 export interface CustomHTMLBaseElement extends HTMLBaseElement {
   template?: ElementTemplate;
   shadowOptions: ShadowRootInit;
 }
 
-export type Warning = ((template: string, ...args: any[]) => void);
+export type Warning = (template: string, ...args: any[]) => void;
 
-export type ReflectProperties = Map<string, {
+export type ReflectProperties = Map<
+string,
+{
   attrName: string;
   isBoolean: boolean;
   value?: unknown;
   initialValue: unknown;
-}>;
+}
+>;
