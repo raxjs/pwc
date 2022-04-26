@@ -88,7 +88,7 @@ export default function autoAddReactiveDecorator(ast: File, values: ValueDescrip
       const { node } = path;
       if (t.isIdentifier(node.key) && classPropertyUsedInTemplate.includes(node.key.name)) {
         if (!node.decorators || node.decorators.length === 0) {
-          node.decorators = [createIdentifierDecorator('reactive')];
+          node.decorators = [createIdentifierDecorator('__reactive')];
           hasReactiveVariableInTemplate = true;
         }
       }
@@ -98,7 +98,7 @@ export default function autoAddReactiveDecorator(ast: File, values: ValueDescrip
       const { node } = path;
       if (t.isPrivateName(node.key) && classPropertyUsedInTemplate.includes(`#${node.key.id.name}`)) {
         if (!node.decorators || node.decorators.length === 0) {
-          node.decorators = [createIdentifierDecorator('reactive')];
+          node.decorators = [createIdentifierDecorator('__reactive')];
           hasReactiveVariableInTemplate = true;
         }
       }

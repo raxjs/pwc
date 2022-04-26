@@ -3,7 +3,7 @@ import * as t from '@babel/types';
 import babelTraverse from '@babel/traverse';
 
 function isIncludeReactiveDecorator(decorators: Array<t.Decorator>): boolean {
-  return decorators.some(decorator => t.isIdentifier(decorator.expression) && decorator.expression.name === 'reactive');
+  return decorators.some(decorator => t.isIdentifier(decorator.expression) && decorator.expression.name === '__reactive');
 }
 
 function createClassAccessorPropertyFromClassProperty(node: t.ClassProperty | t.ClassPrivateProperty) {
