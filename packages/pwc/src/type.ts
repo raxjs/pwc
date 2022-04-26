@@ -1,5 +1,3 @@
-import { ReactiveNode } from './elements/reactiveNode';
-
 export interface PWCElement extends Element {
   connectedCallback(): void;
   disconnectedCallback(): void;
