@@ -2,12 +2,18 @@ import * as parse5 from 'parse5';
 import type { SFCDescriptor, ElementNode } from './parse';
 import { dfs, isEventNameInTemplate, isBindings, isMemberExpression, getEventInfo, BINDING_REGEXP, INTERPOLATION_REGEXP } from './utils';
 
-export interface AttributeDescriptor {
+export interface NormalAttributeDescriptor {
   name: string;
-  value?: string;
-  handler?: string;
-  capture?: boolean;
+  value: string;
 }
+
+export interface EventAttributeDescriptor {
+  name: string;
+  handler: string;
+  capture: boolean;
+}
+
+export type AttributeDescriptor = NormalAttributeDescriptor | EventAttributeDescriptor;
 
 export type ValueDescriptor = Array<string | Array<AttributeDescriptor>>;
 
