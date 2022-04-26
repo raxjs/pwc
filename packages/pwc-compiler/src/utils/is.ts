@@ -103,3 +103,7 @@ export function isMemberExpression(path: string): boolean {
   }
   return !currentOpenBracketCount && !currentOpenParensCount;
 }
+
+export function isBoolean(val: unknown): boolean {
+  return typeof val === 'boolean';
+}

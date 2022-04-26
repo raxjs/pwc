@@ -25,11 +25,13 @@ export class AttributedNode implements ReactiveNode {
   #el: Element;
   #root: PWCElement;
   #elIsCustom: boolean;
+  #elIsSvg: boolean;
 
   constructor(commentNode: Comment, initialAttrs: Attributes, rootNode: PWCElement) {
     this.#el = commentNode.nextSibling as Element;
     this.#root = rootNode;
     this.#elIsCustom = Boolean(window.customElements.get(this.#el.localName));
+    this.#elIsSvg = this.#el instanceof SVGElement;
     this.#commitAttributes(initialAttrs, true);
   }
 
@@ -43,7 +45,11 @@ export class AttributedNode implements ReactiveNode {
   }
 
   #commitAttributes(value: Attributes, isInitial = false) {
-    commitAttributes(this.#el, value, isInitial, this.#root);
+    commitAttributes(this.#el, value, {
+      isInitial,
+      isSVG: this.#elIsSvg,
+      rootElement: this.#root,
+    });
   }
 }
 
