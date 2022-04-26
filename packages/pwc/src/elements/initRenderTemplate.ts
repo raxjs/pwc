@@ -1,8 +1,10 @@
 import { PLACEHOLDER_COMMENT_DATA, PWC_PREFIX, TEXT_COMMENT_DATA } from '../constants';
-import { isArray } from '../utils';
-import { AttributedNode, TextNode } from './reactiveNode';
-import type { Attributes, RootElement, TemplateDataType, ElementTemplate, PWCElementTemplate } from '../type';
+import { isArray, isTemplate } from '../utils';
+import { AttributedNode, TemplateNode, TextNode } from './reactiveNode';
+import type { ReactiveNode } from './reactiveNode';
+import type { Attributes, RootElement, TemplateDataItemType, PWCElementTemplate, PWCElement } from '../type';
 import { createTemplate } from './createTemplate';
+import { getTemplateInfo } from './getTemplateInfo';
 
 enum NODE_TYPE {
   ATTRIBUTE = 'ATTRIBUTE',
@@ -33,7 +35,12 @@ type ValuePlaceholder = TemplatePlaceholder | TemplatesPlaceholder | TextPlaceho
 
 type PlaceholderItem = ValuePlaceholder | AttributePlaceholder;
 
-export function initRenderTemplate(fragment: RootElement | Node, templateData: TemplateDataType[], reactiveNodes) {
+export function initRenderTemplate(
+  fragment: RootElement | Node,
+  templateData: TemplateDataItemType[],
+  reactiveNodes: ReactiveNode[],
+  hostElement: PWCElement,
+) {
   const nodeIterator = document.createNodeIterator(fragment, NodeFilter.SHOW_COMMENT, {
     acceptNode(node) {
       if ((node as Comment).data?.includes(PWC_PREFIX)) {
@@ -55,7 +62,7 @@ export function initRenderTemplate(fragment: RootElement | Node, templateData: T
       if (isArray(value)) {
         type = NODE_TYPE.TEMPLATES;
         // @ts-ignore
-      } else if ((value as ElementTemplate)?.template === true) {
+      } else if (isTemplate(value)) {
         type = NODE_TYPE.TEMPLATE;
       } else {
         type = NODE_TYPE.TEXT;
@@ -81,37 +88,51 @@ export function initRenderTemplate(fragment: RootElement | Node, templateData: T
     switch (type) {
       case NODE_TYPE.TEXT: {
         // Avoid render undefined or null
-        const textElement = new TextNode(placeholder, value || '');
-        reactiveNodes.push(textElement);
+        const textNode = new TextNode(placeholder, value || '');
+        reactiveNodes.push(textNode);
         break;
       }
       case NODE_TYPE.ATTRIBUTE: {
-        const attributedElement = new AttributedNode(placeholder, value, this);
-        reactiveNodes.push(attributedElement);
+        const attributedNode = new AttributedNode(placeholder, value, hostElement);
+        reactiveNodes.push(attributedNode);
         break;
       }
       case NODE_TYPE.TEMPLATE: {
-        initTemplateItem(value, placeholder, reactiveNodes);
+        initTemplateItem(value, placeholder, reactiveNodes, hostElement);
         break;
       }
       case NODE_TYPE.TEMPLATES: {
-        initTemplateItems(value, placeholder, reactiveNodes);
+        initTemplateItems(value, placeholder, reactiveNodes, hostElement);
         break;
       }
     }
   }
 }
 
-function initTemplateItems(elementTemplates: PWCElementTemplate[], prevNode: Node, reactiveNodes) {
+function initTemplateItems(
+  elementTemplates: PWCElementTemplate[],
+  prevNode: Node,
+  reactiveNodes: ReactiveNode[],
+  hostElement: PWCElement,
+) {
+  const templateNode = new TemplateNode();
+  reactiveNodes.push(templateNode);
   for (const elementTemplate of elementTemplates) {
-    initTemplateItem(elementTemplate, prevNode, reactiveNodes);
+    initTemplateItem(elementTemplate, prevNode, templateNode.reactiveNodes, hostElement);
   }
 }
 
-function initTemplateItem(elementTemplate: PWCElementTemplate, prevNode: Node, reactiveNodes) {
-  const { templateString, templateData = [] } = elementTemplate;
+function initTemplateItem(
+  elementTemplate: PWCElementTemplate,
+  prevNode: Node,
+  reactiveNodes: ReactiveNode[],
+  hostElement: PWCElement,
+) {
+  const { templateString, templateData = [] } = getTemplateInfo(elementTemplate);
   const fragment = createTemplate(templateString);
-  initRenderTemplate(fragment, templateData, reactiveNodes);
+  const templateNode = new TemplateNode();
+  reactiveNodes.push(templateNode);
+  initRenderTemplate(fragment, templateData, templateNode.reactiveNodes, hostElement);
   prevNode.parentNode.insertBefore(fragment, prevNode);
 }
 

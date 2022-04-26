@@ -10,6 +10,8 @@ export function getTemplateInfo(elementTemplate: ElementTemplate): PWCElementTem
     templateString = elementTemplate[TemplateString];
     templateData = elementTemplate[TemplateData];
   }
+
+  // TODO: xss
   return {
     templateString,
     templateData,

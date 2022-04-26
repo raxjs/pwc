@@ -1,5 +1,5 @@
 import { hasOwnProperty, is } from './common';
-import { isEventName } from './isEventName';
+import { isEvent } from './isEvent';
 import { isPrimitive } from './checkTypes';
 
 export function shallowEqual(valueA: any, valueB: any) {
@@ -18,7 +18,7 @@ export function shallowEqual(valueA: any, valueB: any) {
   }
 
   for (const val of keysA) {
-    if (!hasOwnProperty(valueB, val) || !isEventName(val) || !is(valueA[val], valueB[val])) {
+    if (!hasOwnProperty(valueB, val) || !isEvent(valueA[val]) || !is(valueA[val], valueB[val])) {
       return false;
     }
   }

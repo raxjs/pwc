@@ -1,7 +1,6 @@
-import { isEventName } from '../utils/isEventName';
+import { isEvent } from '../utils/isEvent';
 import type { Attributes, PWCElement } from '../type';
-import { isFunction, toRaw } from '../utils';
-import { warning } from '../error';
+import { toRaw } from '../utils';
 
 export function commitAttributes(element: Element, attrs: Attributes, opt?: {
   isInitial?: boolean;
@@ -15,21 +14,16 @@ export function commitAttributes(element: Element, attrs: Attributes, opt?: {
   } = opt || {};
   for (const attr of attrs) {
     const { name, value } = attr;
-    if (isEventName(name)) {
+    if (isEvent(attr)) {
       // Only add event listener at the first render
       if (!isInitial) {
         continue;
       }
       const eventName = name.slice(2).toLowerCase();
-      // And value is valid
-      if (!isFunction(value)) {
-        warning('The %s handler on %s is not a valid function', eventName, element);
-        continue;
-      }
-      const { capture = false } = attr;
+      const { capture = false, handler } = attr;
       // If capture is true, the event should be triggered when capture stage
       // Bind the rootElement to ensure the handler context is the element itself
-      element.addEventListener(eventName, value.bind(rootElement), capture);
+      element.addEventListener(eventName, handler.bind(rootElement), capture);
     } else if (isSVG) {
       // https://svgwg.org/svg2-draft/struct.html#InterfaceSVGSVGElement
       // Svg elements must be set as attributes, all properties is read only
