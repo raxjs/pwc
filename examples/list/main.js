@@ -5,15 +5,37 @@ class CustomElement extends HTMLElement {
   @reactive
   accessor #title;
 
+  onClick() {
+    this.#title = '123';
+  }
+
   get template() {
     return {
-      templateString: '<div>map: <!--?pwc_t--></div>',
+      templateString: '<!--?pwc_p--><div>map: <!--?pwc_t--><!--?pwc_t--></div>',
       templateData: [
-        [1, 3, 2].map((i) => ({
+        [
+          {
+            name: 'onclick',
+            handler: this.onClick
+          },
+        ],
+        {
           templateString: 'title is <!--?pwc_t-->',
-          templateData: [i],
+          templateData: [this.#title],
           template: true
-        }))
+        },
+        [
+          {
+            templateString: 'title is <!--?pwc_t-->',
+            templateData: [this.#title],
+            template: true
+          },
+          {
+            templateString: 'title is <!--?pwc_t-->',
+            templateData: [this.#title],
+            template: true
+          }
+        ]
       ],
       template: true
     };

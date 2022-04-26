@@ -1,5 +1,7 @@
 import { commitAttributes } from './commitAttributes';
-import type { Attributes, PWCElement } from '../type';
+import type { Attributes, PWCElementTemplate, PWCElement, TemplateNodeValue } from '../type';
+import { isTemplate } from '../utils';
+import { updateView } from './updateView';
 
 export interface ReactiveNode {
   commitValue: (value: any) => void;
@@ -42,5 +44,19 @@ export class AttributedNode implements ReactiveNode {
 
   #commitAttributes(value: Attributes, isInitial = false) {
     commitAttributes(this.#el, value, isInitial, this.#root);
+  }
+}
+
+export class TemplateNode implements ReactiveNode {
+  reactiveNodes: ReactiveNode[] = [];
+
+  commitValue([prev, current]: TemplateNodeValue) {
+    if (isTemplate(current)) {
+      updateView(prev as PWCElementTemplate, current as PWCElementTemplate, this.reactiveNodes);
+    } else {
+      for (let index = 0; index < this.reactiveNodes.length; index++) {
+        this.reactiveNodes[index].commitValue([prev[index], current[index]]);
+      }
+    }
   }
 }

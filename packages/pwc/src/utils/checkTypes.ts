@@ -1,3 +1,5 @@
+import { TemplateFlag } from '../constants';
+
 export const EMPTY_OBJECT = {};
 
 export function isArray(arg: any) {
@@ -30,4 +32,8 @@ export function isMap(value: unknown) {
 
 export function isPrivate(name: string) {
   return name.startsWith('#');
+}
+
+export function isTemplate(value: unknown): boolean {
+  return value && value[TemplateFlag] === true;
 }

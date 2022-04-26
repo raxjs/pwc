@@ -1,3 +1,5 @@
+import { ReactiveNode } from './elements/reactiveNode';
+
 export interface PWCElement extends Element {
   connectedCallback(): void;
   disconnectedCallback(): void;
@@ -29,13 +31,13 @@ export interface Attribute extends NormalAttribute, EventAttribute {}
 
 export type Attributes = Attribute[];
 
-export type TemplateDataType = Attributes | string | ElementTemplate[];
+export type TemplateDataItemType = Attributes | string | ElementTemplate[] | ElementTemplate;
 
 export type TemplateStringType = string;
 
 export type PWCElementTemplate = {
   templateString?: TemplateStringType;
-  templateData?: TemplateDataType[];
+  templateData?: TemplateDataItemType[];
   template?: boolean;
 };
 
@@ -54,3 +56,8 @@ export type ReflectProperties = Map<string, {
   value?: unknown;
   initialValue: unknown;
 }>;
+
+export type TemplateNodeValue = [
+  PWCElementTemplate | PWCElementTemplate[],
+  PWCElementTemplate | PWCElementTemplate[],
+];

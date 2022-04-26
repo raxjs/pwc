@@ -4,14 +4,14 @@ import { toRaw } from '../utils';
 
 export function commitAttributes(element: Element, attrs: Attributes, isInitial, rootElement?: PWCElement) {
   for (const attr of attrs) {
-    const { name, value, handler } = attr;
+    const { name, value } = attr;
     if (isEvent(attr)) {
       // Only add event listener at the first render
       if (!isInitial) {
         continue;
       }
       const eventName = name.slice(2).toLowerCase();
-      const { capture = false } = attr;
+      const { capture = false, handler } = attr;
       // If capture is true, the event should be triggered when capture stage
       // Bind the rootElement to ensure the handler context is the element itself
       element.addEventListener(eventName, handler.bind(rootElement), capture);

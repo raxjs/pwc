@@ -1,11 +1,12 @@
 import type { ElementTemplate, PWCElement, PWCElementTemplate, ReflectProperties, RootElement } from '../type';
 import { Reactive } from '../reactivity/reactive';
-import type { ReactiveNode } from './reactiveNode';
-import { shallowEqual, generateUid } from '../utils';
+import { ReactiveNode } from './reactiveNode';
+import { generateUid } from '../utils';
 import { enqueueJob, nextTick } from './sheduler';
 import { initRenderTemplate } from './initRenderTemplate';
 import { getTemplateInfo } from './getTemplateInfo';
 import { validateElementTemplate } from './validateElementTemplate';
+import { updateView } from './updateView';
 
 export default (Definition: PWCElement) => {
   return class extends Definition {
@@ -39,9 +40,8 @@ export default (Definition: PWCElement) => {
           }
           const { templateString, templateData } = getTemplateInfo(this.#currentTemplate);
           this.#root = this.shadowRoot || this;
-          // TODO: xss
           this.#root.innerHTML = templateString;
-          initRenderTemplate(this.#root, templateData, this.#reactiveNodes);
+          initRenderTemplate(this.#root, templateData, this.#reactiveNodes, this);
           this.#initialized = true;
         };
         // Avoid that child component connectedCallback triggers before parent component
@@ -63,30 +63,14 @@ export default (Definition: PWCElement) => {
     }
 
     #performUpdate() {
-      const {
-        templateString: oldTemplateString,
-        templateData: oldTemplateData,
-      } = this.#currentTemplate as PWCElementTemplate;
       const currentElementTemplate = this.template;
       if (__DEV__) {
         validateElementTemplate(currentElementTemplate);
       }
-      const { templateString, templateData } = getTemplateInfo(currentElementTemplate);
+      const newElementTemplate = getTemplateInfo(currentElementTemplate);
 
-      // While template strings is constant with prev ones,
-      // it should just update node values and attributes
-      if (oldTemplateString === templateString) {
-        for (let index = 0; index < oldTemplateData.length; index++) {
-          if (!shallowEqual(oldTemplateData[index], templateData[index])) {
-            this.#reactiveNodes[index].commitValue(templateData[index]);
-          }
-        }
-      }
-      // It will trigger get template method if there use this.template
-      this.#currentTemplate = {
-        templateData,
-        templateString,
-      };
+      updateView(this.#currentTemplate as PWCElementTemplate, newElementTemplate, this.#reactiveNodes);
+      this.#currentTemplate = newElementTemplate;
     }
 
     _requestUpdate(): void {
