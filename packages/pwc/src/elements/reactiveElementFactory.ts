@@ -1,12 +1,12 @@
 import type { ElementTemplate, PWCElement, PWCElementTemplate, ReflectProperties, RootElement } from '../type';
 import { Reactive } from '../reactivity/reactive';
-import { ReactiveNode } from './reactiveNode';
+import type { ReactiveNode } from './reactiveNode';
 import { generateUid } from '../utils';
 import { enqueueJob, nextTick } from './sheduler';
 import { initRenderTemplate } from './initRenderTemplate';
 import { getTemplateInfo } from './getTemplateInfo';
 import { validateElementTemplate } from './validateElementTemplate';
-import { updateView } from './updateView';
+import { updateView } from './reactiveNode';
 
 export default (Definition: PWCElement) => {
   return class extends Definition {

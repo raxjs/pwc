@@ -9,19 +9,19 @@ import type { CompileTemplateResult } from '../compileTemplate';
 
 export interface TransformScriptOptions {
   templateString: string | null;
-  values?: CompileTemplateResult['values'];
+  templateData?: CompileTemplateResult['templateData'];
 }
 
 export default function transformScript(ast: File, {
   templateString,
-  values,
+  templateData,
 }: TransformScriptOptions): void {
   autoAddCustomElementDecorator(ast);
   let shouldImportReactive = false;
   if (templateString !== null) {
-    shouldImportReactive = autoAddReactiveDecorator(ast, values);
+    shouldImportReactive = autoAddReactiveDecorator(ast, templateData);
     autoAddAccessor(ast);
-    genGetTemplateMethod(ast, { templateString, values });
+    genGetTemplateMethod(ast, { templateString, templateData });
   }
   autoInjectImportPWC(ast, shouldImportReactive);
 }

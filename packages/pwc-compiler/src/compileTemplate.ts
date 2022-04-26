@@ -19,7 +19,7 @@ export type ValueDescriptor = Array<string | Array<AttributeDescriptor>>;
 
 export interface CompileTemplateResult {
   templateString?: string;
-  values?: ValueDescriptor;
+  templateData?: ValueDescriptor;
 }
 
 const TEXT_COMMENT_DATA = '?pwc_t';
@@ -151,7 +151,7 @@ export function compileTemplate(descriptor: SFCDescriptor): CompileTemplateResul
 
 export function compileTemplateAST(ast: ElementNode): CompileTemplateResult {
   const nodes = dfs(ast);
-  const values = transformTemplateAst(nodes);
+  const templateData = transformTemplateAst(nodes);
   const templateString = genTemplateString(ast);
-  return { templateString, values };
+  return { templateString, templateData };
 }

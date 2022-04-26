@@ -1,7 +1,6 @@
 import { commitAttributes } from './commitAttributes';
 import type { Attributes, PWCElementTemplate, PWCElement, TemplateNodeValue } from '../type';
-import { isTemplate } from '../utils';
-import { updateView } from './updateView';
+import { isTemplate, shallowEqual } from '../utils';
 
 export interface ReactiveNode {
   commitValue: (value: any) => void;
@@ -62,6 +61,35 @@ export class TemplateNode implements ReactiveNode {
     } else {
       for (let index = 0; index < this.reactiveNodes.length; index++) {
         this.reactiveNodes[index].commitValue([prev[index], current[index]]);
+      }
+    }
+  }
+}
+
+export function updateView(
+  oldElementTemplate: PWCElementTemplate,
+  newElementTemplate: PWCElementTemplate,
+  reactiveNodes: ReactiveNode[],
+) {
+  const {
+    templateString: oldTemplateString,
+    templateData: oldTemplateData,
+  } = oldElementTemplate;
+  const {
+    templateString,
+    templateData,
+  } = newElementTemplate;
+  // While template strings is constant with prev ones,
+  // it should just update node values and attributes
+  if (oldTemplateString === templateString) {
+    for (let index = 0; index < oldTemplateData.length; index++) {
+      const reactiveNode = reactiveNodes[index];
+      // Avoid html fragment effect
+      if (reactiveNode instanceof TemplateNode) {
+        // TODO more diff
+        reactiveNode.commitValue([oldTemplateData[index], templateData[index]] as TemplateNodeValue);
+      } else if (!shallowEqual(oldTemplateData[index], templateData[index])) {
+        reactiveNode.commitValue(templateData[index]);
       }
     }
   }
