@@ -1,7 +1,6 @@
 import type { File } from '@babel/types';
 import * as t from '@babel/types';
 import babelTraverse from '@babel/traverse';
-import { isBoolean } from '../utils';
 
 import type { CompileTemplateResult } from '../compileTemplate';
 

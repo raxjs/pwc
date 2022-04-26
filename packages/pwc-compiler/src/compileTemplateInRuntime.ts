@@ -21,7 +21,13 @@ function injectRuntimeValue(bindings, originalValues): CompileTemplateResult['te
       return bindings[bindingIndex++];
     } else {
       val.forEach(obj => {
-        obj.value = bindings[bindingIndex++];
+        if ('handler' in obj) {
+          // Events
+          obj.handler = bindings[bindingIndex++];
+        } else {
+          // Normal attribute
+          obj.value = bindings[bindingIndex++];
+        }
       });
       return val;
     }
