@@ -4,9 +4,7 @@ import type { TransformPluginContext } from 'rollup';
 import { createRollupError } from './utils/error.js';
 import { transformSync } from '@babel/core';
 import babelPluginProposalDecorators from '@babel/plugin-proposal-decorators';
-import babelPluginProposalClassProperties from '@babel/plugin-proposal-class-properties';
-import babelPluginProposalClassStaticBlock from '@babel/plugin-proposal-class-static-block';
-import babalPluginProposalPrivateMethods from '@babel/plugin-proposal-private-methods';
+import babelPresetEnv from '@babel/preset-env';
 
 const cache = new WeakMap<SFCDescriptor>();
 
@@ -33,14 +31,30 @@ export function resolveScript(
     pluginContext.error(createRollupError(descriptor.filename, err));
   }
   // Use babel to transform syntax like decorators
-  // TODO: remove this step
+  console.log("🚀 ~ file: script.ts ~ line 35 ~ resolved.content", resolved.content)
   const { code, map } = transformSync(resolved.content, {
     filename: resolved.filename,
+    presets: [
+      [
+        /* The following plugins are needed:
+        1. @babel/plugin-proposal-class-properties;
+        2. @babel/plugin-proposal-class-static-block;
+        3. @babel/plugin-proposal-private-methods;
+        */
+        babelPresetEnv,
+        {
+          // TODO: to be checked with @ice/pkg
+          targets: 'last 1 Chrome versions', // Make sure keep syntax as new as possible
+          spec: true,
+          modules: false,
+        }
+      ]
+    ],
     plugins: [
-      [babelPluginProposalDecorators, { version: '2021-12', decoratorsBeforeExport: true }],
-      babelPluginProposalClassProperties,
-      babelPluginProposalClassStaticBlock,
-      babalPluginProposalPrivateMethods,
+      [
+        babelPluginProposalDecorators,
+        { version: '2021-12', decoratorsBeforeExport: true }
+      ]
     ],
     sourceMaps: true,
     // TODO:
@@ -53,5 +67,8 @@ export function resolveScript(
     content: code,
     map,
   });
-  return resolved;
+  return {
+    ...resolved,
+    content: code
+  };
 }

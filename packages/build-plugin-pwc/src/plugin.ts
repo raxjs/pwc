@@ -1,29 +1,28 @@
 import type { Plugin } from 'rollup';
 import { createFilter } from 'rollup-pluginutils';
 import { transformPWC } from './pwc.js';
-import { join } from 'path';
+import { basename } from 'path';
 import { readFileSync } from 'fs';
 
 
 interface Options {
-  include?: string | RegExp | (string | RegExp)[];
-  exclude?: string | RegExp | (string | RegExp)[];
+  include?: string | RegExp;
+  exclude?: string | RegExp;
+  rootDir: string;
 }
 
 export default function PluginPWC({
   include = /\.pwc$/,
   exclude,
+  rootDir
 }: Options): Plugin {
-  const rootContext = process.cwd();
   const filter = createFilter(include, exclude);
 
   return {
     name: 'pwc',
     load(id) {
-      // TODO: passing id and rootDir as params to get absolutePath
       if (filter(id)) {
-        const tempFilePath = join(rootContext, 'src', id);
-        const result = readFileSync(tempFilePath, 'utf-8');
+        const result = readFileSync(id, 'utf-8');
         return {
           code: result,
         };
@@ -33,13 +32,19 @@ export default function PluginPWC({
 
     transform(code, id) {
       if (filter(id)) {
-        const { script, style } = transformPWC(code, id, rootContext, this);
-        if (typeof style === 'object') {
+        const styleFilename = basename(id).replace(include, '.css');
+        const { script, style } = transformPWC(code, {
+          filename: id,
+          styleFilename,
+          sourceRoot: rootDir,
+          pluginContext: this
+        });
+        if (typeof style === 'object') { //TODO
           // TODO: distinguish transform task and bundle task
+          const styleFilename = basename(id).replace(include, '.css');
           this.emitFile({
             type: 'asset',
-            // TODO: relative path
-            fileName: 'index.css',
+            fileName: styleFilename,
             source: style.code,
           });
         }
