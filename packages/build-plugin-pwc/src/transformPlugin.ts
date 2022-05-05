@@ -1,17 +1,11 @@
 import type { Plugin } from 'rollup';
 import { createFilter } from 'rollup-pluginutils';
 import { transformPWC } from './pwc.js';
+import type { Options } from './options.js';
 import { basename } from 'path';
 import { readFileSync } from 'fs';
 
-
-interface Options {
-  include?: string | RegExp;
-  exclude?: string | RegExp;
-  rootDir: string;
-}
-
-export default function PluginPWC({
+export default function TransformPluginPWC({
   include = /\.pwc$/,
   exclude,
   rootDir
@@ -19,7 +13,7 @@ export default function PluginPWC({
   const filter = createFilter(include, exclude);
 
   return {
-    name: 'pwc',
+    name: 'transform-pwc',
     load(id) {
       if (filter(id)) {
         const result = readFileSync(id, 'utf-8');
@@ -40,7 +34,6 @@ export default function PluginPWC({
           pluginContext: this
         });
         if (typeof style === 'object') { //TODO
-          // TODO: distinguish transform task and bundle task
           const styleFilename = basename(id).replace(include, '.css');
           this.emitFile({
             type: 'asset',

@@ -24,16 +24,15 @@ export function resolveScript(
     return cached;
   }
 
-  let resolved: SFCScriptCompileResult | null = null;
+  let compiled: SFCScriptCompileResult | null = null;
   try {
-    resolved = compileScript(descriptor);
+    compiled = compileScript(descriptor);
   } catch (err) {
     pluginContext.error(createRollupError(descriptor.filename, err));
   }
   // Use babel to transform syntax like decorators
-  console.log("🚀 ~ file: script.ts ~ line 35 ~ resolved.content", resolved.content)
-  const { code, map } = transformSync(resolved.content, {
-    filename: resolved.filename,
+  const { code, map } = transformSync(compiled.content, {
+    filename: compiled.filename,
     presets: [
       [
         /* The following plugins are needed:
@@ -58,17 +57,14 @@ export function resolveScript(
     ],
     sourceMaps: true,
     // TODO:
-    // inputSourceMap: resolved.map
+    // inputSourceMap: compiled.map
   });
 
-  // TODO:set resolved
-  cache.set(descriptor, {
-    ...resolved,
+  const resolved = {
+    ...compiled,
     content: code,
     map,
-  });
-  return {
-    ...resolved,
-    content: code
   };
+  cache.set(descriptor, resolved);
+  return resolved;
 }
