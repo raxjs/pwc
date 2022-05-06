@@ -1,4 +1,4 @@
-import { compileTemplateAST, parse } from '../src';
+import { compileTemplateAST, parse } from '../esm';
 
 describe('compileTemplate', () => {
   it('compile a simple template', () => {

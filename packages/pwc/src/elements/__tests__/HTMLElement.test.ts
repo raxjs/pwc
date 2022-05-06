@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import '../native/HTMLElement';
 import { reactive, customElement } from '../../decorators';
 import { nextTick } from '../sheduler';
@@ -239,7 +240,7 @@ describe('Render nested components', () => {
       ></child-element>`;
     }
   }
-  
+
   const element = document.createElement('parent-element');
   document.body.appendChild(element);
 

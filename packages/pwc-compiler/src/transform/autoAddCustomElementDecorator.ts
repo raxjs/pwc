@@ -12,7 +12,7 @@ function createCallExpressionDecorator(decorator: string, argument) {
 
 export default function autoAddCustomElementDecorator(ast: File): boolean {
   let shouldAutoAddCustomElementDecorator = true;
-  babelTraverse(ast, {
+  babelTraverse.default(ast, {
     // Add @__customElement('custom-component') for class
     ExportDefaultDeclaration(path) {
       const { node } = path;

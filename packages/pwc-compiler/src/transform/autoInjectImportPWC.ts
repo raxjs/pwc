@@ -20,7 +20,7 @@ function createImportSpecifier(importedName) {
 
 export default function autoInjectImportPWC(ast: File, importDescriptor: injectImportPWCDescriptor): void {
   const importSpecifiers = Object.keys(importDescriptor).filter(specifier => importDescriptor[specifier]);
-  babelTraverse(ast, {
+  babelTraverse.default(ast, {
     Program(path) {
       let hasImportPWC = false;
       path.traverse({
