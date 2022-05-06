@@ -2,6 +2,8 @@ import '../native/HTMLElement';
 import { reactive, customElement } from '../../decorators';
 import { nextTick } from '../sheduler';
 import { compileTemplateInRuntime as html } from '@pwc/compiler';
+import { createElement, render as raxRender, useState, useCallback } from 'rax';
+import * as DriverDom from 'driver-dom';
 
 function getSimpleCustomElement() {
   return class CustomElement extends HTMLElement {
@@ -98,6 +100,14 @@ function getReactiveCustomElement() {
       };
     }
   };
+}
+
+function macroTask() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 0);
+  })
 }
 
 describe('Render HTMLElement', () => {
@@ -309,5 +319,52 @@ describe('Render nested components', () => {
       '\n      <!--?pwc_p--><div>Hello<!--?pwc_t--> - Child Element<!--?pwc_t--> - 2<!--?pwc_t--></div>\n    ',
     );
     expect(mockChildFn).toBeCalledTimes(6);
+  });
+});
+
+describe('render with rax', () => {
+  it('should pass props to PWC element', async () => {
+    @customElement('rax-custom-element')
+    class CustomElement extends HTMLElement {
+      @reactive
+      accessor customTitle = 'default title';
+      get template() {
+        return html`<div>${this.customTitle}</div>`;
+      }
+    }
+
+    const root = document.createElement('div');
+    root.id = 'root';
+    document.body.appendChild(root);
+
+    function App() {
+      const [customTitle, setCustomTitle] = useState('outside title');
+
+      const handleClick = useCallback(() => {
+        setCustomTitle('changed title');
+      }, []);
+
+      console.log('customTitle =====> ', customTitle);
+
+      return createElement('rax-custom-element', {
+        customTitle,
+        onClick: handleClick,
+      });
+    }
+
+    raxRender(createElement(App), root, {
+      driver: DriverDom,
+    });
+
+    await nextTick();
+
+    expect(root.innerHTML).toEqual('<rax-custom-element><div>outside title<!--?pwc_t--></div></rax-custom-element>');
+
+    const el = document.getElementsByTagName('rax-custom-element')[0];
+    el.click();
+
+    await macroTask();
+
+    expect(root.innerHTML).toEqual('<rax-custom-element><div>changed title<!--?pwc_t--></div></rax-custom-element>');
   });
 });
