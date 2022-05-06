@@ -253,7 +253,7 @@ describe('Render nested components', () => {
     const parentBtn = document.getElementById('parent-btn');
     const childElement = document.getElementById('child-container');
     expect(childElement.innerHTML).toEqual(
-      '<!--?pwc_p--><div>Hello<!--?pwc_t--> - World<!--?pwc_t--> - <!--?pwc_t--></div>',
+      '\n      <!--?pwc_p--><div>Hello<!--?pwc_t--> - World<!--?pwc_t--> - <!--?pwc_t--></div>\n    ',
     );
     expect(mockChildFn).toBeCalledTimes(1);
 
@@ -261,7 +261,7 @@ describe('Render nested components', () => {
     parentBtn.click();
     await nextTick();
     expect(childElement.innerHTML).toEqual(
-      '<!--?pwc_p--><div>Hello!<!--?pwc_t--> - World<!--?pwc_t--> - <!--?pwc_t--></div>',
+      '\n      <!--?pwc_p--><div>Hello!<!--?pwc_t--> - World<!--?pwc_t--> - <!--?pwc_t--></div>\n    ',
     );
     expect(mockChildFn).toBeCalledTimes(2);
 
@@ -269,7 +269,7 @@ describe('Render nested components', () => {
     parentBtn.click();
     await nextTick();
     expect(childElement.innerHTML).toEqual(
-      '<!--?pwc_p--><div>Hello!<!--?pwc_t--> - World!<!--?pwc_t--> - <!--?pwc_t--></div>',
+      '\n      <!--?pwc_p--><div>Hello!<!--?pwc_t--> - World!<!--?pwc_t--> - <!--?pwc_t--></div>\n    ',
     );
     expect(mockChildFn).toBeCalledTimes(3);
 
@@ -277,7 +277,7 @@ describe('Render nested components', () => {
     parentBtn.click();
     await nextTick();
     expect(childElement.innerHTML).toEqual(
-      '<!--?pwc_p--><div>Hello!<!--?pwc_t--> - World!<!--?pwc_t--> - 2<!--?pwc_t--></div>',
+      '\n      <!--?pwc_p--><div>Hello!<!--?pwc_t--> - World!<!--?pwc_t--> - 2<!--?pwc_t--></div>\n    ',
     );
     expect(mockChildFn).toBeCalledTimes(4);
   });
@@ -290,7 +290,7 @@ describe('Render nested components', () => {
     childComponent.title = 'Hello';
     await nextTick();
     expect(childElement.innerHTML).toEqual(
-      '<!--?pwc_p--><div>Hello<!--?pwc_t--> - World!<!--?pwc_t--> - 2<!--?pwc_t--></div>',
+      '\n      <!--?pwc_p--><div>Hello<!--?pwc_t--> - World!<!--?pwc_t--> - 2<!--?pwc_t--></div>\n    ',
     );
     expect(mockChildFn).toBeCalledTimes(5);
 
@@ -298,7 +298,7 @@ describe('Render nested components', () => {
     childComponent.data = { name: 'Child Element' };
     await nextTick();
     expect(childElement.innerHTML).toEqual(
-      '<!--?pwc_p--><div>Hello<!--?pwc_t--> - Child Element<!--?pwc_t--> - 2<!--?pwc_t--></div>',
+      '\n      <!--?pwc_p--><div>Hello<!--?pwc_t--> - Child Element<!--?pwc_t--> - 2<!--?pwc_t--></div>\n    ',
     );
     expect(mockChildFn).toBeCalledTimes(6);
 
@@ -306,7 +306,7 @@ describe('Render nested components', () => {
     childComponent.items = [1];
     await nextTick();
     expect(childElement.innerHTML).toEqual(
-      '<!--?pwc_p--><div>Hello<!--?pwc_t--> - Child Element<!--?pwc_t--> - 2<!--?pwc_t--></div>',
+      '\n      <!--?pwc_p--><div>Hello<!--?pwc_t--> - Child Element<!--?pwc_t--> - 2<!--?pwc_t--></div>\n    ',
     );
     expect(mockChildFn).toBeCalledTimes(6);
   });

@@ -18,7 +18,7 @@ class Child extends HTMLElement {
   }
 
   get template() {
-    return html`<div>
+    return html`<div id="container">
       Child ${this.name}
       <div>parent class name is ${this.className}</div>
     </div>`;

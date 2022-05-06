@@ -4,7 +4,6 @@ import { TemplateNode, ReactiveNodeMap } from './reactiveNode';
 import { generateUid, isArray } from '../utils';
 import { enqueueJob, nextTick } from './sheduler';
 import { getTemplateInfo } from './getTemplateInfo';
-import { validateElementTemplate } from './validateElementTemplate';
 import { initRenderTemplate } from './initRenderTemplate';
 
 export default (Definition: PWCElement) => {
@@ -66,9 +65,6 @@ export default (Definition: PWCElement) => {
 
     #performUpdate() {
       const nextElementTemplate = this.template;
-      if (__DEV__) {
-        validateElementTemplate(nextElementTemplate);
-      }
       const newPWCElementTemplate = getTemplateInfo(nextElementTemplate);
       // TODO: check reactive node type
       this.#reactiveNodes[0].commitValue([this.#currentTemplate, newPWCElementTemplate]);
