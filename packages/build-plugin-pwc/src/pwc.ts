@@ -23,7 +23,7 @@ export function transformPWC(
     styleFilename,
     sourceRoot,
     pluginContext,
-  }: transformPWCOptions
+  }: transformPWCOptions,
 ): transformPWCResult {
   const { descriptor, errors } = parse(code, {
     filename,

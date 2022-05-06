@@ -13,7 +13,7 @@ const isPwcCssFile = (filename: string) => filename.endsWith(PWC_CSS_EXT);
 export default function BundlePluginPWC({
   include = /\.pwc$/,
   exclude,
-  rootDir
+  rootDir,
 }: Options): Plugin {
   const filter = createFilter(include, exclude);
 
@@ -50,7 +50,7 @@ export default function BundlePluginPWC({
           filename: id,
           styleFilename: baseStyleFilename,
           sourceRoot: rootDir,
-          pluginContext: this
+          pluginContext: this,
         });
         if (typeof style === 'object') {
           // Cache css code for load use in bundle task

@@ -46,14 +46,14 @@ export function resolveScript(
           targets: 'last 1 Chrome versions', // Make sure keep syntax as new as possible
           spec: true,
           modules: false,
-        }
-      ]
+        },
+      ],
     ],
     plugins: [
       [
         babelPluginProposalDecorators,
-        { version: '2021-12', decoratorsBeforeExport: true }
-      ]
+        { version: '2021-12', decoratorsBeforeExport: true },
+      ],
     ],
     sourceMaps: true,
     // TODO:

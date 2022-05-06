@@ -10,7 +10,7 @@ const BuildPluginPWC = (api) => {
       ...config,
       rollupPlugins: [
         transformPlugin({ include: /\.pwc$/, rootDir }),
-      ]
+      ],
     };
   }
 
@@ -20,8 +20,8 @@ const BuildPluginPWC = (api) => {
       entry: './src/index.pwc', // TODO: maybe can be configured by user
       rollupPlugins: [
         bundlePlugin({ include: /\.pwc$/, rootDir }),
-      ]
-    }
+      ],
+    };
   }
 
   onGetConfig('transform-esm', modifyTransformConfig);

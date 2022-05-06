@@ -8,7 +8,7 @@ import { readFileSync } from 'fs';
 export default function TransformPluginPWC({
   include = /\.pwc$/,
   exclude,
-  rootDir
+  rootDir,
 }: Options): Plugin {
   const filter = createFilter(include, exclude);
 
@@ -31,9 +31,9 @@ export default function TransformPluginPWC({
           filename: id,
           styleFilename,
           sourceRoot: rootDir,
-          pluginContext: this
+          pluginContext: this,
         });
-        if (typeof style === 'object') { //TODO
+        if (typeof style === 'object') { // TODO
           const styleFilename = basename(id).replace(include, '.css');
           this.emitFile({
             type: 'asset',
