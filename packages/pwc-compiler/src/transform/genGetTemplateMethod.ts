@@ -53,9 +53,9 @@ export default function genGetTemplateMethod(ast: File, templateResult: CompileT
         const { node } = path;
         // class must extended from HTMLElement
         if (t.isIdentifier(node.superClass) && node.superClass.name === 'HTMLElement') {
-          const { templateString, values } = templateResult;
+          const { templateString, templateData } = templateResult;
           const templateStringExpression = t.stringLiteral(templateString);
-          const templateValuesExpression = createArrayExpression(values.map(val => {
+          const templateValuesExpression = createArrayExpression(templateData.map(val => {
             if (typeof val === 'string') {
               // 1 variables
               return createIdentifier(val);
