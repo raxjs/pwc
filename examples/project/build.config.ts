@@ -9,6 +9,13 @@ export default defineConfig({
     formats: ['esm', 'es2017']
   },
   plugins:[
+    [
+      '@ice/pkg-plugin-docusaurus',
+      {
+        title: '标题',
+        mobilePreview: true
+      }
+    ],
     'build-plugin-pwc'
   ]
 });
