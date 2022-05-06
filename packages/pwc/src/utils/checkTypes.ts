@@ -1,5 +1,4 @@
 export const EMPTY_OBJECT = {};
-export const NOOP = () => {};
 
 export function isArray(arg: any) {
   return Array.isArray(arg);
@@ -17,7 +16,7 @@ export function isFunction(value: unknown) {
   return typeof value === 'function';
 }
 
-export function isObject(value: unknown) {
+export function isPlainObject(value: unknown) {
   return Object.prototype.toString.call(value) === '[object Object]';
 }
 

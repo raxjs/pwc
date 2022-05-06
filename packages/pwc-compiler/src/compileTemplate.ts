@@ -1,6 +1,6 @@
 import * as parse5 from 'parse5';
-import type { SFCDescriptor, ElementNode } from './parse.js';
-import { dfs, isEventNameInTemplate, isBindings, getEventInfo, BINDING_REGEXP, INTERPOLATION_REGEXP } from './utils/index.js';
+import type { SFCDescriptor, ElementNode } from './parse';
+import { dfs, isEventNameInTemplate, isBindings, isMemberExpression, getEventInfo, BINDING_REGEXP, INTERPOLATION_REGEXP } from './utils';
 
 export interface AttributeDescriptor {
   name: string;
@@ -17,6 +17,7 @@ export interface CompileTemplateResult {
 
 const TEXT_COMMENT_DATA = '?pwc_t';
 const PLACEHOLDER_COMMENT_DATA = '?pwc_p';
+const fnExpRE = /^\s*([\w$_]+|(async\s*)?\([^)]*?\))\s*=>|^\s*(async\s+)?function(?:\s+[\w$]+)?\s*\(/;
 
 function createCommentNode(data) {
   return {
@@ -49,16 +50,34 @@ function extractAttributeBindings(node: ElementNode): Array<AttributeDescriptor>
         if (isEventNameInTemplate(attr.name)) {
           // events
           const { eventName, isCapture } = getEventInfo(attr.name);
+          let expression = attr.value.replace(BINDING_REGEXP, '$1').trim();
+          if (expression) {
+            const isMemberExp = isMemberExpression(expression);
+            const isInlineStatement = !(isMemberExp || fnExpRE.test(expression));
+            const hasMultipleStatements = expression.includes(';');
+            if (hasMultipleStatements) {
+              // TODO: throw error
+            }
+            if (isInlineStatement) {
+              // Use function to block wrap the inline statement expression
+              expression = `() => (${expression})`;
+            }
+          } else {
+            expression = '() => {}';
+          }
+
           tempAttributeDescriptor.push({
             name: `on${eventName}`,
-            value: attr.value.replace(BINDING_REGEXP, '$1'),
+            value: expression,
             capture: isCapture,
           });
         } else {
           // attributes
+          let expression = attr.value.replace(BINDING_REGEXP, '$1').trim();
+
           tempAttributeDescriptor.push({
             name: attr.name,
-            value: attr.value.replace(BINDING_REGEXP, '$1'),
+            value: expression,
           });
         }
         return false; // remove attribute bindings

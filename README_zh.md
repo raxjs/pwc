@@ -1,8 +1,10 @@
 ## PWC
 
-渐进式 Web Component 解决方案。
+渐进式 Web Components 解决方案。
 
 > ⚠️ 仍在开发中，请勿使用。
+
+[文档地址](https://raxjs.github.io/pwc)
 
 ### 什么是 PWC ？
 

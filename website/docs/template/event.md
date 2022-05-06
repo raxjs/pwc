@@ -8,26 +8,85 @@ sidebar_position: 2
 
 用户可以在模板中使用 `@` 语法糖监听 DOM 事件，并在其触发时执行一些 JavaScript 代码。
 
-// TODO
+事件处理器的值可以是：
 
-## 事件处理方法
+1. 内联事件处理器：事件被触发时执行的 JavaScript 表达式
+2. 方法事件处理器：一个组件的属性名、或对某个方法的访问
 
-事件触发回调逻辑复杂时，用户可以直接传入一个函数方法，供 DOM 事件触发后执行：
+### 内联事件处理器
 
-示例：
+内联事件处理器通常用于简单场景，例如：
 
 ```html
 <template>
-  <button @click="{{this.onSave}}">Save</button>
+  <div @click="{{this.#count++}}"></div>
 </template>
+<script>
+  export default CustomComponent extends HTMLElement {
+    #count = 0;
+  }
+</script>
 ```
 
-```js
-export default class CustomComponent extends HTMLElement {
-  onSave = () => {
-    console.log('saved');
+### 方法事件处理器
+
+内联事件处理器仅支持单一的 JavaScript 表达式，当事件处理器需要处理复杂逻辑时，可以传入一个方法名或对某个方法的调用。例如：
+
+```html
+<template>
+  <div @click="{{this.handleClick}}"></div>
+</template>
+<script>
+  export default CustomComponent extends HTMLElement {
+    handleClick = (event) => {
+      // `event` 是 DOM 原生事件
+      if (event) {
+        alert(event.target.tagName);
+      }
+    }
   }
-}
+</script>
+```
+
+方法事件处理器会自动接收原生 DOM 事件并触发执行。在上面的例子中，我们能够通过被触发事件的 `event.target.tagName` 访问到该 DOM 元素。
+
+### 在内联处理器中调用方法
+
+除了直接绑定方法名，你还可以在内联事件处理器中调用方法。这允许我们向方法传入自定义参数：
+
+```html
+<template>
+  <div @click="{{this.say('hello')}}"></div>
+</template>
+<script>
+  export default CustomComponent extends HTMLElement {
+    say = (msg) => {
+      console.log(msg);
+    }
+  }
+</script>
+```
+
+### 在内联事件处理器中访问事件参数
+
+有时我们需要在内联事件处理器中访问原生 DOM 事件。你可以使用内联箭头函数：
+
+```html
+<template>
+  <button @click="{{(event) => warn('Form cannot be submitted yet.', event)}}">
+    Submit
+  </button>
+</template>
+<script>
+  export default CustomComponent extends HTMLElement {
+    warn = (msg, event) => {
+      if (event) {
+        event.preventDefault();
+      }
+      console.log(msg);
+    }
+  }
+</script>
 ```
 
 ## 事件修饰符

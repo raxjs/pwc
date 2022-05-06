@@ -14,7 +14,7 @@ describe('Set element attribute/property/event handler', () => {
       },
     ];
     const div = document.createElement('div');
-    commitAttributes(div, attrs, true);
+    commitAttributes(div, attrs, { isInitial: true });
     expect(div.getAttribute('data-index')).toEqual('1');
     expect(div.dataset.index).toEqual('1');
     expect(div.getAttribute('class')).toEqual('container');
@@ -39,7 +39,7 @@ describe('Set element attribute/property/event handler', () => {
       },
     ];
     const parent1 = document.createElement('div');
-    commitAttributes(parent1, parent1Attrs, true);
+    commitAttributes(parent1, parent1Attrs, { isInitial: true });
 
     // Parent2 element
     const parent2ClickHandler = jest.fn().mockImplementation(() => {
@@ -57,7 +57,7 @@ describe('Set element attribute/property/event handler', () => {
       },
     ];
     const parent2 = document.createElement('div');
-    commitAttributes(parent2, parent2Attrs, true);
+    commitAttributes(parent2, parent2Attrs, { isInitial: true });
 
     const childClickHandler = jest.fn().mockImplementation(() => {
       parent1ClickState = 'child clicked';
@@ -70,7 +70,7 @@ describe('Set element attribute/property/event handler', () => {
       },
     ];
     const child = document.createElement('div');
-    commitAttributes(child, childAttrs, true);
+    commitAttributes(child, childAttrs, { isInitial: true });
 
     document.body.appendChild(parent1);
     document.body.appendChild(parent2);
@@ -113,7 +113,7 @@ describe('Set element attribute/property/event handler', () => {
       },
     ];
 
-    commitAttributes(customElement, attrs, true);
+    commitAttributes(customElement, attrs, { isInitial: true });
 
     expect(customElement.getAttribute('data-index')).toEqual('1');
     expect(customElement.dataset.index).toEqual('1');
@@ -133,11 +133,23 @@ describe('Set element attribute/property/event handler', () => {
         capture: true,
       }
     ];
-    commitAttributes(div, attrs, true);
+    commitAttributes(div, attrs, { isInitial: true });
     div.click();
     expect(mockClickHandler).toBeCalledTimes(1);
-    commitAttributes(div, attrs, false);
+    commitAttributes(div, attrs);
     div.click();
     expect(mockClickHandler).toBeCalledTimes(2);
+  });
+
+  it('Svg elements should be set as attributes', () => {
+    const svg = document.createElement('svg');
+    const attrs = [{
+      name: 'width',
+      value: '200'
+    }];
+
+    commitAttributes(svg, attrs, { isInitial: true });
+
+    expect(svg.getAttribute('width')).toEqual('200');
   });
 });

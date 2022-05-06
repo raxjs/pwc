@@ -137,13 +137,13 @@ describe('attribute decorator', () => {
           return html`<div>${this.attrName}</div>`;
         }
       }
-    }).toThrowError(`The attribute decorator should be added to the class field with accessor, like:
+    }).toThrowError(__DEV__ ? `The attribute decorator should be added to the class field with accessor, like:
 
       class extends HTMLElement {
         @attribute('attr-name')
         accessor attrName
       }
-  `);
+  `: 'Error: #0.');
   });
 
   it('should work without initialValue', async () => {

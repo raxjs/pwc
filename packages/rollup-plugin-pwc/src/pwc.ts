@@ -48,11 +48,13 @@ function genScriptCode(descriptor: SFCDescriptor, pluginContext: TransformPlugin
 function genStyleCode(descriptor: SFCDescriptor) {
   // TODO: css scoped
   let styleCode = '';
-  const src = descriptor.filename;
-  const attrsQuery = attrsToQuery(descriptor.style.attrs, 'css');
-  const query = `?pwc&type=style${attrsQuery}`;
-  const styleRequest = JSON.stringify(src + query);
-  styleCode += `\nimport ${styleRequest}`;
+  if (descriptor.style) {
+    const src = descriptor.filename;
+    const attrsQuery = attrsToQuery(descriptor.style.attrs, 'css');
+    const query = `?pwc&type=style${attrsQuery}`;
+    const styleRequest = JSON.stringify(src + query);
+    styleCode += `\nimport ${styleRequest}`;
+  }
   return styleCode;
 }
 
