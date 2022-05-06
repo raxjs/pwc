@@ -1,12 +1,11 @@
-import type { ElementTemplate, PWCElement, PWCElementTemplate, ReflectProperties, RootElement } from '../type';
+import type { ElementTemplate, PWCElement, ReflectProperties, RootElement, ReactiveNode } from '../type';
 import { Reactive } from '../reactivity/reactive';
-import type { ReactiveNode } from './reactiveNode';
-import { generateUid } from '../utils';
+import { TemplateNode, ReactiveNodeMap } from './reactiveNode';
+import { generateUid, isArray } from '../utils';
 import { enqueueJob, nextTick } from './sheduler';
-import { initRenderTemplate } from './initRenderTemplate';
 import { getTemplateInfo } from './getTemplateInfo';
 import { validateElementTemplate } from './validateElementTemplate';
-import { updateView } from './reactiveNode';
+import { initRenderTemplate } from './initRenderTemplate';
 
 export default (Definition: PWCElement) => {
   return class extends Definition {
@@ -16,7 +15,7 @@ export default (Definition: PWCElement) => {
     // The root element
     #root: RootElement;
     // Template info
-    #currentTemplate: ElementTemplate;
+    #currentTemplate: ElementTemplate | ElementTemplate[];
     // Reactive nodes
     #reactiveNodes: ReactiveNode[] = [];
     // Reactive instance
@@ -35,13 +34,16 @@ export default (Definition: PWCElement) => {
       if (!this.#initialized) {
         this.#initTask = () => {
           this.#currentTemplate = this.template || {};
-          if (__DEV__) {
-            validateElementTemplate(this.#currentTemplate);
+          if (isArray(this.#currentTemplate)) {
+
+          } else {
+            this.#root = this.shadowRoot || this;
+            const { templateString, templateData } = getTemplateInfo(this.#currentTemplate);
+            this.#root.innerHTML = templateString;
+            const templateNode = new TemplateNode();
+            this.#reactiveNodes.push(templateNode);
+            initRenderTemplate(this.#root, templateData, templateNode.reactiveNodes, this, ReactiveNodeMap);
           }
-          const { templateString, templateData } = getTemplateInfo(this.#currentTemplate);
-          this.#root = this.shadowRoot || this;
-          this.#root.innerHTML = templateString;
-          initRenderTemplate(this.#root, templateData, this.#reactiveNodes, this);
           this.#initialized = true;
         };
         // Avoid that child component connectedCallback triggers before parent component
@@ -63,14 +65,14 @@ export default (Definition: PWCElement) => {
     }
 
     #performUpdate() {
-      const currentElementTemplate = this.template;
+      const nextElementTemplate = this.template;
       if (__DEV__) {
-        validateElementTemplate(currentElementTemplate);
+        validateElementTemplate(nextElementTemplate);
       }
-      const newElementTemplate = getTemplateInfo(currentElementTemplate);
-
-      updateView(this.#currentTemplate as PWCElementTemplate, newElementTemplate, this.#reactiveNodes);
-      this.#currentTemplate = newElementTemplate;
+      const newPWCElementTemplate = getTemplateInfo(nextElementTemplate);
+      // TODO: check reactive node type
+      this.#reactiveNodes[0].commitValue([this.#currentTemplate, newPWCElementTemplate]);
+      this.#currentTemplate = newPWCElementTemplate;
     }
 
     _requestUpdate(): void {

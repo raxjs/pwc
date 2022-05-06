@@ -1,3 +1,5 @@
+import { NodeType } from './constants';
+
 export interface PWCElement extends Element {
   connectedCallback(): void;
   disconnectedCallback(): void;
@@ -55,7 +57,13 @@ export type ReflectProperties = Map<string, {
   initialValue: unknown;
 }>;
 
-export type TemplateNodeValue = [
-  PWCElementTemplate | PWCElementTemplate[],
-  PWCElementTemplate | PWCElementTemplate[],
-];
+export interface ReactiveNode {
+  reactiveNodes?: ReactiveNode[];
+  commitValue: (value: any) => void;
+}
+
+interface ReactiveNodeCtor {
+  new(commentNode: Comment, rootElement: PWCElement, initialValue?: string | Attributes): ReactiveNode;
+}
+
+export type ReactiveNodeMapType = Record<NodeType, ReactiveNodeCtor>;

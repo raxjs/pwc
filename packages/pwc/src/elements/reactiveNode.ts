@@ -1,15 +1,13 @@
+import type { Attributes, PWCElementTemplate, PWCElement, ReactiveNode, ReactiveNodeMapType } from '../type';
 import { commitAttributes } from './commitAttributes';
-import type { Attributes, PWCElementTemplate, PWCElement, TemplateNodeValue } from '../type';
-import { isTemplate, shallowEqual } from '../utils';
-
-export interface ReactiveNode {
-  commitValue: (value: any) => void;
-}
+import { shallowEqual } from '../utils';
+import { initTemplateItems } from './initRenderTemplate';
+import { NodeType } from '../constants';
 
 export class TextNode implements ReactiveNode {
   #el: Text;
 
-  constructor(commentNode: Comment, initialValue: string) {
+  constructor(commentNode: Comment, rootElement: PWCElement, initialValue: string) {
     const textNode = document.createTextNode(initialValue);
     this.#el = textNode;
     commentNode.parentNode.insertBefore(textNode, commentNode);
@@ -26,7 +24,7 @@ export class AttributedNode implements ReactiveNode {
   #elIsCustom: boolean;
   #elIsSvg: boolean;
 
-  constructor(commentNode: Comment, initialAttrs: Attributes, rootNode: PWCElement) {
+  constructor(commentNode: Comment, rootNode: PWCElement, initialAttrs: Attributes) {
     this.#el = commentNode.nextSibling as Element;
     this.#root = rootNode;
     this.#elIsCustom = Boolean(window.customElements.get(this.#el.localName));
@@ -54,15 +52,33 @@ export class AttributedNode implements ReactiveNode {
 
 export class TemplateNode implements ReactiveNode {
   reactiveNodes: ReactiveNode[] = [];
+  childNodes: Node[];
+  commitValue([prev, current]: [PWCElementTemplate, PWCElementTemplate]) {
+    updateView(prev, current, this.reactiveNodes);
+  }
+}
 
-  commitValue([prev, current]: TemplateNodeValue) {
-    if (isTemplate(current)) {
-      updateView(prev as PWCElementTemplate, current as PWCElementTemplate, this.reactiveNodes);
-    } else {
-      for (let index = 0; index < this.reactiveNodes.length; index++) {
-        this.reactiveNodes[index].commitValue([prev[index], current[index]]);
-      }
+export class TemplatesNode implements ReactiveNode {
+  reactiveNodes: ReactiveNode[] = [];
+  #commentNode: Comment;
+  #rootElement: PWCElement;
+  childNodes: Node[];
+  constructor(commentNode: Comment, rootElement: PWCElement) {
+    this.#commentNode = commentNode;
+    this.#rootElement = rootElement;
+  }
+
+  commitValue([prev, current]: [PWCElementTemplate[], PWCElementTemplate[]]) {
+    // Empty reactive nodes
+    for (const reactiveNode of this.reactiveNodes) {
+      (reactiveNode as TemplateNode).childNodes?.forEach(childNode => {
+        const parent = childNode.parentNode;
+        parent.removeChild(childNode);
+      });
     }
+    this.reactiveNodes = [];
+    // Rebuild
+    initTemplateItems(current, this.#commentNode, this.reactiveNodes, this.#rootElement, ReactiveNodeMap);
   }
 }
 
@@ -85,12 +101,24 @@ export function updateView(
     for (let index = 0; index < oldTemplateData.length; index++) {
       const reactiveNode = reactiveNodes[index];
       // Avoid html fragment effect
-      if (reactiveNode instanceof TemplateNode) {
+      if (reactiveNode instanceof TemplateNode || reactiveNode instanceof TemplatesNode) {
         // TODO more diff
-        reactiveNode.commitValue([oldTemplateData[index], templateData[index]] as TemplateNodeValue);
+        reactiveNode.commitValue(
+          [
+            oldTemplateData[index] as (PWCElementTemplate & PWCElementTemplate[]),
+            templateData[index] as (PWCElementTemplate & PWCElementTemplate[]),
+          ],
+        );
       } else if (!shallowEqual(oldTemplateData[index], templateData[index])) {
         reactiveNode.commitValue(templateData[index]);
       }
     }
   }
 }
+
+export const ReactiveNodeMap: ReactiveNodeMapType = {
+  [NodeType.TEXT]: TextNode,
+  [NodeType.ATTRIBUTE]: AttributedNode,
+  [NodeType.TEMPLATE]: TemplateNode,
+  [NodeType.TEMPLATES]: TemplatesNode,
+};
