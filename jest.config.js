@@ -13,5 +13,5 @@ module.exports = {
   globals: {
     __DEV__: !process.env.PRODUCTION,
   },
-  extensionsToTreatAsEsm: ['.ts']
+  extensionsToTreatAsEsm: ['.ts'],
 };
