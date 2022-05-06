@@ -34,10 +34,10 @@ export default (Definition: PWCElement) => {
       if (!this.#initialized) {
         this.#initTask = () => {
           this.#currentTemplate = this.template || {};
+          this.#root = this.shadowRoot || this;
           if (isArray(this.#currentTemplate)) {
 
           } else {
-            this.#root = this.shadowRoot || this;
             const { templateString, templateData } = getTemplateInfo(this.#currentTemplate);
             this.#root.innerHTML = templateString;
             const templateNode = new TemplateNode();

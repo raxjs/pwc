@@ -13,8 +13,10 @@ export function commitAttributes(element: Element, attrs: Attributes, opt?: {
     rootElement,
   } = opt || {};
   for (const attr of attrs) {
-    const { name, value } = attr;
+    // Bind event
     if (isEvent(attr)) {
+      const { name } = attr;
+
       // Only add event listener at the first render
       if (!isInitial) {
         continue;
@@ -24,7 +26,13 @@ export function commitAttributes(element: Element, attrs: Attributes, opt?: {
       // If capture is true, the event should be triggered when capture stage
       // Bind the rootElement to ensure the handler context is the element itself
       element.addEventListener(eventName, handler.bind(rootElement), capture);
-    } else if (isSVG) {
+
+      return;
+    }
+
+    const { name, value } = attr;
+
+    if (isSVG) {
       // https://svgwg.org/svg2-draft/struct.html#InterfaceSVGSVGElement
       // Svg elements must be set as attributes, all properties is read only
       element.setAttribute(name, value);

@@ -11,19 +11,20 @@ function getSimpleCustomElement() {
       console.log('click!!!');
     }
     get template() {
-      return [
-        '<!--?pwc_p--><div id="container"><!--?pwc_t--> - <!--?pwc_t--></div>',
-        [
+      return {
+        templateString: '<!--?pwc_p--><div id="container"><!--?pwc_t--> - <!--?pwc_t--></div>',
+        templateData: [
           [
             {
               name: 'onclick',
-              value: this.onClick,
-            }
+              handler: this.onClick,
+            },
           ],
           this.text,
           this.name,
         ],
-      ];
+        template: true,
+      };
     }
   };
 }
@@ -38,20 +39,22 @@ function getNestedCustomElement() {
       console.log('click!!!');
     }
     get template() {
-      return [
-        '<!--?pwc_p--><div id="nested-container"><!--?pwc_t--> <div>This is <!--?pwc_t--></div> <!--?pwc_t--></div>',
-        [
+      return {
+        templateString:
+          '<!--?pwc_p--><div id="nested-container"><!--?pwc_t--> <div>This is <!--?pwc_t--></div> <!--?pwc_t--></div>',
+        templateData: [
           [
             {
               name: 'onclick',
-              value: this.onClick,
-            }
+              handler: this.onClick,
+            },
           ],
           this.text,
           this.#title,
           this.name,
         ],
-      ];
+        template: true,
+      };
     }
   };
 }
@@ -75,9 +78,9 @@ function getReactiveCustomElement() {
       this.changedClassName = !this.changedClassName;
     }
     get template() {
-      return [
-        '<!--?pwc_p--><div id="reactive-container"><!--?pwc_t--> - <!--?pwc_t--></div>',
-        [
+      return {
+        templateString: '<!--?pwc_p--><div id="reactive-container"><!--?pwc_t--> - <!--?pwc_t--></div>',
+        templateData: [
           [
             {
               name: 'class',
@@ -85,13 +88,14 @@ function getReactiveCustomElement() {
             },
             {
               name: 'onclick',
-              value: this.onClick,
-            }
+              handler: this.onClick,
+            },
           ],
           this.#text,
           this.#data.name,
         ],
-      ];
+        template: true,
+      };
     }
   };
 }
@@ -133,13 +137,17 @@ describe('Render HTMLElement', () => {
     const element = document.createElement('custom-reactive-element');
     document.body.appendChild(element);
     await nextTick();
-    expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="reactive-container" class="red">hello<!--?pwc_t--> - jack<!--?pwc_t--></div>');
+    expect(element.innerHTML).toEqual(
+      '<!--?pwc_p--><div id="reactive-container" class="red">hello<!--?pwc_t--> - jack<!--?pwc_t--></div>',
+    );
 
     const container = document.getElementById('reactive-container');
     container.click();
 
     await nextTick();
-    expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="reactive-container" class="green">hello?<!--?pwc_t--> - jack!<!--?pwc_t--></div>');
+    expect(element.innerHTML).toEqual(
+      '<!--?pwc_p--><div id="reactive-container" class="green">hello?<!--?pwc_t--> - jack!<!--?pwc_t--></div>',
+    );
   });
 
   it('should trigger template method as expected', async () => {
@@ -169,19 +177,19 @@ describe('Render HTMLElement', () => {
   });
 });
 
-
-
 describe('Render nested components', () => {
   const mockChildFn = jest.fn().mockImplementation((obj) => {
-    return html`<div id="child-container"><div onClick=${obj.callback}>${obj.title} - ${obj.data.name} - ${obj.items.join(',')}</div></div>`;
-  })
+    return html`<div id="child-container">
+      <div @click=${obj.callback}>${obj.title} - ${obj.data.name} - ${obj.items.join(',')}</div>
+    </div>`;
+  });
   @customElement('child-element')
   class ChildElement extends HTMLElement {
     @reactive
     accessor title = 'Child Element';
 
     @reactive
-    accessor data = { };
+    accessor data = {};
 
     items = [];
 
@@ -191,7 +199,6 @@ describe('Render nested components', () => {
       return mockChildFn(this);
     }
   }
-
 
   let index = 0;
 
@@ -211,7 +218,7 @@ describe('Render nested components', () => {
     }
 
     onClick() {
-      switch(index) {
+      switch (index) {
         case 0:
           this.#title += '!';
           break;
@@ -229,42 +236,49 @@ describe('Render nested components', () => {
     }
 
     get template() {
-      return html`
-      <button id="parent-btn" onClick=${this.onClick.bind(this)}>Click</button>
-      <child-element
-        title=${this.#title}
-        data=${this.#data}
-        items=${this.#items}
-        callback=${this.#callback}
-      ></child-element>`;
+      return html`<button id="parent-btn" @click=${this.onClick.bind(this)}>Click</button>
+        <child-element
+          title=${this.#title}
+          data=${this.#data}
+          items=${this.#items}
+          callback=${this.#callback}
+        ></child-element>`;
     }
   }
-  
+
   const element = document.createElement('parent-element');
   document.body.appendChild(element);
 
   it('any reactive data should trigger the update of child components', async () => {
     const parentBtn = document.getElementById('parent-btn');
     const childElement = document.getElementById('child-container');
-    expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello<!--?pwc_t--> - World<!--?pwc_t--> - <!--?pwc_t--></div>');
+    expect(childElement.innerHTML).toEqual(
+      '<!--?pwc_p--><div>Hello<!--?pwc_t--> - World<!--?pwc_t--> - <!--?pwc_t--></div>',
+    );
     expect(mockChildFn).toBeCalledTimes(1);
 
     // primity type
     parentBtn.click();
     await nextTick();
-    expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello!<!--?pwc_t--> - World<!--?pwc_t--> - <!--?pwc_t--></div>');
+    expect(childElement.innerHTML).toEqual(
+      '<!--?pwc_p--><div>Hello!<!--?pwc_t--> - World<!--?pwc_t--> - <!--?pwc_t--></div>',
+    );
     expect(mockChildFn).toBeCalledTimes(2);
 
     // object type
     parentBtn.click();
     await nextTick();
-    expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello!<!--?pwc_t--> - World!<!--?pwc_t--> - <!--?pwc_t--></div>');
+    expect(childElement.innerHTML).toEqual(
+      '<!--?pwc_p--><div>Hello!<!--?pwc_t--> - World!<!--?pwc_t--> - <!--?pwc_t--></div>',
+    );
     expect(mockChildFn).toBeCalledTimes(3);
 
     // array type
     parentBtn.click();
     await nextTick();
-    expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello!<!--?pwc_t--> - World!<!--?pwc_t--> - 2<!--?pwc_t--></div>');
+    expect(childElement.innerHTML).toEqual(
+      '<!--?pwc_p--><div>Hello!<!--?pwc_t--> - World!<!--?pwc_t--> - 2<!--?pwc_t--></div>',
+    );
     expect(mockChildFn).toBeCalledTimes(4);
   });
 
@@ -275,20 +289,25 @@ describe('Render nested components', () => {
     // with reactive decorator
     childComponent.title = 'Hello';
     await nextTick();
-    expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello<!--?pwc_t--> - World!<!--?pwc_t--> - 2<!--?pwc_t--></div>');
+    expect(childElement.innerHTML).toEqual(
+      '<!--?pwc_p--><div>Hello<!--?pwc_t--> - World!<!--?pwc_t--> - 2<!--?pwc_t--></div>',
+    );
     expect(mockChildFn).toBeCalledTimes(5);
 
     // with reactive decorator
     childComponent.data = { name: 'Child Element' };
     await nextTick();
-    expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello<!--?pwc_t--> - Child Element<!--?pwc_t--> - 2<!--?pwc_t--></div>');
+    expect(childElement.innerHTML).toEqual(
+      '<!--?pwc_p--><div>Hello<!--?pwc_t--> - Child Element<!--?pwc_t--> - 2<!--?pwc_t--></div>',
+    );
     expect(mockChildFn).toBeCalledTimes(6);
 
     // without reactive decorator
     childComponent.items = [1];
     await nextTick();
-    expect(childElement.innerHTML).toEqual('<!--?pwc_p--><div>Hello<!--?pwc_t--> - Child Element<!--?pwc_t--> - 2<!--?pwc_t--></div>');
+    expect(childElement.innerHTML).toEqual(
+      '<!--?pwc_p--><div>Hello<!--?pwc_t--> - Child Element<!--?pwc_t--> - 2<!--?pwc_t--></div>',
+    );
     expect(mockChildFn).toBeCalledTimes(6);
   });
-
 });

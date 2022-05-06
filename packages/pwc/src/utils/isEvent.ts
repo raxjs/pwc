@@ -1,7 +1,7 @@
-import type { EventAttribute } from '../type';
+import type { Attribute, EventAttribute } from '../type';
 import { isFunction } from './checkTypes';
 
-export function isEvent(attr: EventAttribute): boolean {
+export function isEvent(attr: Attribute): attr is EventAttribute {
   // When attribute name startWith on, it should be an event
   return attr.name.startsWith('on') && isFunction(attr.handler);
 }

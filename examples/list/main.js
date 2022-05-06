@@ -18,6 +18,6 @@ class CustomElement extends HTMLElement {
   }
 
   get template() {
-    return html`<div>123: ${html`<span @click=${this.onClick}>${this.#title}</span>`}</div>`;
+    return 123;
   }
 }

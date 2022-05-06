@@ -3,34 +3,34 @@ import { compileTemplateAST, parse } from '../src';
 describe('compileTemplate', () => {
   it('compile a simple template', () => {
     const { descriptor } = parse('<template><p>{{text}}</p></template>');
-    const { templateString, values} = compileTemplateAST(descriptor.template.ast);
+    const { templateString, templateData } = compileTemplateAST(descriptor.template.ast);
 
     expect(templateString).toBe('<p><!--?pwc_t--></p>');
-    expect(values).toEqual(['text']);
+    expect(templateData ).toEqual(['text']);
   });
 
   it('compile a simple template with class property', () => {
     const { descriptor } = parse('<template><p>{{this.text}}</p></template>');
-    const { templateString, values} = compileTemplateAST(descriptor.template.ast);
+    const { templateString, templateData } = compileTemplateAST(descriptor.template.ast);
 
     expect(templateString).toBe('<p><!--?pwc_t--></p>');
-    expect(values).toEqual(['this.text']);
+    expect(templateData ).toEqual(['this.text']);
   });
 
   it('compile a simple template with class private property', () => {
     const { descriptor } = parse('<template><p>{{this.#text}}</p></template>');
-    const { templateString, values} = compileTemplateAST(descriptor.template.ast);
+    const { templateString, templateData } = compileTemplateAST(descriptor.template.ast);
 
     expect(templateString).toBe('<p><!--?pwc_t--></p>');
-    expect(values).toEqual(['this.#text']);
+    expect(templateData ).toEqual(['this.#text']);
   });
 
   it('compile a template with a event', () => {
     const { descriptor } = parse('<template><p @click="{{handleClick}}">{{text}}</p></template>');
-    const { templateString, values} = compileTemplateAST(descriptor.template.ast);
+    const { templateString, templateData } = compileTemplateAST(descriptor.template.ast);
 
     expect(templateString).toBe('<!--?pwc_p--><p><!--?pwc_t--></p>');
-    expect(values).toEqual([
+    expect(templateData ).toEqual([
       [
         {
           name: 'onclick',
@@ -44,10 +44,10 @@ describe('compileTemplate', () => {
 
   it('compile a template with a class method', () => {
     const { descriptor } = parse('<template><p @click="{{this.handleClick}}">{{text}}</p></template>');
-    const { templateString, values} = compileTemplateAST(descriptor.template.ast);
+    const { templateString, templateData } = compileTemplateAST(descriptor.template.ast);
 
     expect(templateString).toBe('<!--?pwc_p--><p><!--?pwc_t--></p>');
-    expect(values).toEqual([
+    expect(templateData ).toEqual([
       [
         {
           name: 'onclick',
@@ -61,10 +61,10 @@ describe('compileTemplate', () => {
 
   it('compile a template with a capture event', () => {
     const { descriptor } = parse('<template><p @click.capture="{{handleClick}}">{{text}}</p></template>');
-    const { templateString, values} = compileTemplateAST(descriptor.template.ast);
+    const { templateString, templateData } = compileTemplateAST(descriptor.template.ast);
 
     expect(templateString).toBe('<!--?pwc_p--><p><!--?pwc_t--></p>');
-    expect(values).toEqual([
+    expect(templateData ).toEqual([
       [
         {
           name: 'onclick',
@@ -78,10 +78,10 @@ describe('compileTemplate', () => {
 
   it('compile a template with an attribute start with on', () => {
     const { descriptor } = parse('<template><custom-component onevent="{{handleEvent}}">{{text}}</custom-component></template>');
-    const { templateString, values} = compileTemplateAST(descriptor.template.ast);
+    const { templateString, templateData } = compileTemplateAST(descriptor.template.ast);
 
     expect(templateString).toBe('<!--?pwc_p--><custom-component><!--?pwc_t--></custom-component>');
-    expect(values).toEqual([
+    expect(templateData ).toEqual([
       [
         {
           name: 'onevent',
@@ -95,10 +95,10 @@ describe('compileTemplate', () => {
 
   it('compile a template with attributes', () => {
     const { descriptor } = parse('<template><p class="{{className}}">{{text}}</p></template>');
-    const { templateString, values} = compileTemplateAST(descriptor.template.ast);
+    const { templateString, templateData } = compileTemplateAST(descriptor.template.ast);
 
     expect(templateString).toBe('<!--?pwc_p--><p><!--?pwc_t--></p>');
-    expect(values).toEqual([
+    expect(templateData ).toEqual([
       [
         {
           name: 'class',
@@ -111,10 +111,10 @@ describe('compileTemplate', () => {
 
   it('compile a template with attributes binded with class property', () => {
     const { descriptor } = parse('<template><p class="{{this.className}}" style="{{this.#style}}">{{text}}</p></template>');
-    const { templateString, values} = compileTemplateAST(descriptor.template.ast);
+    const { templateString, templateData } = compileTemplateAST(descriptor.template.ast);
 
     expect(templateString).toBe('<!--?pwc_p--><p><!--?pwc_t--></p>');
-    expect(values).toEqual([
+    expect(templateData ).toEqual([
       [
         {
           name: 'class',
@@ -131,10 +131,10 @@ describe('compileTemplate', () => {
 
   it('compile a template with child element', () => {
     const { descriptor } = parse('<template><div class="{{this.className}}" style="{{this.#style}}"><div>{{this.#text}}</div></div></template>');
-    const { templateString, values} = compileTemplateAST(descriptor.template.ast);
+    const { templateString, templateData } = compileTemplateAST(descriptor.template.ast);
 
     expect(templateString).toBe('<!--?pwc_p--><div><div><!--?pwc_t--></div></div>');
-    expect(values).toEqual([
+    expect(templateData ).toEqual([
       [
         {
           name: 'class',
@@ -151,20 +151,20 @@ describe('compileTemplate', () => {
 
   it('compile a template with javascript expressions in text interpolation', () => {
     const { descriptor } = parse('<template><div>{{ count++ }}</div></template>');
-    const { templateString, values} = compileTemplateAST(descriptor.template.ast);
+    const { templateString, templateData } = compileTemplateAST(descriptor.template.ast);
 
     expect(templateString).toBe('<div><!--?pwc_t--></div>');
-    expect(values).toEqual([
+    expect(templateData ).toEqual([
       'count++',
     ]);
   });
 
   it('compile a template with javascript expressions in attribute bindings', () => {
     const { descriptor } = parse('<template><child-component bind="{{ count++ }}" ></child-component></template>');
-    const { templateString, values} = compileTemplateAST(descriptor.template.ast);
+    const { templateString, templateData } = compileTemplateAST(descriptor.template.ast);
 
     expect(templateString).toBe('<!--?pwc_p--><child-component></child-component>');
-    expect(values).toEqual([
+    expect(templateData ).toEqual([
       [
         {
           name: 'bind',
@@ -176,10 +176,10 @@ describe('compileTemplate', () => {
 
   it('compile a template with javascript expressions in event bindings', () => {
     const { descriptor } = parse('<template><div @click="{{ count++ }}"></div></template>');
-    const { templateString, values} = compileTemplateAST(descriptor.template.ast);
+    const { templateString, templateData } = compileTemplateAST(descriptor.template.ast);
 
     expect(templateString).toBe('<!--?pwc_p--><div></div>');
-    expect(values).toEqual([
+    expect(templateData ).toEqual([
       [
         {
           name: 'onclick',
@@ -192,10 +192,10 @@ describe('compileTemplate', () => {
 
   it('compile a template with calling methods in event bindings', () => {
     const { descriptor } = parse(`<template><div @click="{{ say('hello') }}"></div></template>`);
-    const { templateString, values} = compileTemplateAST(descriptor.template.ast);
+    const { templateString, templateData } = compileTemplateAST(descriptor.template.ast);
 
     expect(templateString).toBe('<!--?pwc_p--><div></div>');
-    expect(values).toEqual([
+    expect(templateData ).toEqual([
       [
         {
           name: 'onclick',
@@ -208,10 +208,10 @@ describe('compileTemplate', () => {
 
   it('compile a template with inline arrow function in event bindings', () => {
     const { descriptor } = parse(`<template><div @click="{{ (event) => warn('', event) }}"></div></template>`);
-    const { templateString, values} = compileTemplateAST(descriptor.template.ast);
+    const { templateString, templateData } = compileTemplateAST(descriptor.template.ast);
 
     expect(templateString).toBe('<!--?pwc_p--><div></div>');
-    expect(values).toEqual([
+    expect(templateData ).toEqual([
       [
         {
           name: 'onclick',

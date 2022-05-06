@@ -27,7 +27,7 @@ export interface EventAttribute {
   capture?: boolean;
 }
 
-export interface Attribute extends NormalAttribute, EventAttribute {}
+export type Attribute = NormalAttribute | EventAttribute;
 
 export type Attributes = Attribute[];
 
