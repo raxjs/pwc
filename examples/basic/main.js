@@ -1,66 +1,62 @@
 import { reactive, customElement, attribute, html } from 'pwc';
 
 @customElement('child-element')
-class ChildElement extends HTMLElement {
-  @reactive
-  accessor title = 'Child Element';
+class Child extends HTMLElement {
+  name = 'Child';
 
   @reactive
-  accessor data = {};
+  @attribute('data-class-name')
+  accessor className = 'red';
 
-  items = [];
+  @attribute('checked')
+  accessor checked = false;
 
-  callback() {}
+  connectedCallback() {
+    super.connectedCallback();
+    console.log('connected');
+    console.log('checked => ', this.checked);
+    console.log(this.className)
+  }
 
   get template() {
-    return html`<div id="child-container">
-      <div @click=${this.callback}>${this.title} - ${this.data.name} - ${this.items.join(',')}</div>
+    return html`<div id="container">
+      Child ${this.name}
+      <div>parent class name is ${this.className}</div>
     </div>`;
   }
 }
 
-let index = 0;
-
 @customElement('custom-element')
-class ParentElement extends HTMLElement {
+class CustomElement extends HTMLElement {
   @reactive
-  accessor #title = 'Hello';
+  accessor #data = {
+    name: 'jack!',
+  };
 
   @reactive
-  accessor #data = { name: 'World' };
+  accessor #text = 'hello';
+
+  @attribute('custom')
+  accessor custom = false;
 
   @reactive
-  accessor #items = [];
+  accessor #className = 'red';
 
-  #callback() {
-    console.log('Click in ChildElement');
+  connectedCallback() {
+    super.connectedCallback();
+    console.log('parent connected');
   }
 
   onClick() {
-    switch (index) {
-      case 0:
-        this.#title += '!';
-        break;
-      case 1:
-        this.#data.name += '!';
-        break;
-      case 2:
-        this.#items.push(index);
-        break;
-      default:
-        break;
-    }
-
-    index++;
-  }
+    this.#data.name += '!';
+    this.#text += '?';
+    this.#className = this.#className === 'green' ? 'red' : 'green';
+  };
 
   get template() {
-    return html`<button id="parent-btn" @click=${this.onClick.bind(this)}>Click</button>
-      <child-element
-        title=${this.#title}
-        data=${this.#data}
-        items=${this.#items}
-        callback=${this.#callback}
-      ></child-element>`;
+    return html`<div class=${this.#className} @click=${this.onClick}>
+      ${this.#text} - ${this.#data.name}
+      <child-element name=${this.#data.name} checked=${true} data-class-name=${this.#className} />
+    </div>`;
   }
 }
