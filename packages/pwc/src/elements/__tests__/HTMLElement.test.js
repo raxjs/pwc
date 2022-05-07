@@ -107,7 +107,7 @@ function macroTask() {
     setTimeout(() => {
       resolve();
     }, 0);
-  })
+  });
 }
 
 describe('Render HTMLElement', () => {
@@ -118,7 +118,7 @@ describe('Render HTMLElement', () => {
     const element = document.createElement('custom-element');
     document.body.appendChild(element);
     await nextTick();
-    expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="container">hello<!--?pwc_t--> - jack<!--?pwc_t--></div>');
+    expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="container">hello<!--?pwc_t--> - jack<!--?pwc_t--></div><!--?pwc_t-->');
 
     const container = document.getElementById('container');
     container.click();
@@ -133,7 +133,7 @@ describe('Render HTMLElement', () => {
     document.body.appendChild(element);
     await nextTick();
     expect(element.innerHTML).toEqual(
-      '<!--?pwc_p--><div id="nested-container">hello<!--?pwc_t--> <div>This is title<!--?pwc_t--></div> nested<!--?pwc_t--></div>',
+      '<!--?pwc_p--><div id="nested-container">hello<!--?pwc_t--> <div>This is title<!--?pwc_t--></div> nested<!--?pwc_t--></div><!--?pwc_t-->',
     );
 
     const container = document.getElementById('nested-container');
@@ -148,7 +148,7 @@ describe('Render HTMLElement', () => {
     document.body.appendChild(element);
     await nextTick();
     expect(element.innerHTML).toEqual(
-      '<!--?pwc_p--><div id="reactive-container" class="red">hello<!--?pwc_t--> - jack<!--?pwc_t--></div>',
+      '<!--?pwc_p--><div id="reactive-container" class="red">hello<!--?pwc_t--> - jack<!--?pwc_t--></div><!--?pwc_t-->',
     );
 
     const container = document.getElementById('reactive-container');
@@ -156,7 +156,7 @@ describe('Render HTMLElement', () => {
 
     await nextTick();
     expect(element.innerHTML).toEqual(
-      '<!--?pwc_p--><div id="reactive-container" class="green">hello?<!--?pwc_t--> - jack!<!--?pwc_t--></div>',
+      '<!--?pwc_p--><div id="reactive-container" class="green">hello?<!--?pwc_t--> - jack!<!--?pwc_t--></div><!--?pwc_t-->',
     );
   });
 
@@ -322,6 +322,129 @@ describe('Render nested components', () => {
   });
 });
 
+describe('render multiple kinds template', () => {
+  it('should render basic data types', async () => {
+    // Return number directly
+    @customElement('number-custom-element')
+    class NumberCustomElement extends HTMLElement {
+      get template() {
+        return 123;
+      }
+    }
+    const el = document.createElement('number-custom-element');
+    document.body.appendChild(el);
+    await nextTick();
+    expect(el.innerHTML).toEqual('123<!--?pwc_t-->');
+
+    // Return a property which value is number
+    @customElement('number-dynamic-custom-element')
+    class NumberDynamicCustomElement extends HTMLElement {
+      #id = 123;
+      get template() {
+        return this.#id;
+      }
+    }
+    const el1 = document.createElement('number-dynamic-custom-element');
+    document.body.appendChild(el1);
+    await nextTick();
+    expect(el1.innerHTML).toEqual('123<!--?pwc_t-->');
+
+    // Return null
+    @customElement('null-custom-element')
+    class NullCustomElement extends HTMLElement {
+      get template() {
+        return null;
+      }
+    }
+
+    const el2 = document.createElement('null-custom-element');
+    document.body.appendChild(el2);
+    await nextTick();
+    expect(el2.innerHTML).toEqual('<!--?pwc_t-->');
+
+    // Return false
+    @customElement('false-custom-element')
+    class FalseCustomElement extends HTMLElement {
+      get template() {
+        return false;
+      }
+    }
+
+    const el3 = document.createElement('false-custom-element');
+    document.body.appendChild(el3);
+    await nextTick();
+    expect(el3.innerHTML).toEqual('<!--?pwc_t-->');
+
+    // Return 0
+    @customElement('zero-custom-element')
+    class ZeroCustomElement extends HTMLElement {
+      get template() {
+        return 0;
+      }
+    }
+
+    const el4 = document.createElement('zero-custom-element');
+    document.body.appendChild(el4);
+    await nextTick();
+    expect(el4.innerHTML).toEqual('0<!--?pwc_t-->');
+
+    // Return plain object
+    @customElement('plain-object-custom-element')
+    class PlainObjectCustomElement extends HTMLElement {
+      get template() {
+        return { x: 1 };
+      }
+    }
+
+    const el5 = document.createElement('plain-object-custom-element');
+    document.body.appendChild(el5);
+    await nextTick();
+    expect(el5.innerHTML).toEqual('[object Object]<!--?pwc_t-->');
+  });
+
+  it('should render nested template', async () => {
+    // Return nested false
+    @customElement('nested-false-custom-element')
+    class FalseCustomElement extends HTMLElement {
+      get template() {
+        return html`<div>${html`${false}`}</div>`;
+      }
+    }
+    const el = document.createElement('nested-false-custom-element');
+    document.body.appendChild(el);
+    await nextTick();
+    expect(el.innerHTML).toEqual('<div><!--?pwc_t--><!--?pwc_t--></div><!--?pwc_t-->');
+
+    @customElement('nested-simple-list')
+    class NestedSimpleList extends HTMLElement {
+      get template() {
+        return html`<div>${[1, 3, 2].map((item) => html`<span>${item}</span>`)}</div>`;
+      }
+    }
+    const el1 = document.createElement('nested-simple-list');
+    document.body.appendChild(el1);
+    await nextTick();
+    expect(el1.innerHTML).toEqual(
+      '<div><span>1<!--?pwc_t--></span><span>3<!--?pwc_t--></span><span>2<!--?pwc_t--></span><!--?pwc_t--></div><!--?pwc_t-->',
+    );
+
+    @customElement('directly-list')
+    class DirectlyList extends HTMLElement {
+      get template() {
+        return [1, 3, 2].map((item) => {
+          return html`<span>${item}</span>`;
+        });
+      }
+    }
+    const el2 = document.createElement('directly-list');
+    document.body.appendChild(el2);
+    await nextTick();
+    expect(el2.innerHTML).toEqual(
+      '<span>1<!--?pwc_t--></span><span>3<!--?pwc_t--></span><span>2<!--?pwc_t--></span><!--?pwc_t-->',
+    );
+  });
+});
+
 describe('render with rax', () => {
   it('should pass props to PWC element', async () => {
     @customElement('rax-custom-element')
@@ -344,8 +467,6 @@ describe('render with rax', () => {
         setCustomTitle('changed title');
       }, []);
 
-      console.log('customTitle =====> ', customTitle);
-
       return createElement('rax-custom-element', {
         customTitle,
         onClick: handleClick,
@@ -358,13 +479,13 @@ describe('render with rax', () => {
 
     await nextTick();
 
-    expect(root.innerHTML).toEqual('<rax-custom-element><div>outside title<!--?pwc_t--></div></rax-custom-element>');
+    expect(root.innerHTML).toEqual('<rax-custom-element><div>outside title<!--?pwc_t--></div><!--?pwc_t--></rax-custom-element>');
 
     const el = document.getElementsByTagName('rax-custom-element')[0];
     el.click();
 
     await macroTask();
 
-    expect(root.innerHTML).toEqual('<rax-custom-element><div>changed title<!--?pwc_t--></div></rax-custom-element>');
+    expect(root.innerHTML).toEqual('<rax-custom-element><div>changed title<!--?pwc_t--></div><!--?pwc_t--></rax-custom-element>');
   });
 });

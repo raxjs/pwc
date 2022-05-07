@@ -63,7 +63,11 @@ export interface ReactiveNode {
 }
 
 interface ReactiveNodeCtor {
-  new(commentNode: Comment, rootElement: PWCElement, initialValue?: string | Attributes): ReactiveNode;
+  new(
+    commentNode: Comment,
+    rootElement: PWCElement,
+    initialValue?: string | Attributes | PWCElementTemplate[] | PWCElementTemplate
+  ): ReactiveNode;
 }
 
 export type ReactiveNodeMapType = Record<NodeType, ReactiveNodeCtor>;

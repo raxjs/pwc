@@ -37,3 +37,7 @@ export function isPrivate(name: string) {
 export function isTemplate(value: unknown): boolean {
   return value && value[TemplateFlag] === true;
 }
+
+export function isFalsy(value: unknown) {
+  return !value && value !== 0;
+}

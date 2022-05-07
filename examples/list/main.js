@@ -18,6 +18,9 @@ class CustomElement extends HTMLElement {
   }
 
   get template() {
-    return 123;
+    // return this.#list.map((item) => {
+    //   return html`<span>${item}</span>`;
+    // });
+    return html`<div>123</div>`
   }
 }

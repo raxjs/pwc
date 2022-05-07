@@ -1,10 +1,10 @@
-import type { ElementTemplate, PWCElement, ReflectProperties, RootElement, ReactiveNode } from '../type';
+import type { ElementTemplate, PWCElement, ReflectProperties, RootElement, ReactiveNode, PWCElementTemplate } from '../type';
 import { Reactive } from '../reactivity/reactive';
-import { TemplateNode, ReactiveNodeMap } from './reactiveNode';
+import { TemplateNode, TemplatesNode } from './reactiveNode';
 import { generateUid, isArray } from '../utils';
-import { enqueueJob, nextTick } from './sheduler';
+import { enqueueJob } from './sheduler';
 import { getTemplateInfo } from './getTemplateInfo';
-import { initRenderTemplate } from './initRenderTemplate';
+import { TEXT_COMMENT_DATA } from '../constants';
 
 export default (Definition: PWCElement) => {
   return class extends Definition {
@@ -21,8 +21,6 @@ export default (Definition: PWCElement) => {
     #reactive: Reactive = new Reactive(this);
     // Reflect properties
     #reflectProperties: ReflectProperties = new Map();
-    // Init task
-    #initTask: () => void;
 
     get template() {
       return {} as ElementTemplate;
@@ -31,27 +29,26 @@ export default (Definition: PWCElement) => {
     // Custom element native lifecycle
     connectedCallback() {
       if (!this.#initialized) {
-        this.#initTask = () => {
-          this.#currentTemplate = this.template || {};
-          this.#root = this.shadowRoot || this;
-          if (isArray(this.#currentTemplate)) {
-
-          } else {
-            const { templateString, templateData } = getTemplateInfo(this.#currentTemplate);
-            this.#root.innerHTML = templateString;
-            const templateNode = new TemplateNode();
-            this.#reactiveNodes.push(templateNode);
-            initRenderTemplate(this.#root, templateData, templateNode.reactiveNodes, this, ReactiveNodeMap);
-          }
-          this.#initialized = true;
-        };
-        // Avoid that child component connectedCallback triggers before parent component
-        nextTick(() => {
-          if (this.#initTask) {
-            this.#initTask();
-            this.#initTask = null;
-          }
-        });
+        // @ts-ignore
+        if (this.__init_task__) {
+          // @ts-ignore
+          this.__init_task__();
+        }
+        this.#currentTemplate = this.template;
+        this.#root = this.shadowRoot || this;
+        const commentNode = document.createComment(TEXT_COMMENT_DATA);
+        this.appendChild(commentNode);
+        if (isArray(this.#currentTemplate)) {
+          this.#reactiveNodes.push(
+            new TemplatesNode(commentNode, this, this.#currentTemplate as PWCElementTemplate[]),
+          );
+        } else {
+          this.#currentTemplate = getTemplateInfo(this.#currentTemplate);
+          this.#reactiveNodes.push(
+            new TemplateNode(commentNode, this, this.#currentTemplate as PWCElementTemplate),
+          );
+        }
+        this.#initialized = true;
       }
     }
     disconnectedCallback() {}

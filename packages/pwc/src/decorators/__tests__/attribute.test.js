@@ -99,7 +99,7 @@ describe('attribute decorator', () => {
     document.body.appendChild(el);
     await nextTick();
     expect(el.innerHTML).toEqual(
-      `<!--?pwc_p--><${childLocalName} item-title="title"><div>title<!--?pwc_t--></div></${childLocalName}>`,
+      `<!--?pwc_p--><${childLocalName} item-title="title"><div>title<!--?pwc_t--></div><!--?pwc_t--></${childLocalName}><!--?pwc_t-->`,
     );
   });
 
@@ -123,7 +123,7 @@ describe('attribute decorator', () => {
     el.attrName = 'changed value';
     expect(el.getAttribute('attr-name')).toEqual('outside value');
     await nextTick();
-    expect(el.innerHTML).toEqual('<div>changed value<!--?pwc_t--></div>');
+    expect(el.innerHTML).toEqual('<div>changed value<!--?pwc_t--></div><!--?pwc_t-->');
   });
 
   it('should throw error without accessor', () => {

@@ -75,22 +75,8 @@ export function initRenderTemplate(
 
   for (const placeholderItem of placeholderList) {
     const { type, value, placeholder } = placeholderItem;
-    switch (type) {
-      case NodeType.TEXT:
-      case NodeType.ATTRIBUTE: {
-        const attributedNode = new ReactiveNodeMap[type](placeholder, rootElement, value);
-        reactiveNodes.push(attributedNode);
-        break;
-      }
-      case NodeType.TEMPLATE: {
-        initTemplateItem(value, placeholder, reactiveNodes, rootElement, ReactiveNodeMap);
-        break;
-      }
-      case NodeType.TEMPLATES: {
-        initTemplateItems(value, placeholder, reactiveNodes, rootElement, ReactiveNodeMap);
-        break;
-      }
-    }
+    const reactiveNode = new ReactiveNodeMap[type](placeholder, rootElement, value);
+    reactiveNodes.push(reactiveNode);
   }
 }
 
@@ -101,28 +87,22 @@ export function initTemplateItems(
   rootElement: PWCElement,
   ReactiveNodeMap: ReactiveNodeMapType,
 ) {
-  const templatesNode = new ReactiveNodeMap[NodeType.TEMPLATES](prevNode, rootElement);
-  reactiveNodes.push(templatesNode);
   for (const elementTemplate of elementTemplates) {
     // TODO: item may not elementTemplate, like a number or text
-    initTemplateItem(elementTemplate, prevNode, templatesNode.reactiveNodes, rootElement, ReactiveNodeMap);
+    const templateNode = new ReactiveNodeMap[NodeType.TEMPLATE](prevNode, rootElement, elementTemplate);
+    reactiveNodes.push(templateNode);
   }
 }
 
 export function initTemplateItem(
-  elementTemplate: PWCElementTemplate,
-  prevNode: Comment,
-  reactiveNodes: ReactiveNode[],
-  rootElement: PWCElement,
+  templateNode,
   ReactiveNodeMap,
 ) {
-  const { templateString, templateData = [] } = getTemplateInfo(elementTemplate);
+  const { templateString, templateData = [] } = getTemplateInfo(templateNode.value);
   const fragment = createTemplate(templateString);
-  const templateNode = new ReactiveNodeMap[NodeType.TEMPLATE]();
   // Cache all native nodes
   templateNode.childNodes = [...fragment.childNodes];
-  reactiveNodes.push(templateNode);
-  initRenderTemplate(fragment, templateData, templateNode.reactiveNodes, rootElement, ReactiveNodeMap);
-  prevNode.parentNode.insertBefore(fragment, prevNode);
+  initRenderTemplate(fragment, templateData, templateNode.reactiveNodes, templateNode.rootElement, ReactiveNodeMap);
+  templateNode.commentNode.parentNode.insertBefore(fragment, templateNode.commentNode);
 }
 

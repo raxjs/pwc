@@ -1,14 +1,14 @@
 import type { Attributes, PWCElementTemplate, PWCElement, ReactiveNode, ReactiveNodeMapType } from '../type';
 import { commitAttributes } from './commitAttributes';
-import { shallowEqual } from '../utils';
-import { initTemplateItems } from './initRenderTemplate';
+import { isFalsy, shallowEqual } from '../utils';
+import { initTemplateItem, initTemplateItems } from './initRenderTemplate';
 import { NodeType } from '../constants';
 
 export class TextNode implements ReactiveNode {
   #el: Text;
 
   constructor(commentNode: Comment, rootElement: PWCElement, initialValue: string) {
-    const textNode = document.createTextNode(initialValue);
+    const textNode = document.createTextNode(isFalsy(initialValue) ? '' : initialValue);
     this.#el = textNode;
     commentNode.parentNode.insertBefore(textNode, commentNode);
   }
@@ -20,16 +20,23 @@ export class TextNode implements ReactiveNode {
 
 export class AttributedNode implements ReactiveNode {
   #el: Element;
-  #root: PWCElement;
+  rootElement: PWCElement;
   #elIsCustom: boolean;
   #elIsSvg: boolean;
 
-  constructor(commentNode: Comment, rootNode: PWCElement, initialAttrs: Attributes) {
+  constructor(commentNode: Comment, rootElement: PWCElement, initialAttrs: Attributes) {
     this.#el = commentNode.nextSibling as Element;
-    this.#root = rootNode;
+    this.rootElement = rootElement;
     this.#elIsCustom = Boolean(window.customElements.get(this.#el.localName));
     this.#elIsSvg = this.#el instanceof SVGElement;
-    this.#commitAttributes(initialAttrs, true);
+    if (this.#elIsCustom) {
+      // @ts-ignore
+      this.#el.__init_task__ = () => {
+        this.#commitAttributes(initialAttrs, true);
+      };
+    } else {
+      this.#commitAttributes(initialAttrs, true);
+    }
   }
 
   commitValue(value: Attributes) {
@@ -45,7 +52,7 @@ export class AttributedNode implements ReactiveNode {
     commitAttributes(this.#el, value, {
       isInitial,
       isSVG: this.#elIsSvg,
-      rootElement: this.#root,
+      rootElement: this.rootElement,
     });
   }
 }
@@ -53,6 +60,15 @@ export class AttributedNode implements ReactiveNode {
 export class TemplateNode implements ReactiveNode {
   reactiveNodes: ReactiveNode[] = [];
   childNodes: Node[];
+  rootElement: PWCElement;
+  commentNode: Comment;
+  value: PWCElementTemplate;
+  constructor(commentNode: Comment, rootElement: PWCElement, elementTemplate: PWCElementTemplate) {
+    this.rootElement = rootElement;
+    this.commentNode = commentNode;
+    this.value = elementTemplate;
+    initTemplateItem(this, ReactiveNodeMap);
+  }
   commitValue([prev, current]: [PWCElementTemplate, PWCElementTemplate]) {
     updateView(prev, current, this.reactiveNodes);
   }
@@ -61,11 +77,12 @@ export class TemplateNode implements ReactiveNode {
 export class TemplatesNode implements ReactiveNode {
   reactiveNodes: ReactiveNode[] = [];
   #commentNode: Comment;
-  #rootElement: PWCElement;
+  rootElement: PWCElement;
   childNodes: Node[];
-  constructor(commentNode: Comment, rootElement: PWCElement) {
+  constructor(commentNode: Comment, rootElement: PWCElement, elementTemplates: PWCElementTemplate[]) {
     this.#commentNode = commentNode;
-    this.#rootElement = rootElement;
+    this.rootElement = rootElement;
+    initTemplateItems(elementTemplates, commentNode, this.reactiveNodes, rootElement, ReactiveNodeMap);
   }
 
   commitValue([prev, current]: [PWCElementTemplate[], PWCElementTemplate[]]) {
@@ -78,7 +95,7 @@ export class TemplatesNode implements ReactiveNode {
     }
     this.reactiveNodes = [];
     // Rebuild
-    initTemplateItems(current, this.#commentNode, this.reactiveNodes, this.#rootElement, ReactiveNodeMap);
+    initTemplateItems(current, this.#commentNode, this.reactiveNodes, this.rootElement, ReactiveNodeMap);
   }
 }
 
