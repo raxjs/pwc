@@ -16,6 +16,10 @@ export function isFunction(value: unknown) {
   return typeof value === 'function';
 }
 
+export function isObject(value: unknown) {
+  return typeof value === 'object';
+}
+
 export function isPlainObject(value: unknown) {
   return Object.prototype.toString.call(value) === '[object Object]';
 }
@@ -30,4 +34,8 @@ export function isMap(value: unknown) {
 
 export function isPrivate(name: string) {
   return name.startsWith('#');
+}
+
+export function toRawType(value: unknown): string {
+  return Object.prototype.toString.call(value).slice(8, -1);
 }
