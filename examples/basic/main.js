@@ -2,7 +2,8 @@ import { reactive, customElement, attribute, html } from 'pwc';
 
 @customElement('child-element')
 class Child extends HTMLElement {
-  name = 'Child';
+  @reactive
+  accessor data = {};
 
   @reactive
   @attribute('data-class-name')

@@ -21,7 +21,16 @@ export function shallowEqual(valueA: any, valueB: any) {
     if (!hasOwnProperty(valueB, val) || !isEvent(valueA[val]) || !is(valueA[val], valueB[val])) {
       return false;
     }
+    for (let index = 0; index < valueA.length; index++) {
+      const itemA = valueA[index];
+      const itemB = valueB[index];
+      if (isEvent(itemA.name)) {
+        continue;
+      }
+      if (!is(itemA.value, itemB.value)) {
+        return false;
+      }
+    }
   }
-
   return true;
 }

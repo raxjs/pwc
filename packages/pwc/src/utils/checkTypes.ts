@@ -19,6 +19,10 @@ export function isFunction(value: unknown) {
   return typeof value === 'function';
 }
 
+export function isObject(value: unknown) {
+  return typeof value === 'object';
+}
+
 export function isPlainObject(value: unknown) {
   return Object.prototype.toString.call(value) === '[object Object]';
 }
@@ -46,4 +50,7 @@ export function isTemplate(value: unknown): boolean {
 
 export function isFalsy(value: unknown) {
   return !value && value !== 0;
+}
+export function toRawType(value: unknown): string {
+  return Object.prototype.toString.call(value).slice(8, -1);
 }
