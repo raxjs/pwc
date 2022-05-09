@@ -55,7 +55,7 @@ export function resolveScript(
         babelPluginProposalDecorators,
         { version: '2021-12', decoratorsBeforeExport: true },
       ],
-      removePwcExt
+      removePwcExt,
     ],
     sourceMaps: true,
     // TODO:

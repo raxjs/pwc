@@ -2,7 +2,7 @@ import { PWC_EXT } from '../utils/constants.js';
 
 // If user write .pwc extension, then in transform mode .pwc should be removed
 // Otherwise it can't be handled because .pwc file will be transformed into .js file
-export default function({ types: t }) {
+export default function ({ types: t }) {
   return {
     visitor: {
       ImportDeclaration(path) {
@@ -13,7 +13,7 @@ export default function({ types: t }) {
           const sourceWithoutExt = node.value.slice(0, lastDot);
           sourcePath.replaceWith(t.stringLiteral(sourceWithoutExt));
         }
-      }
-    }
-  }
+      },
+    },
+  };
 }
