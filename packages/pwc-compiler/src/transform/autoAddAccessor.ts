@@ -4,7 +4,9 @@ import babelTraverse from '@babel/traverse';
 import { REACTIVE_DECORATOR } from './autoAddReactiveDecorator';
 
 function isIncludeReactiveDecorator(decorators: Array<t.Decorator>): boolean {
-  return decorators.some(decorator => t.isIdentifier(decorator.expression) && decorator.expression.name === REACTIVE_DECORATOR);
+  return decorators.some(
+    decorator => t.isIdentifier(decorator.expression) && decorator.expression.name === REACTIVE_DECORATOR,
+  );
 }
 
 function createClassAccessorPropertyFromClassProperty(node: t.ClassProperty | t.ClassPrivateProperty) {
