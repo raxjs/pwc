@@ -23,7 +23,7 @@
  */
 import { throwError, throwMinifiedError } from '../../error';
 import { validateAccessor } from '../validateAccessor';
-import type { ReflectProperties, Attribute } from '../../type';
+import type { ReflectProperties, NormalAttribute } from '../../type';
 import { isBoolean } from '../../utils';
 import { attributeSetter } from './setter';
 import { attributeGetter } from './getter';
@@ -61,7 +61,7 @@ export function attribute(attrName: string) {
         // Validate the repeated attribute name
         validateReflectedAttr(reflectProperties, name, attrName);
 
-        const attr = {
+        const attr: NormalAttribute = {
           name: attrName,
           value: attrValue,
         };
@@ -97,7 +97,7 @@ function validateReflectedAttr(reflectProperties: ReflectProperties, name: strin
 /**
  * Docs: https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#boolean-attribute
  */
-function handleBooleanAttribute(initialValue: boolean, attr: Attribute) {
+function handleBooleanAttribute(initialValue: boolean, attr: NormalAttribute) {
   if (__DEV__) {
     if (initialValue !== false) {
       throwError(
@@ -109,7 +109,7 @@ function handleBooleanAttribute(initialValue: boolean, attr: Attribute) {
   return attr.value !== null;
 }
 
-function handleCommonAttribute(el: Element, initialValue: string, attr: Attribute) {
+function handleCommonAttribute(el: Element, initialValue: string, attr: NormalAttribute) {
   if (attr.value === null) {
     return initialValue;
   }
