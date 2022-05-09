@@ -16,12 +16,17 @@ export default function transformScript(ast: File, {
   templateString,
   templateData,
 }: TransformScriptOptions): void {
-  autoAddCustomElementDecorator(ast);
+  let shouldImportCustomElement = true;
   let shouldImportReactive = false;
+
+  shouldImportCustomElement = autoAddCustomElementDecorator(ast);
   if (templateString !== null) {
     shouldImportReactive = autoAddReactiveDecorator(ast, templateData);
     autoAddAccessor(ast);
     genGetTemplateMethod(ast, { templateString, templateData });
   }
-  autoInjectImportPWC(ast, shouldImportReactive);
+  autoInjectImportPWC(ast, {
+    customElement: shouldImportCustomElement,
+    reactive: shouldImportReactive,
+  });
 }
