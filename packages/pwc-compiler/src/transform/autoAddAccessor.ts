@@ -1,7 +1,7 @@
 import type { File } from '@babel/types';
 import t from '@babel/types';
 import babelTraverse from '@babel/traverse';
-import { REACTIVE_DECORATOR } from './autoAddReactiveDecorator';
+import { REACTIVE_DECORATOR } from './autoAddReactiveDecorator.js';
 
 function isIncludeReactiveDecorator(decorators: Array<t.Decorator>): boolean {
   return decorators.some(decorator => t.isIdentifier(decorator.expression) && decorator.expression.name === REACTIVE_DECORATOR);
