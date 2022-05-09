@@ -5,6 +5,7 @@ import { createRollupError } from './utils/error.js';
 import { transformSync } from '@babel/core';
 import babelPluginProposalDecorators from '@babel/plugin-proposal-decorators';
 import babelPresetEnv from '@babel/preset-env';
+import removePwcExt from './babelPlugins/removePwcExt.js';
 
 const cache = new WeakMap<SFCDescriptor>();
 
@@ -54,6 +55,7 @@ export function resolveScript(
         babelPluginProposalDecorators,
         { version: '2021-12', decoratorsBeforeExport: true },
       ],
+      removePwcExt
     ],
     sourceMaps: true,
     // TODO:
