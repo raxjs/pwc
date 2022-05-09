@@ -6,7 +6,7 @@
     @reactive
     accessor name = 'pwc';
 
-    className = 'container';
+    clsName = 'container';
 
     handleClick = () => {
       console.log('click');
@@ -14,7 +14,7 @@
     };
 
     get template() {
-      return html`<div class=${this.className} @click.capture=${this.handleClick}>${this.name}${this.name}</div>`;
+      return html`<div class=${this.clsName} @click.capture=${this.handleClick}>${this.name}${this.name}</div>`;
     }
   }
 </script>
