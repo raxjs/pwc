@@ -499,6 +499,42 @@ describe('render multiple kinds template', () => {
     expect(el3.innerHTML).toEqual(
       `<!--?pwc_p--><div class=\"item4\">item4<!--?pwc_t--></div><!--?pwc_t--><!--?pwc_t-->`,
     );
+
+    @customElement('nested-hybrid-list')
+    class NestedHybridList extends HTMLElement {
+      @reactive
+      accessor list = ['item1', 'item2', 'item3', 'item4'];
+
+      onClick() {
+        this.list.push('item 5');
+      }
+
+      handleItemClick(index) {
+        this.list = [...this.list.slice(0, index), ...this.list.slice(index + 1)];
+      }
+
+      get template() {
+        return html`<div @click=${this.onClick}>
+          ${this.list.map((item, index) => {
+            return html`<div class=${item} @click=${() => this.handleItemClick(index)}>${item}</div>`;
+          })}
+        </div>`;
+      }
+    }
+
+    const el4 = document.createElement('nested-hybrid-list');
+    document.body.appendChild(el4);
+
+    expect(el4.innerHTML).toEqual(`<!--?pwc_p--><div>
+          <!--?pwc_p--><div class=\"item1\">item1<!--?pwc_t--></div><!--?pwc_p--><div class=\"item2\">item2<!--?pwc_t--></div><!--?pwc_p--><div class=\"item3\">item3<!--?pwc_t--></div><!--?pwc_p--><div class=\"item4\">item4<!--?pwc_t--></div><!--?pwc_t-->
+        </div><!--?pwc_t-->`);
+
+    const nestedItem1 = document.getElementsByClassName('item1')[0];
+    nestedItem1.click();
+    await macroTask();
+    expect(el4.innerHTML).toEqual(`<!--?pwc_p--><div>
+          <!--?pwc_p--><div class=\"item2\">item2<!--?pwc_t--></div><!--?pwc_p--><div class=\"item3\">item3<!--?pwc_t--></div><!--?pwc_p--><div class=\"item4\">item4<!--?pwc_t--></div><!--?pwc_p--><div class=\"item 5\">item 5<!--?pwc_t--></div><!--?pwc_t-->
+        </div><!--?pwc_t-->`);
   });
 });
 
