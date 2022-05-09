@@ -63,7 +63,7 @@ export default (Definition: PWCElement) => {
     #performUpdate() {
       const nextElementTemplate = this.template;
       const newPWCElementTemplate = getTemplateInfo(nextElementTemplate);
-      // TODO: check reactive node type
+      // The root reactive node must be TemplateNode
       this.#reactiveNodes[0].commitValue([this.#currentTemplate, newPWCElementTemplate]);
       this.#currentTemplate = newPWCElementTemplate;
     }
