@@ -14,7 +14,6 @@ class Child extends HTMLElement {
   connectedCallback() {
     super.connectedCallback();
     console.log('connected');
-    console.log('checked => ', this.checked);
     console.log(this.className)
   }
 

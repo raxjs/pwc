@@ -52,6 +52,7 @@ importers:
       '@types/node': 17.0.24
       chalk: 4.1.2
       codecov: 3.8.3
+      driver-dom: 2.2.2
       esbuild: 0.14.36
       eslint: 7.32.0
       esno: 0.14.1
@@ -63,11 +64,9 @@ importers:
       jest: 27.5.1
       local-web-server: 4.2.1
       prettier: 2.6.2
+      rax: 1.2.2
       stylelint: 14.7.1
       typescript: 4.6.3
-    devDependencies:
-      driver-dom: 2.2.2
-      rax: 1.2.2
 
   examples/basic:
     specifiers:
@@ -1658,6 +1657,7 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.13.9
+    dev: false
 
   /@babel/template/7.16.7:
     resolution: {integrity: sha512-I8j/x8kHUrbYRTUxXrrMbfCa7jxkE7tZre39x3kjr9hvI82cK1FfqLygotcWN5kdPGWcLdWMHpSBavse5tWw3w==}
@@ -2671,7 +2671,7 @@ packages:
 
   /@uni/env/1.1.0:
     resolution: {integrity: sha512-2GVgUzxIaO2vGElXEuc45+I7L6Jbw8inLDDFuC0K4htjKtPmYywKSE6oDhvmdAXb4GCOH8hmxECYtAh1rjsgoQ==}
-    dev: true
+    dev: false
 
   /JSONStream/1.3.5:
     resolution: {integrity: sha512-E+iruNOY8VV9s4JEbe1aNEm6MiszPRr/UfcHMz0TQh1BXSxHK+ASV1R6W4HpjBhSeS+54PIsAMCBmwD06LLsqQ==}
@@ -3850,11 +3850,11 @@ packages:
     resolution: {integrity: sha512-v/jCQnQkjv0q3Z51zYhG5MfzMjlfJURiC8mhaAwhHsih55j8AnPupurSBOJn67qAE4Ol5XiGlqDnjWAH9XM1OA==}
     dependencies:
       style-unit: 3.0.4
-    dev: true
+    dev: false
 
   /driver-server/1.0.0:
     resolution: {integrity: sha512-H5nhMzsSJYaug+PDPyXiVW2KvK5k7B7K+yVW3FuHESq494Soh1cfomquJ2pk5RiApQr1z0e+0tif11TVRlM+PQ==}
-    dev: true
+    dev: false
 
   /duplexer/0.1.2:
     resolution: {integrity: sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==}
@@ -6290,6 +6290,7 @@ packages:
     hasBin: true
     dependencies:
       js-tokens: 4.0.0
+    dev: false
 
   /lru-cache/6.0.0:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
@@ -7473,6 +7474,7 @@ packages:
       loose-envify: 1.4.0
       object-assign: 4.1.1
       react-is: 16.13.1
+    dev: false
 
   /psl/1.8.0:
     resolution: {integrity: sha512-RIdOzyoavK+hA18OGGWDqUTsCLhtA7IcZ/6NCs4fFJaHBDab+pDDmDIByWFRQJq2Cd7r1OoQxBGKOaztq+hjIQ==}
@@ -7542,7 +7544,7 @@ packages:
       rax: ^1.0.0
     dependencies:
       rax: 1.2.2
-    dev: true
+    dev: false
 
   /rax-clone-element/1.0.0_rax@1.2.2:
     resolution: {integrity: sha512-TaQMVuzoglvCTjbWATlvvwARmeWnG8kpENWNXrNDv0++x29GHNND/TBbx7sdtVs/QmYwYc8YmwRUhaBwKQi5eQ==}
@@ -7552,7 +7554,7 @@ packages:
     dependencies:
       rax: 1.2.2
       rax-is-valid-element: 1.0.0
-    dev: true
+    dev: false
 
   /rax-create-factory/1.0.0_rax@1.2.2:
     resolution: {integrity: sha512-blBaVrurj/BOWelJhQWiuc0Kk8Ons1jsNsX78omaPBLkSOL7OkyJ3NC/0iKXHu425yWrGB6e5vho/qabROC7VQ==}
@@ -7561,12 +7563,12 @@ packages:
       rax: ^1.0.0
     dependencies:
       rax: 1.2.2
-    dev: true
+    dev: false
 
   /rax-is-valid-element/1.0.0:
     resolution: {integrity: sha512-MM3IUAQRKn3EJ0D2vjxgobOJLplLAw3YxE7/IRM6ytDYzlPq5iIZ8wsXoPAp/qW3Y+n23HLQUIljmLKywcCEIA==}
     engines: {npm: '>=3.0.0'}
-    dev: true
+    dev: false
 
   /rax/1.2.2:
     resolution: {integrity: sha512-SKUKSXoG2Dp+sFyiFyYzTGmhZlYGxusRSigcokAYTN3r4WTySreXs2WE+6nBBGg26aFyiCsBVHNeI86SQbVsQg==}
@@ -7579,10 +7581,11 @@ packages:
       rax-clone-element: 1.0.0_rax@1.2.2
       rax-create-factory: 1.0.0_rax@1.2.2
       rax-is-valid-element: 1.0.0
-    dev: true
+    dev: false
 
   /react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
+    dev: false
 
   /react-is/17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
@@ -8286,7 +8289,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.17.9
       universal-env: 3.3.3
-    dev: true
+    dev: false
 
   /stylehacks/5.1.0_postcss@8.4.12:
     resolution: {integrity: sha512-SzLmvHQTrIWfSgljkQCw2++C9+Ne91d/6Sp92I8c5uHTcy/PgeHamwITIbBW9wnFTY/3ZfSXR9HIL6Ikqmcu6Q==}
@@ -8719,7 +8722,7 @@ packages:
     engines: {npm: '>=3.0.0'}
     dependencies:
       '@uni/env': 1.1.0
-    dev: true
+    dev: false
 
   /universalify/0.1.2:
     resolution: {integrity: sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==}

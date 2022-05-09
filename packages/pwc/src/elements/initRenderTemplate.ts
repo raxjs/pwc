@@ -1,29 +1,10 @@
-import type { Attributes, PWCElement, PWCElementTemplate, ReactiveNode, ReactiveNodeMapType, RootElement, TemplateDataItemType } from '../type';
+import type { ElementTemplate, PWCElement, ReactiveNode, ReactiveNodeMapType, RootElement, TemplateDataItemType } from '../type';
 import { NodeType, PLACEHOLDER_COMMENT_DATA, PWC_PREFIX, TEXT_COMMENT_DATA } from '../constants';
 import { isArray, isTemplate } from '../utils';
 import { getTemplateInfo } from './getTemplateInfo';
 import { createTemplate } from './createTemplate';
-
-type PlaceholderItemType<T extends keyof NODE_TYPE_MAP> = {
-  placeholder: Comment;
-  type: T;
-  value: NODE_TYPE_MAP[T];
-};
-
-type NODE_TYPE_MAP = {
-  [NodeType.ATTRIBUTE]: Attributes;
-  [NodeType.TEMPLATE]: PWCElementTemplate;
-  [NodeType.TEXT]: string;
-  [NodeType.TEMPLATES]: PWCElementTemplate[];
-};
-
-type TextPlaceholder = PlaceholderItemType<NodeType.TEXT>;
-type TemplatePlaceholder = PlaceholderItemType<NodeType.TEMPLATE>;
-type AttributePlaceholder = PlaceholderItemType<NodeType.ATTRIBUTE>;
-type TemplatesPlaceholder = PlaceholderItemType<NodeType.TEMPLATES>;
-type ValuePlaceholder = TemplatePlaceholder | TemplatesPlaceholder | TextPlaceholder;
-
-type PlaceholderItem = ValuePlaceholder | AttributePlaceholder;
+import { throwError } from '../error';
+import { elementTemplateManager } from './elementTemplateManager';
 
 export function initRenderTemplate(
   fragment: RootElement | Node,
@@ -42,14 +23,13 @@ export function initRenderTemplate(
   });
   let placeholder: Node;
   let index = 0;
-  const placeholderList: PlaceholderItem[] = [];
 
   while ((placeholder = nodeIterator.nextNode())) {
     const value = templateData[index];
+    let type;
 
     // Insert dynamic text node
     if ((placeholder as Comment).data === TEXT_COMMENT_DATA) {
-      let type;
       if (isArray(value)) {
         type = NodeType.TEMPLATES;
       } else if (isTemplate(value)) {
@@ -57,46 +37,54 @@ export function initRenderTemplate(
       } else {
         type = NodeType.TEXT;
       }
-      placeholderList.push({
-        placeholder,
-        type,
-        value,
-      } as ValuePlaceholder);
     } else if ((placeholder as Comment).data === PLACEHOLDER_COMMENT_DATA) {
-      placeholderList.push({
-        placeholder: placeholder as Comment,
-        type: NodeType.ATTRIBUTE,
-        value: value as Attributes,
-      });
+      type = NodeType.ATTRIBUTE;
     }
 
-    index++;
-  }
+    if (__DEV__) {
+      if (!type) {
+        throwError('It is an invalid element template!');
+      }
+    }
 
-  for (const placeholderItem of placeholderList) {
-    const { type, value, placeholder } = placeholderItem;
-    const reactiveNode = new ReactiveNodeMap[type](placeholder, rootElement, value);
-    reactiveNodes.push(reactiveNode);
+    reactiveNodes.push(new ReactiveNodeMap[type](placeholder, rootElement, value));
+
+    index++;
   }
 }
 
 export function initTemplateItems(
-  elementTemplates: PWCElementTemplate[],
+  elementTemplates: ElementTemplate[],
   prevNode: Comment,
   reactiveNodes: ReactiveNode[],
   rootElement: PWCElement,
   ReactiveNodeMap: ReactiveNodeMapType,
 ) {
-  for (const elementTemplate of elementTemplates) {
-    // TODO: item may not elementTemplate, like a number or text
-    const templateNode = new ReactiveNodeMap[NodeType.TEMPLATE](prevNode, rootElement, elementTemplate);
-    reactiveNodes.push(templateNode);
+  for (let elementTemplate of elementTemplates) {
+    let ReactiveNodeCtor;
+    elementTemplateManager(elementTemplate, {
+      falsyAction() {
+        ReactiveNodeCtor = ReactiveNodeMap[NodeType.TEXT];
+        elementTemplate = '';
+      },
+      pwcElementTemplateAction() {
+        ReactiveNodeCtor = ReactiveNodeMap[NodeType.TEMPLATE];
+      },
+      textAction() {
+        ReactiveNodeCtor = ReactiveNodeMap[NodeType.TEXT];
+      },
+      arrayAction() {
+        ReactiveNodeCtor = ReactiveNodeMap[NodeType.TEMPLATES];
+      },
+    });
+
+    reactiveNodes.push(new ReactiveNodeCtor(prevNode, rootElement, elementTemplate));
   }
 }
 
 export function initTemplateItem(
   templateNode,
-  ReactiveNodeMap,
+  ReactiveNodeMap: ReactiveNodeMapType,
 ) {
   const { templateString, templateData = [] } = getTemplateInfo(templateNode.value);
   const fragment = createTemplate(templateString);

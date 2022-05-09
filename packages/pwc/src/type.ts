@@ -41,7 +41,7 @@ export type PWCElementTemplate = {
   template?: boolean;
 };
 
-export type ElementTemplate = PWCElementTemplate | string;
+export type ElementTemplate = PWCElementTemplate | string | number | null | undefined;
 
 export interface CustomHTMLBaseElement extends HTMLBaseElement {
   template?: ElementTemplate;
@@ -62,11 +62,13 @@ export interface ReactiveNode {
   commitValue: (value: any) => void;
 }
 
+export type ReactiveNodeValue = string | Attributes | PWCElementTemplate[] | PWCElementTemplate;
+
 interface ReactiveNodeCtor {
   new(
     commentNode: Comment,
     rootElement: PWCElement,
-    initialValue?: string | Attributes | PWCElementTemplate[] | PWCElementTemplate
+    initialValue?: ReactiveNodeValue,
   ): ReactiveNode;
 }
 

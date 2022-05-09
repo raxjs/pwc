@@ -1,13 +1,26 @@
-import type { Attributes, PWCElementTemplate, PWCElement, ReactiveNode, ReactiveNodeMapType } from '../type';
+import type { Attributes, PWCElementTemplate, PWCElement, ReactiveNode, ReactiveNodeMapType, ReactiveNodeValue } from '../type';
 import { commitAttributes } from './commitAttributes';
 import { isFalsy, shallowEqual } from '../utils';
 import { initTemplateItem, initTemplateItems } from './initRenderTemplate';
 import { NodeType } from '../constants';
 
-export class TextNode implements ReactiveNode {
+class BaseNode {
+  commentNode: Comment;
+  rootElement: PWCElement;
+  value: ReactiveNodeValue;
+  reactiveNodes: ReactiveNode[] = [];
+  constructor(commentNode: Comment, rootElement: PWCElement, initialValue: ReactiveNodeValue) {
+    this.commentNode = commentNode;
+    this.rootElement = rootElement;
+    this.value = initialValue;
+  }
+}
+
+export class TextNode extends BaseNode implements ReactiveNode {
   #el: Text;
 
   constructor(commentNode: Comment, rootElement: PWCElement, initialValue: string) {
+    super(commentNode, rootElement, initialValue);
     const textNode = document.createTextNode(isFalsy(initialValue) ? '' : initialValue);
     this.#el = textNode;
     commentNode.parentNode.insertBefore(textNode, commentNode);
@@ -18,15 +31,14 @@ export class TextNode implements ReactiveNode {
   }
 }
 
-export class AttributedNode implements ReactiveNode {
+export class AttributedNode extends BaseNode implements ReactiveNode {
   #el: Element;
-  rootElement: PWCElement;
   #elIsCustom: boolean;
   #elIsSvg: boolean;
 
   constructor(commentNode: Comment, rootElement: PWCElement, initialAttrs: Attributes) {
+    super(commentNode, rootElement, initialAttrs);
     this.#el = commentNode.nextSibling as Element;
-    this.rootElement = rootElement;
     this.#elIsCustom = Boolean(window.customElements.get(this.#el.localName));
     this.#elIsSvg = this.#el instanceof SVGElement;
     if (this.#elIsCustom) {
@@ -57,16 +69,10 @@ export class AttributedNode implements ReactiveNode {
   }
 }
 
-export class TemplateNode implements ReactiveNode {
-  reactiveNodes: ReactiveNode[] = [];
+export class TemplateNode extends BaseNode implements ReactiveNode {
   childNodes: Node[];
-  rootElement: PWCElement;
-  commentNode: Comment;
-  value: PWCElementTemplate;
   constructor(commentNode: Comment, rootElement: PWCElement, elementTemplate: PWCElementTemplate) {
-    this.rootElement = rootElement;
-    this.commentNode = commentNode;
-    this.value = elementTemplate;
+    super(commentNode, rootElement, elementTemplate);
     initTemplateItem(this, ReactiveNodeMap);
   }
   commitValue([prev, current]: [PWCElementTemplate, PWCElementTemplate]) {
@@ -74,29 +80,32 @@ export class TemplateNode implements ReactiveNode {
   }
 }
 
-export class TemplatesNode implements ReactiveNode {
-  reactiveNodes: ReactiveNode[] = [];
-  #commentNode: Comment;
-  rootElement: PWCElement;
+export class TemplatesNode extends BaseNode implements ReactiveNode {
   childNodes: Node[];
   constructor(commentNode: Comment, rootElement: PWCElement, elementTemplates: PWCElementTemplate[]) {
-    this.#commentNode = commentNode;
-    this.rootElement = rootElement;
+    super(commentNode, rootElement, elementTemplates);
     initTemplateItems(elementTemplates, commentNode, this.reactiveNodes, rootElement, ReactiveNodeMap);
   }
 
   commitValue([prev, current]: [PWCElementTemplate[], PWCElementTemplate[]]) {
-    // Empty reactive nodes
-    for (const reactiveNode of this.reactiveNodes) {
-      (reactiveNode as TemplateNode).childNodes?.forEach(childNode => {
-        const parent = childNode.parentNode;
-        parent.removeChild(childNode);
-      });
-    }
-    this.reactiveNodes = [];
+    // Delete reactive children nodes
+    deleteChildren(this);
     // Rebuild
-    initTemplateItems(current, this.#commentNode, this.reactiveNodes, this.rootElement, ReactiveNodeMap);
+    initTemplateItems(current, this.commentNode, this.reactiveNodes, this.rootElement, ReactiveNodeMap);
   }
+}
+
+function deleteChildren(targetReactiveNode: ReactiveNode) {
+  for (const reactiveNode of targetReactiveNode.reactiveNodes) {
+    (reactiveNode as TemplateNode).childNodes?.forEach(childNode => {
+      const parent = childNode.parentNode;
+      parent.removeChild(childNode);
+    });
+    if (reactiveNode.reactiveNodes.length > 0) {
+      deleteChildren(reactiveNode);
+    }
+  }
+  targetReactiveNode.reactiveNodes = [];
 }
 
 export function updateView(

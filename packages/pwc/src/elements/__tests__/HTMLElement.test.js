@@ -117,8 +117,10 @@ describe('Render HTMLElement', () => {
     window.customElements.define('custom-element', CustomElement);
     const element = document.createElement('custom-element');
     document.body.appendChild(element);
-    await nextTick();
-    expect(element.innerHTML).toEqual('<!--?pwc_p--><div id="container">hello<!--?pwc_t--> - jack<!--?pwc_t--></div><!--?pwc_t-->');
+
+    expect(element.innerHTML).toEqual(
+      '<!--?pwc_p--><div id="container">hello<!--?pwc_t--> - jack<!--?pwc_t--></div><!--?pwc_t-->',
+    );
 
     const container = document.getElementById('container');
     container.click();
@@ -131,7 +133,7 @@ describe('Render HTMLElement', () => {
     window.customElements.define('custom-nested-element', CustomElement);
     const element = document.createElement('custom-nested-element');
     document.body.appendChild(element);
-    await nextTick();
+
     expect(element.innerHTML).toEqual(
       '<!--?pwc_p--><div id="nested-container">hello<!--?pwc_t--> <div>This is title<!--?pwc_t--></div> nested<!--?pwc_t--></div><!--?pwc_t-->',
     );
@@ -146,7 +148,7 @@ describe('Render HTMLElement', () => {
     window.customElements.define('custom-reactive-element', CustomElement);
     const element = document.createElement('custom-reactive-element');
     document.body.appendChild(element);
-    await nextTick();
+
     expect(element.innerHTML).toEqual(
       '<!--?pwc_p--><div id="reactive-container" class="red">hello<!--?pwc_t--> - jack<!--?pwc_t--></div><!--?pwc_t-->',
     );
@@ -178,7 +180,7 @@ describe('Render HTMLElement', () => {
     window.customElements.define('custom-runtime-component', CustomElement);
     const element = document.createElement('custom-runtime-component');
     document.body.appendChild(element);
-    await nextTick();
+
     expect(element.text).toEqual('constructor');
     expect(mockFn).toBeCalledTimes(1);
     element.text = 'world';
@@ -333,7 +335,7 @@ describe('render multiple kinds template', () => {
     }
     const el = document.createElement('number-custom-element');
     document.body.appendChild(el);
-    await nextTick();
+
     expect(el.innerHTML).toEqual('123<!--?pwc_t-->');
 
     // Return a property which value is number
@@ -346,7 +348,7 @@ describe('render multiple kinds template', () => {
     }
     const el1 = document.createElement('number-dynamic-custom-element');
     document.body.appendChild(el1);
-    await nextTick();
+
     expect(el1.innerHTML).toEqual('123<!--?pwc_t-->');
 
     // Return null
@@ -359,7 +361,7 @@ describe('render multiple kinds template', () => {
 
     const el2 = document.createElement('null-custom-element');
     document.body.appendChild(el2);
-    await nextTick();
+
     expect(el2.innerHTML).toEqual('<!--?pwc_t-->');
 
     // Return false
@@ -372,7 +374,7 @@ describe('render multiple kinds template', () => {
 
     const el3 = document.createElement('false-custom-element');
     document.body.appendChild(el3);
-    await nextTick();
+
     expect(el3.innerHTML).toEqual('<!--?pwc_t-->');
 
     // Return 0
@@ -385,7 +387,7 @@ describe('render multiple kinds template', () => {
 
     const el4 = document.createElement('zero-custom-element');
     document.body.appendChild(el4);
-    await nextTick();
+
     expect(el4.innerHTML).toEqual('0<!--?pwc_t-->');
 
     // Return plain object
@@ -412,7 +414,7 @@ describe('render multiple kinds template', () => {
     }
     const el = document.createElement('nested-false-custom-element');
     document.body.appendChild(el);
-    await nextTick();
+
     expect(el.innerHTML).toEqual('<div><!--?pwc_t--><!--?pwc_t--></div><!--?pwc_t-->');
 
     @customElement('nested-simple-list')
@@ -438,15 +440,70 @@ describe('render multiple kinds template', () => {
     }
     const el2 = document.createElement('directly-list');
     document.body.appendChild(el2);
-    await nextTick();
+
     expect(el2.innerHTML).toEqual(
       '<span>1<!--?pwc_t--></span><span>3<!--?pwc_t--></span><span>2<!--?pwc_t--></span><!--?pwc_t-->',
+    );
+
+    @customElement('hybrid-list')
+    class HybridList extends HTMLElement {
+      @reactive
+      accessor list = ['item1', 'item2', 'item3', 'item4'];
+
+      handleItemClick(index) {
+        this.list = [...this.list.slice(0, index), ...this.list.slice(index + 1)];
+      }
+
+      get template() {
+        return html`${this.list.map((item, index) => {
+          if (item === 'item2') {
+            return null;
+          }
+          if (item === 'item3') {
+            return [1, 2, 3].map((insideItem) => {
+              return html`<div class=${item} @click=${() => this.handleItemClick(index)}>
+                inside list: ${insideItem}
+              </div>`;
+            });
+          }
+          return html`<div class=${item} @click=${() => this.handleItemClick(index)}>${item}</div>`;
+        })}`;
+      }
+    }
+
+    const el3 = document.createElement('hybrid-list');
+    document.body.appendChild(el3);
+
+    expect(el3.innerHTML)
+      .toEqual(`<!--?pwc_p--><div class="item1">item1<!--?pwc_t--></div><!--?pwc_p--><div class=\"item3\">
+                inside list: 1<!--?pwc_t-->
+              </div><!--?pwc_p--><div class=\"item3\">
+                inside list: 2<!--?pwc_t-->
+              </div><!--?pwc_p--><div class=\"item3\">
+                inside list: 3<!--?pwc_t-->
+              </div><!--?pwc_p--><div class=\"item4\">item4<!--?pwc_t--></div><!--?pwc_t--><!--?pwc_t-->`);
+
+    const item1 = document.getElementsByClassName('item1')[0];
+    item1.click();
+    await nextTick();
+    expect(el3.innerHTML).toEqual(`<!--?pwc_p--><div class=\"item3\">
+                inside list: 1<!--?pwc_t-->
+              </div><!--?pwc_p--><div class=\"item3\">
+                inside list: 2<!--?pwc_t-->
+              </div><!--?pwc_p--><div class=\"item3\">
+                inside list: 3<!--?pwc_t-->
+              </div><!--?pwc_p--><div class=\"item4\">item4<!--?pwc_t--></div><!--?pwc_t--><!--?pwc_t-->`);
+    const item3 = document.getElementsByClassName('item3')[0];
+    item3.click();
+    await nextTick();
+    expect(el3.innerHTML).toEqual(
+      `<!--?pwc_p--><div class=\"item4\">item4<!--?pwc_t--></div><!--?pwc_t--><!--?pwc_t-->`,
     );
   });
 });
 
 describe('render with rax', () => {
-  it('should pass props to PWC element', async () => {
+  it('should pass props to PWC element in rax', async () => {
     @customElement('rax-custom-element')
     class CustomElement extends HTMLElement {
       @reactive
@@ -477,15 +534,17 @@ describe('render with rax', () => {
       driver: DriverDom,
     });
 
-    await nextTick();
-
-    expect(root.innerHTML).toEqual('<rax-custom-element><div>outside title<!--?pwc_t--></div><!--?pwc_t--></rax-custom-element>');
+    expect(root.innerHTML).toEqual(
+      '<rax-custom-element><div>outside title<!--?pwc_t--></div><!--?pwc_t--></rax-custom-element>',
+    );
 
     const el = document.getElementsByTagName('rax-custom-element')[0];
     el.click();
 
     await macroTask();
 
-    expect(root.innerHTML).toEqual('<rax-custom-element><div>changed title<!--?pwc_t--></div><!--?pwc_t--></rax-custom-element>');
+    expect(root.innerHTML).toEqual(
+      '<rax-custom-element><div>changed title<!--?pwc_t--></div><!--?pwc_t--></rax-custom-element>',
+    );
   });
 });

@@ -1,20 +1,24 @@
-import { TemplateData, TemplateFlag, TemplateString } from '../constants';
+import { TemplateData, TemplateString } from '../constants';
 import { ElementTemplate, PWCElementTemplate } from '../type';
-import { isFalsy } from '../utils';
+import { elementTemplateManager } from './elementTemplateManager';
 
 export function getTemplateInfo(elementTemplate: ElementTemplate): PWCElementTemplate {
   let templateString;
   let templateData = [];
 
-  // Return empty string, while elementTemplate is falsy
-  if (isFalsy(elementTemplate)) {
-    templateString = '';
-  } else if (elementTemplate[TemplateFlag]) {
-    templateString = elementTemplate[TemplateString];
-    templateData = elementTemplate[TemplateData];
-  } else {
-    templateString = elementTemplate;
-  }
+  elementTemplateManager(elementTemplate, {
+    falsyAction() {
+      // Return empty string, while elementTemplate is falsy
+      templateString = '';
+    },
+    pwcElementTemplateAction() {
+      templateString = elementTemplate[TemplateString];
+      templateData = elementTemplate[TemplateData];
+    },
+    textAction() {
+      templateString = elementTemplate;
+    },
+  });
 
   // TODO: xss
   return {
