@@ -2,7 +2,7 @@ import type { Plugin } from 'rollup';
 import { createFilter } from 'rollup-pluginutils';
 import { transformPWC } from './pwc.js';
 import type { Options } from './options.js';
-import { basename } from 'path';
+import { basename, relative, join } from 'path';
 import { readFileSync } from 'fs';
 
 export default function TransformPluginPWC({
@@ -34,7 +34,8 @@ export default function TransformPluginPWC({
           pluginContext: this,
         });
         if (typeof style === 'object') { // TODO
-          const styleFilename = basename(id).replace(include, '.css');
+          const relativePwcFilename = relative(join(rootDir, 'src'), id);
+          const styleFilename = relativePwcFilename.replace(include, '.css');
           this.emitFile({
             type: 'asset',
             fileName: styleFilename,
