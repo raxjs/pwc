@@ -27,7 +27,7 @@ export function commitAttributes(element: Element, attrs: Attributes, opt?: {
       // Bind the rootElement to ensure the handler context is the element itself
       element.addEventListener(eventName, handler.bind(rootElement), capture);
 
-      return;
+      continue;
     }
 
     const { name, value } = attr;
