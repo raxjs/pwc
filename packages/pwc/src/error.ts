@@ -2,7 +2,6 @@
  * Minify code:
  * 0: class field should add accessor
  * 1: repeated reflect attribute name
- * 2: invalid template
  */
 import type { Warning } from './type';
 
