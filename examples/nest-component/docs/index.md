@@ -6,7 +6,7 @@ sidebar_position: 0
 ## Demo
 
 ```jsx preview
-import 'pwc-example-project';
+import 'pwc-example-nest-component';
 
-export default () => <custom-component />
+export default () => <nest-component />
 ```

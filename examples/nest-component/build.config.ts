@@ -12,7 +12,7 @@ export default defineConfig({
     [
       '@ice/pkg-plugin-docusaurus',
       {
-        mobilePreview: true
+        // mobilePreview: true
       }
     ],
     'build-plugin-pwc'

@@ -1,6 +1,7 @@
 <script>
-  import { html, reactive } from 'pwc';
+  import { html, reactive, customElement } from 'pwc';
 
+  @customElement('runtime-component')
   export default class RuntimeComponent extends HTMLElement {
     @reactive
     accessor name = 'pwc';
