@@ -2,7 +2,7 @@ import { TemplateData, TemplateString } from '../constants';
 import { ElementTemplate, PWCElementTemplate } from '../type';
 import { elementTemplateManager } from './elementTemplateManager';
 
-export function getTemplateInfo(elementTemplate: ElementTemplate): PWCElementTemplate {
+export function formatElementTemplate(elementTemplate: ElementTemplate): PWCElementTemplate {
   let templateString;
   let templateData = [];
 

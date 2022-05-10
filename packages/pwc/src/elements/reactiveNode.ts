@@ -1,8 +1,11 @@
-import type { Attributes, PWCElementTemplate, PWCElement, ReactiveNode, ReactiveNodeMapType, ReactiveNodeValue } from '../type';
+import type { Attributes, PWCElementTemplate, PWCElement, ReactiveNode, ReactiveNodeMapType, ReactiveNodeValue, ElementTemplate } from '../type';
 import { commitAttributes } from './commitAttributes';
 import { isFalsy, shallowEqual } from '../utils';
-import { initTemplateItem, initTemplateItems } from './initRenderTemplate';
+import { renderElementTemplate } from './renderElementTemplate';
 import { NodeType } from '../constants';
+import { formatElementTemplate } from './formatElementTemplate';
+import { createTemplate } from './createTemplate';
+import { elementTemplateManager } from './elementTemplateManager';
 
 class BaseNode {
   commentNode: Comment;
@@ -21,13 +24,23 @@ export class TextNode extends BaseNode implements ReactiveNode {
 
   constructor(commentNode: Comment, rootElement: PWCElement, initialValue: string) {
     super(commentNode, rootElement, initialValue);
-    const textNode = document.createTextNode(isFalsy(initialValue) ? '' : initialValue);
-    this.#el = textNode;
-    commentNode.parentNode.insertBefore(textNode, commentNode);
+    this.render();
   }
 
   commitValue(value: string) {
-    this.#el.nodeValue = value;
+    this.value = this.formatValue(value);
+    this.#el.nodeValue = this.value;
+  }
+
+  render() {
+    this.value = this.formatValue(this.value as string);
+    const textNode = document.createTextNode(this.value);
+    this.#el = textNode;
+    this.commentNode.parentNode.insertBefore(textNode, this.commentNode);
+  }
+
+  formatValue(value: string): string {
+    return isFalsy(value) ? '' : value;
   }
 }
 
@@ -41,13 +54,17 @@ export class AttributedNode extends BaseNode implements ReactiveNode {
     this.#el = commentNode.nextSibling as Element;
     this.#elIsCustom = Boolean(window.customElements.get(this.#el.localName));
     this.#elIsSvg = this.#el instanceof SVGElement;
+    this.render();
+  }
+
+  render() {
     if (this.#elIsCustom) {
       // @ts-ignore
       this.#el.__init_task__ = () => {
-        this.#commitAttributes(initialAttrs, true);
+        this.#commitAttributes(this.value as Attributes, true);
       };
     } else {
-      this.#commitAttributes(initialAttrs, true);
+      this.#commitAttributes(this.value as Attributes, true);
     }
   }
 
@@ -73,7 +90,15 @@ export class TemplateNode extends BaseNode implements ReactiveNode {
   childNodes: Node[];
   constructor(commentNode: Comment, rootElement: PWCElement, elementTemplate: PWCElementTemplate) {
     super(commentNode, rootElement, elementTemplate);
-    initTemplateItem(this, ReactiveNodeMap);
+    this.render();
+  }
+  render() {
+    const { templateString, templateData = [] } = formatElementTemplate(this.value as ElementTemplate);
+    const fragment = createTemplate(templateString);
+    // Cache all native nodes
+    this.childNodes = [...fragment.childNodes];
+    renderElementTemplate(fragment, templateData, this.reactiveNodes, this.rootElement, ReactiveNodeMap);
+    this.commentNode.parentNode.insertBefore(fragment, this.commentNode);
   }
   commitValue([prev, current]: [PWCElementTemplate, PWCElementTemplate]) {
     updateView(prev, current, this.reactiveNodes);
@@ -84,28 +109,50 @@ export class TemplatesNode extends BaseNode implements ReactiveNode {
   childNodes: Node[];
   constructor(commentNode: Comment, rootElement: PWCElement, elementTemplates: PWCElementTemplate[]) {
     super(commentNode, rootElement, elementTemplates);
-    initTemplateItems(elementTemplates, commentNode, this.reactiveNodes, rootElement, ReactiveNodeMap);
+    this.render([, elementTemplates]);
   }
 
-  commitValue([prev, current]: [PWCElementTemplate[], PWCElementTemplate[]]) {
+  commitValue([prev, current]: [ElementTemplate[], ElementTemplate[]]) {
     // Delete reactive children nodes
-    deleteChildren(this);
+    this.deleteChildren(this);
     // Rebuild
-    initTemplateItems(current, this.commentNode, this.reactiveNodes, this.rootElement, ReactiveNodeMap);
+    this.render([prev, current]);
   }
-}
+  render([prev, current]: [ElementTemplate[], ElementTemplate[]]) {
+    for (let elementTemplate of current) {
+      let ReactiveNodeCtor;
+      elementTemplateManager(elementTemplate, {
+        falsyAction() {
+          ReactiveNodeCtor = TextNode;
+          elementTemplate = '';
+        },
+        pwcElementTemplateAction() {
+          ReactiveNodeCtor = TemplateNode;
+        },
+        textAction() {
+          ReactiveNodeCtor = TextNode;
+        },
+        arrayAction() {
+          ReactiveNodeCtor = TemplatesNode;
+        },
+      });
 
-function deleteChildren(targetReactiveNode: ReactiveNode) {
-  for (const reactiveNode of targetReactiveNode.reactiveNodes) {
-    (reactiveNode as TemplateNode).childNodes?.forEach(childNode => {
-      const parent = childNode.parentNode;
-      parent.removeChild(childNode);
-    });
-    if (reactiveNode.reactiveNodes.length > 0) {
-      deleteChildren(reactiveNode);
+      this.reactiveNodes.push(new ReactiveNodeCtor(this.commentNode, this.rootElement, elementTemplate));
     }
   }
-  targetReactiveNode.reactiveNodes = [];
+
+  deleteChildren(targetReactiveNode: ReactiveNode) {
+    for (const reactiveNode of targetReactiveNode.reactiveNodes) {
+      (reactiveNode as TemplateNode).childNodes?.forEach(childNode => {
+        const parent = childNode.parentNode;
+        parent.removeChild(childNode);
+      });
+      if (reactiveNode.reactiveNodes.length > 0) {
+        this.deleteChildren(reactiveNode);
+      }
+    }
+    targetReactiveNode.reactiveNodes = [];
+  }
 }
 
 export function updateView(

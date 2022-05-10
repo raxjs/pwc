@@ -3,7 +3,7 @@ import { Reactive } from '../reactivity/reactive';
 import { TemplateNode, TemplatesNode } from './reactiveNode';
 import { generateUid, isArray } from '../utils';
 import { enqueueJob } from './sheduler';
-import { getTemplateInfo } from './getTemplateInfo';
+import { formatElementTemplate } from './formatElementTemplate';
 import { TEXT_COMMENT_DATA } from '../constants';
 
 export default (Definition: PWCElement) => {
@@ -16,7 +16,7 @@ export default (Definition: PWCElement) => {
     // Template info
     #currentTemplate: ElementTemplate | ElementTemplate[];
     // Reactive nodes
-    #reactiveNodes: ReactiveNode[] = [];
+    #reactiveNode: ReactiveNode;
     // Reactive instance
     #reactive: Reactive = new Reactive(this);
     // Reflect properties
@@ -39,14 +39,10 @@ export default (Definition: PWCElement) => {
         const commentNode = document.createComment(TEXT_COMMENT_DATA);
         this.appendChild(commentNode);
         if (isArray(this.#currentTemplate)) {
-          this.#reactiveNodes.push(
-            new TemplatesNode(commentNode, this, this.#currentTemplate as PWCElementTemplate[]),
-          );
+          this.#reactiveNode = new TemplatesNode(commentNode, this, this.#currentTemplate as PWCElementTemplate[]);
         } else {
-          this.#currentTemplate = getTemplateInfo(this.#currentTemplate);
-          this.#reactiveNodes.push(
-            new TemplateNode(commentNode, this, this.#currentTemplate as PWCElementTemplate),
-          );
+          this.#currentTemplate = formatElementTemplate(this.#currentTemplate);
+          this.#reactiveNode = new TemplateNode(commentNode, this, this.#currentTemplate as PWCElementTemplate);
         }
         this.#initialized = true;
       }
@@ -62,9 +58,9 @@ export default (Definition: PWCElement) => {
 
     #performUpdate() {
       const nextElementTemplate = this.template;
-      const newPWCElementTemplate = getTemplateInfo(nextElementTemplate);
+      const newPWCElementTemplate = formatElementTemplate(nextElementTemplate);
       // The root reactive node must be TemplateNode
-      this.#reactiveNodes[0].commitValue([this.#currentTemplate, newPWCElementTemplate]);
+      this.#reactiveNode.commitValue([this.#currentTemplate, newPWCElementTemplate]);
       this.#currentTemplate = newPWCElementTemplate;
     }
 

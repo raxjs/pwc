@@ -1,6 +1,5 @@
-import { TemplateFlag } from '../constants';
 import type { Fn } from '../type';
-import { isFalsy } from '../utils';
+import { isFalsy, isTemplate } from '../utils';
 
 interface ManagerActions {
   falsyAction: Fn;
@@ -17,7 +16,7 @@ export function elementTemplateManager(elementTemplate, {
 }: ManagerActions) {
   if (isFalsy(elementTemplate)) {
     falsyAction();
-  } else if (elementTemplate[TemplateFlag]) {
+  } else if (isTemplate(elementTemplate)) {
     pwcElementTemplateAction();
   } else if (arrayAction) {
     arrayAction();
