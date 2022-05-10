@@ -118,7 +118,7 @@ export class TemplatesNode extends BaseNode implements ReactiveNode {
     // Rebuild
     this.render([prev, current]);
   }
-  render([prev, current]: [ElementTemplate[], ElementTemplate[]]) {
+  render([, current]: [ElementTemplate[], ElementTemplate[]]) {
     for (let elementTemplate of current) {
       let ReactiveNodeCtor;
       elementTemplateManager(elementTemplate, {

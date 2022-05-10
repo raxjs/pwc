@@ -1,4 +1,4 @@
-import type { ElementTemplate, PWCElement, ReactiveNode, ReactiveNodeMapType, RootElement, TemplateDataItemType } from '../type';
+import type { PWCElement, ReactiveNode, ReactiveNodeMapType, RootElement, TemplateDataItemType } from '../type';
 import { NodeType, PLACEHOLDER_COMMENT_DATA, PWC_PREFIX, TEXT_COMMENT_DATA } from '../constants';
 import { isArray, isTemplate } from '../utils';
 import { throwError } from '../error';

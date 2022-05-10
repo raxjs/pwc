@@ -36,7 +36,12 @@ export function isPrivate(name: string) {
 }
 
 export function isTemplate(value: unknown): boolean {
-  return value && value[TemplateFlag] === true && hasOwnProperty(value, TemplateString) && hasOwnProperty(value, TemplateData);
+  return (
+    value &&
+    value[TemplateFlag] === true &&
+    hasOwnProperty(value, TemplateString) &&
+    hasOwnProperty(value, TemplateData)
+  );
 }
 
 export function isFalsy(value: unknown) {
