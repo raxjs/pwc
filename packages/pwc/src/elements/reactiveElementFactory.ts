@@ -34,16 +34,18 @@ export default (Definition: PWCElement) => {
           // @ts-ignore
           this.__init_task__();
         }
-        this.#currentTemplate = this.template;
+        let currentTemplate = this.template;
         this.#root = this.shadowRoot || this;
+        // This pwc element root base comment node
         const commentNode = document.createComment(TEXT_COMMENT_DATA);
         this.appendChild(commentNode);
-        if (isArray(this.#currentTemplate)) {
-          this.#reactiveNode = new TemplatesNode(commentNode, this, this.#currentTemplate as PWCElementTemplate[]);
+        if (isArray(currentTemplate)) {
+          this.#reactiveNode = new TemplatesNode(commentNode, this, currentTemplate as PWCElementTemplate[]);
         } else {
-          this.#currentTemplate = formatElementTemplate(this.#currentTemplate);
-          this.#reactiveNode = new TemplateNode(commentNode, this, this.#currentTemplate as PWCElementTemplate);
+          currentTemplate = formatElementTemplate(currentTemplate);
+          this.#reactiveNode = new TemplateNode(commentNode, this, currentTemplate as PWCElementTemplate);
         }
+        this.#currentTemplate = currentTemplate;
         this.#initialized = true;
       }
     }
