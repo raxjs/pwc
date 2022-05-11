@@ -3,10 +3,7 @@ import { defineConfig } from '@ice/pkg';
 
 export default defineConfig({
   bundle: {
-    formats: ['umd', 'es2017']
-  },
-  transform: {
-    formats: ['esm', 'es2017']
+    formats: ['umd']
   },
   plugins:[
     [
