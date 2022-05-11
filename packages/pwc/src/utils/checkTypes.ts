@@ -1,3 +1,6 @@
+import { TemplateData, TemplateFlag, TemplateString } from '../constants';
+import { hasOwnProperty } from './common';
+
 export const EMPTY_OBJECT = {};
 
 export function isArray(arg: any) {
@@ -38,4 +41,16 @@ export function isPrivate(name: string) {
 
 export function toRawType(value: unknown): string {
   return Object.prototype.toString.call(value).slice(8, -1);
+}
+export function isTemplate(value: unknown): boolean {
+  return (
+    value &&
+    value[TemplateFlag] === true &&
+    hasOwnProperty(value, TemplateString) &&
+    hasOwnProperty(value, TemplateData)
+  );
+}
+
+export function isFalsy(value: unknown) {
+  return !value && value !== 0;
 }

@@ -2,17 +2,24 @@ import * as parse5 from 'parse5';
 import type { SFCDescriptor, ElementNode } from './parse';
 import { dfs, isEventNameInTemplate, isBindings, isMemberExpression, getEventInfo, BINDING_REGEXP, INTERPOLATION_REGEXP } from './utils';
 
-export interface AttributeDescriptor {
+export interface NormalAttributeDescriptor {
   name: string;
   value: string;
-  capture?: boolean;
 }
+
+export interface EventAttributeDescriptor {
+  name: string;
+  handler: string;
+  capture: boolean;
+}
+
+export type AttributeDescriptor = NormalAttributeDescriptor | EventAttributeDescriptor;
 
 export type ValueDescriptor = Array<string | Array<AttributeDescriptor>>;
 
 export interface CompileTemplateResult {
   templateString?: string;
-  values?: ValueDescriptor;
+  templateData?: ValueDescriptor;
 }
 
 const TEXT_COMMENT_DATA = '?pwc_t';
@@ -35,7 +42,7 @@ function createTextNode(value) {
 
 // with side effect in changing node structure
 function extractAttributeBindings(node: ElementNode): Array<AttributeDescriptor> {
-  const tempAttributeDescriptor = [];
+  const tempAttributeDescriptor: Array<AttributeDescriptor> = [];
   // Extract attribute bindings
   if (node.attrs?.length > 0) {
     let hasInsertComment = false; // Should only insert comment node before current node once
@@ -68,13 +75,12 @@ function extractAttributeBindings(node: ElementNode): Array<AttributeDescriptor>
 
           tempAttributeDescriptor.push({
             name: `on${eventName}`,
-            value: expression,
+            handler: expression,
             capture: isCapture,
           });
         } else {
           // attributes
           let expression = attr.value.replace(BINDING_REGEXP, '$1').trim();
-
           tempAttributeDescriptor.push({
             name: attr.name,
             value: expression,
@@ -145,7 +151,7 @@ export function compileTemplate(descriptor: SFCDescriptor): CompileTemplateResul
 
 export function compileTemplateAST(ast: ElementNode): CompileTemplateResult {
   const nodes = dfs(ast);
-  const values = transformTemplateAst(nodes);
+  const templateData = transformTemplateAst(nodes);
   const templateString = genTemplateString(ast);
-  return { templateString, values };
+  return { templateString, templateData };
 }

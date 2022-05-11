@@ -1,7 +1,6 @@
 import { is } from './common';
-import { isEventName } from './isEventName';
+import { isEvent } from './isEvent';
 import { isArray, isPrimitive } from './checkTypes';
-import { getProperties } from './reactiveMethods';
 
 export function shallowEqual(valueA: any, valueB: any) {
   if (typeof valueA !== typeof valueB) {
@@ -19,7 +18,7 @@ export function shallowEqual(valueA: any, valueB: any) {
     for (let index = 0; index < valueA.length; index++) {
       const itemA = valueA[index];
       const itemB = valueB[index];
-      if (isEventName(itemA.name)) {
+      if (isEvent(itemA.name)) {
         continue;
       }
       if (!is(itemA.value, itemB.value)) {

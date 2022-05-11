@@ -6,3 +6,14 @@ export const enum ReactiveFlags {
   PROPERTY = '__p_property__',
   IS_REACTIVE = '__p_is_reactive__',
 }
+
+export const TemplateString = 'templateString';
+export const TemplateData = 'templateData';
+export const TemplateFlag = 'template';
+
+export enum NodeType {
+  ATTRIBUTE = 'ATTRIBUTE',
+  TEXT = 'TEXT',
+  TEMPLATE = 'TEMPLATE',
+  TEMPLATES = 'TEMPLATES',
+}
