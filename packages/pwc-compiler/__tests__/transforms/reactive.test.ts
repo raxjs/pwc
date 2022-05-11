@@ -69,7 +69,11 @@ export default class CustomElement extends HTMLElement {
   accessor name = '';
 
   get template() {
-    return ["\\n  <p>hello</p>\\n", []];
+    return {
+      templateString: "\\n  <p>hello</p>\\n",
+      templateData: [],
+      template: true
+    };
   }
 
 }`);
@@ -88,7 +92,11 @@ export default class CustomElement extends HTMLElement {
   accessor data = '';
 
   get template() {
-    return ["\\n  <p><!--?pwc_t--></p>\\n", [this.#name]];
+    return {
+      templateString: "\\n  <p><!--?pwc_t--></p>\\n",
+      templateData: [this.#name],
+      template: true
+    };
   }
 
 }`);
@@ -106,7 +114,11 @@ export default class CustomElement extends HTMLElement {
   accessor #name = '';
 
   get template() {
-    return [\"\\n  <p><!--?pwc_t--></p>\\n\", [this.#name]];
+    return {
+      templateString: "\\n  <p><!--?pwc_t--></p>\\n\",
+      templateData: [this.#name],
+      template: true
+    };
   }
 
 }`);
@@ -124,7 +136,11 @@ export default class CustomElement extends HTMLElement {
   data = {};
 
   get template() {
-    return ["\\n  <p><!--?pwc_t--></p>\\n", [this.#text]];
+    return {
+      templateString: "\\n  <p><!--?pwc_t--></p>\\n",
+      templateData: [this.#text],
+      template: true
+    };
   }
 
 }`);
@@ -151,7 +167,11 @@ export default class CustomElement extends HTMLElement {
   };
 
   get template() {
-    return ["\\n  <p><!--?pwc_t--></p>\\n  <p><!--?pwc_t--></p>\\n  <p><!--?pwc_t--></p>\\n", [this.data.name, this.arr[0], this.nestedData.obj1.obj2.age]];
+    return {
+      templateString: "\\n  <p><!--?pwc_t--></p>\\n  <p><!--?pwc_t--></p>\\n  <p><!--?pwc_t--></p>\\n",
+      templateData: [this.data.name, this.arr[0], this.nestedData.obj1.obj2.age],
+      template: true
+    };
   }
 
 }`);
@@ -169,7 +189,11 @@ export default class CustomElement extends HTMLElement {
   accessor insideName = '';
 
   get template() {
-    return ["\\n  <p><!--?pwc_t--></p>\\n  <p><!--?pwc_t--></p>\\n", [outsideName, this.insideName]];
+    return {
+      templateString: "\\n  <p><!--?pwc_t--></p>\\n  <p><!--?pwc_t--></p>\\n",
+      templateData: [outsideName, this.insideName],
+      template: true
+    };
   }
 
 }`);
@@ -183,7 +207,11 @@ export default class CustomElement extends HTMLElement {
 @__customElement(\"custom-element\")
 export default class CustomElement extends HTMLElement {
   get template() {
-    return [\"\\n  <p>hello</p>\\n\", []];
+    return {
+      templateString: "\\n  <p>hello</p>\\n\",
+      templateData: [],
+      template: true
+    };
   }
 
 }`);

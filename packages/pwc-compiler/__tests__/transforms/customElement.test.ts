@@ -13,7 +13,11 @@ export default class CustomElement extends HTMLElement {
   accessor #name = '';
 
   get template() {
-    return ["\\n  <p><!--?pwc_t--></p>\\n", [this.#name]];
+    return {
+      templateString: "\\n  <p><!--?pwc_t--></p>\\n",
+      templateData: [this.#name],
+      template: true
+    };
   }
 
 }`);
@@ -27,7 +31,11 @@ export default class CustomElement extends HTMLElement {
 @customElement('custom-element')
 export default class CustomElement extends HTMLElement {
   get template() {
-    return ["\\n  <p>hello</p>\\n", []];
+    return {
+      templateString: "\\n  <p>hello</p>\\n",
+      templateData: [],
+      template: true
+    };
   }
 
 }`);

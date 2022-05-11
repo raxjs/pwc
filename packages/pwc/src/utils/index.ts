@@ -1,5 +1,5 @@
 export * from './common';
-export * from './isEventName';
+export * from './isEvent';
 export * from './shallowEqual';
 export * from './generateUid';
 export * from './checkTypes';

@@ -3,8 +3,9 @@ import { compileTemplateAST } from './compileTemplate';
 import type { CompileTemplateResult } from './compileTemplate';
 
 interface CompileTemplateInRuntimeResult {
-  [0]: CompileTemplateResult['templateString'];
-  [1]: CompileTemplateResult['values'];
+  templateString: CompileTemplateResult['templateString'];
+  templateData: CompileTemplateResult['templateData'];
+  template: true;
 }
 
 /**
@@ -13,18 +14,24 @@ interface CompileTemplateInRuntimeResult {
  * originalValues: [[{name: 'class', value: ''}, {name: 'onclick', value: '', capture: false}], '']
  * result: [[{name: 'class', value: 'className'}, {name: 'onclick', value: function, capture: false}], 'title']
  */
-function injectRuntimeValue(bindings, originalValues): CompileTemplateResult['values'] {
+function injectRuntimeValue(bindings, originalValues): CompileTemplateResult['templateData'] {
   let bindingIndex = 0;
   return originalValues.map(val => {
     if (typeof val === 'string') {
       return bindings[bindingIndex++];
     } else {
       val.forEach(obj => {
-        obj.value = bindings[bindingIndex++];
+        if ('handler' in obj) {
+          // Events
+          obj.handler = bindings[bindingIndex++];
+        } else {
+          // Normal attribute
+          obj.value = bindings[bindingIndex++];
+        }
       });
       return val;
     }
-  }) as CompileTemplateResult['values'];
+  }) as CompileTemplateResult['templateData'];
 }
 
 export function compileTemplateInRuntime(strings: Array<string>, ...runtimeValues): CompileTemplateInRuntimeResult {
@@ -36,9 +43,13 @@ export function compileTemplateInRuntime(strings: Array<string>, ...runtimeValue
   } catch (err) {
     throw new Error(`template compile error: ${err}`);
   }
-  const { templateString, values: originalValues } = compileTemplateAST(dom);
+  const { templateString, templateData: originalTemplateData } = compileTemplateAST(dom);
   // bindings in originalValues is empty and actual values is in runtimeValues
   // injectRuntimeValue will inject corresponding runtime values into originalValues
-  const values = injectRuntimeValue(runtimeValues, originalValues);
-  return [templateString, values];
+  const templateData = injectRuntimeValue(runtimeValues, originalTemplateData);
+  return {
+    templateString,
+    templateData,
+    template: true,
+  };
 }

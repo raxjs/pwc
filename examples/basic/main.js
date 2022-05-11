@@ -14,11 +14,11 @@ class Child extends HTMLElement {
   connectedCallback() {
     super.connectedCallback();
     console.log('connected');
-    console.log('checked => ', this.checked);
+    console.log(this.className)
   }
 
   get template() {
-    return html`<div>
+    return html`<div id="container">
       Child ${this.name}
       <div>parent class name is ${this.className}</div>
     </div>`;
@@ -49,13 +49,13 @@ class CustomElement extends HTMLElement {
   onClick() {
     this.#data.name += '!';
     this.#text += '?';
-    this.className = this.className === 'green' ? 'red' : 'green';
+    this.#className = this.#className === 'green' ? 'red' : 'green';
   };
 
   get template() {
-    return html`<div class=${this.className} @click=${this.onClick}>
+    return html`<div class=${this.#className} @click=${this.onClick}>
       ${this.#text} - ${this.#data.name}
-      <child-element name=${this.#data.name} checked=${true} data-class-name=${this.className} />
+      <child-element name=${this.#data.name} checked=${true} data-class-name=${this.#className} />
     </div>`;
   }
 }

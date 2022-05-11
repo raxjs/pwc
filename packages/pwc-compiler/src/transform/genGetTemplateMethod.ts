@@ -2,19 +2,17 @@ import type { File } from '@babel/types';
 import * as t from '@babel/types';
 import babelTraverse from '@babel/traverse';
 
-import type { CompileTemplateResult, AttributeDescriptor } from '../compileTemplate';
+import type { CompileTemplateResult } from '../compileTemplate';
 
-function createObjectProperty(key, value) {
-  if (key === 'value') {
-    return t.objectProperty(t.identifier(key), createIdentifier(value));
-  } else if (key === 'name') {
-    return t.objectProperty(t.identifier(key), t.stringLiteral(value));
-  } else if (key === 'capture') {
-    return t.objectProperty(t.identifier(key), t.booleanLiteral(value));
-  }
+interface objectExpression {
+  [key: string]: t.Expression;
 }
 
-function createObjectExpression(obj: AttributeDescriptor) {
+function createObjectProperty(key: string, value: t.Expression) {
+  return t.objectProperty(t.identifier(key), value);
+}
+
+function createObjectExpression(obj: objectExpression) {
   return t.objectExpression(Object.entries(obj).map(([key, value]) => {
     return createObjectProperty(key, value);
   }));
@@ -45,6 +43,8 @@ function cretateGetTemplateClassMethod(returnExpression) {
   );
 }
 
+const templateFlag = t.booleanLiteral(true);
+
 export default function genGetTemplateMethod(ast: File, templateResult: CompileTemplateResult): void {
   babelTraverse(ast, {
     ClassDeclaration(path) {
@@ -53,9 +53,9 @@ export default function genGetTemplateMethod(ast: File, templateResult: CompileT
         const { node } = path;
         // class must extended from HTMLElement
         if (t.isIdentifier(node.superClass) && node.superClass.name === 'HTMLElement') {
-          const { templateString, values } = templateResult;
+          const { templateString, templateData } = templateResult;
           const templateStringExpression = t.stringLiteral(templateString);
-          const templateValuesExpression = createArrayExpression(values.map(val => {
+          const templateValuesExpression = createArrayExpression(templateData.map(val => {
             if (typeof val === 'string') {
               // 1 variables
               return createIdentifier(val);
@@ -66,7 +66,7 @@ export default function genGetTemplateMethod(ast: File, templateResult: CompileT
                 [
                   {
                     name: 'onclick',
-                    value: 'onClick',
+                    handler: 'onClick',
                     capture: true,
                   },
                   {
@@ -76,11 +76,30 @@ export default function genGetTemplateMethod(ast: File, templateResult: CompileT
                 ]
               */
               return createArrayExpression(val.map(attr => {
-                return createObjectExpression(attr);
-              }));
+                const attributeEntries = Object.entries(attr).map(([key, val]) => {
+                  let expression;
+                  if (key === 'name') {
+                    expression = t.stringLiteral(val);
+                  } else if (key === 'value' || key === 'handler') {
+                    expression = createIdentifier(val);
+                  } else if (key === 'capture') {
+                    expression = t.booleanLiteral(val);
+                  }
+                  return [key, expression];
+                });
+                const attributeObjectExpression = Object.fromEntries(attributeEntries);
+                return createObjectExpression(attributeObjectExpression);
+              },
+              ));
             }
           }));
-          const returnExpression = createArrayExpression([templateStringExpression, templateValuesExpression]);
+
+          const returnExpression = createObjectExpression({
+            templateString: templateStringExpression,
+            templateData: templateValuesExpression,
+            template: templateFlag,
+          });
+
           node.body.body.push(cretateGetTemplateClassMethod(returnExpression));
         }
       }
