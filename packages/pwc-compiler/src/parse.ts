@@ -1,9 +1,10 @@
-import { parseFragment } from 'parse5';
+import { type Token, parseFragment } from 'parse5';
 import * as babelParser from '@babel/parser';
 import type { File } from '@babel/types';
 import type { RawSourceMap } from 'source-map';
 import { SourceMapGenerator } from 'source-map';
 import { validateScript, validateTemplate } from './validate';
+import { type CompilerError, createCompilerError, ErrorCodes } from './errors';
 
 export interface SFCBlock {
   type: string;
@@ -48,13 +49,18 @@ export interface SFCParseResult {
   errors: SyntaxError[];
 }
 
-export interface SourceLocation {
-  startLine: number;
-  startCol: number;
-  startOffset: number;
-  endLine: number;
-  endCol: number;
-  endOffset: number;
+export interface Position {
+  line: number;
+  column: number;
+  offset?: number;
+}
+
+export interface Location {
+  start: Position;
+  end: Position;
+}
+
+export interface SourceLocation extends Location {
   source: string;
 }
 
@@ -68,9 +74,16 @@ export interface ElementNode {
   value?: string;
   data?: string;
   attrs?: AttributeNode[];
+  content?: ElementNode;
   childNodes?: ElementNode[];
   parentNode?: ElementNode;
-  sourceCodeLocation?: SourceLocation;
+  loc?: SourceLocation;
+}
+
+function createSourceLocation(originalSource: string, locationInfo: Location): SourceLocation {
+  const { start, end } = locationInfo;
+  const source = originalSource.slice(start.offset, end.offset);
+  return { start, end, source };
 }
 
 function createBlock(
@@ -78,29 +91,18 @@ function createBlock(
   source: string,
 ): SFCBlock {
   const type = node.nodeName;
-  let { startLine, startCol, startOffset, endLine, endCol, endOffset } = node.sourceCodeLocation;
+  let { start, end } = node.loc;
   let content = '';
 
   if (node.childNodes.length) {
-    const startNodeLocation = node.childNodes[0].sourceCodeLocation;
-    const endNodeLocation = node.childNodes[node.childNodes.length - 1].sourceCodeLocation;
-    content = source.slice(startNodeLocation.startOffset, endNodeLocation.endOffset);
-
-    startLine = startNodeLocation.startLine;
-    startCol = startNodeLocation.startCol;
-    startOffset = startNodeLocation.startOffset;
-    endLine = endNodeLocation.endLine;
-    endCol = endNodeLocation.endCol;
-    endOffset = endNodeLocation.endOffset;
+    const { start } = node.childNodes[0].loc;
+    const { end } = node.childNodes[node.childNodes.length - 1].loc;
+    content = source.slice(start.offset, end.offset);
   }
   const loc = {
     source: content,
-    startLine,
-    startCol,
-    startOffset,
-    endLine,
-    endCol,
-    endOffset,
+    start,
+    end,
   };
   const attrs: Record<string, string | true> = {};
   const block: SFCBlock = {
@@ -109,7 +111,7 @@ function createBlock(
     loc,
     attrs,
   };
-  node.attrs.forEach((attr) => {
+  node.attrs?.forEach((attr) => {
     attrs[attr.name] = attr.value ? attr.value || true : true;
     if (attr.name === 'lang') {
       block.lang = attr.value && attr.value;
@@ -164,11 +166,41 @@ function isEmptyString(str: string): boolean {
   return str.replace(/(^\s*)|(\s*$)/g, '').length === 0;
 }
 
+function transformSourceCodeLocation(root: any): void {
+  setNodeSourceCodeLocation(root, root.sourceCodeLocation);
+  if (root.childNodes?.length) {
+    root.childNodes.forEach(node => transformSourceCodeLocation(node));
+  }
+  if (root.content) {
+    transformSourceCodeLocation(root.content);
+  }
+}
+
+function setNodeSourceCodeLocation(node: any, location: Token.ElementLocation | null): void {
+  if (location) {
+    const { startLine, startCol, startOffset, endLine, endCol, endOffset } = location;
+    node.loc = {
+      start: {
+        line: startLine,
+        column: startCol,
+        offset: startOffset,
+      },
+      end: {
+        line: endLine,
+        column: endCol,
+        offset: endOffset,
+      },
+    };
+  }
+}
+
 export function parse(source: string, {
   filename = 'anonymous.pwc',
   sourceRoot = '',
   sourceMap = true,
 }: SFCParseOptions = {}): SFCParseResult {
+  let errors: (CompilerError | SyntaxError)[] = [];
+
   const descriptor: SFCDescriptor = {
     filename,
     source,
@@ -177,27 +209,42 @@ export function parse(source: string, {
     style: null,
   };
 
-  let dom;
-  try {
-    dom = parseFragment(source, { sourceCodeLocationInfo: true });
-  } catch (err) {
-    throw new Error(`[@pwc/compiler] compile error: ${err}`);
-  }
-
-  let errors = [];
+  const dom = parseFragment(source,
+    {
+      sourceCodeLocationInfo: true,
+      onParseError: (parseError) => {
+        const { code, startLine, startCol, startOffset, endLine, endCol, endOffset } = parseError;
+        const err = createCompilerError(code, {
+          start: { line: startLine, column: startCol, offset: startOffset },
+          end: { line: endLine, column: endCol, offset: endOffset },
+          source,
+        });
+        errors.push(err);
+      }
+    });
+  transformSourceCodeLocation(dom);
 
   // Check phase 1: sfc
   const scriptNodeAmount = dom.childNodes.filter(node => node.nodeName === 'script').length;
   if (scriptNodeAmount === 0) {
-    errors.push(new Error('[@pwc/compiler] PWC must contain one <script> tag.'));
+    const err = createCompilerError(ErrorCodes.MISSING_SCRIPT_TAG, {
+      start: { line: 1, column: 1, offset: 0 },
+      end: { line: 1, column: 1, offset: 0 },
+      source,
+    });
+    errors.push(err);
   }
 
-  for (const node of dom.childNodes) {
+  for (let index = 0, length = dom.childNodes.length; index < length; index++) {
+    const node = dom.childNodes[index] as ElementNode;
     if (node.nodeName === 'template') {
       // TODO: Check phase 2: template
       if (descriptor.template) {
-        errors.push(new Error('[@pwc/compiler] PWC mustn\'t contain more than one <template> tag.'));
+        const loc = createSourceLocation(source, node.loc);
+        const err = createCompilerError(ErrorCodes.DUPLICATE_TEMPLATE_TAG, loc);
+        errors.push(err);
       } else {
+        // Template node contains a content property which is the parentNode of the template node's childNodes
         node.childNodes = node.content.childNodes;
         const templateBlock = createBlock(node, source) as SFCTemplateBlock;
         templateBlock.ast = node;
@@ -209,18 +256,22 @@ export function parse(source: string, {
     if (node.nodeName === 'script') {
       // TODO:Check phase 3: script
       if (descriptor.script) {
-        errors.push(new Error('[@pwc/compiler] PWC mustn\'t contain more than only one <script> tag.'));
+        const loc = createSourceLocation(source, node.loc);
+        const err = createCompilerError(ErrorCodes.DUPLICATE_SCRIPT_TAG, loc);
+        errors.push(err);
       } else {
         const scriptBlock = createBlock(node, source) as SFCScriptBlock;
         if (!isEmptyString(scriptBlock.content)) {
           const ast = babelParser.parse(scriptBlock.content, {
             sourceType: 'module',
+            sourceFilename: filename,
+            startLine: node.loc.start.line,
             plugins: [
               ['decorators', { decoratorsBeforeExport: true }],
               'decoratorAutoAccessors',
             ],
           });
-          errors = errors.concat(validateScript(ast));
+          errors = errors.concat(validateScript(ast, scriptBlock.content));
 
           scriptBlock.ast = ast;
           descriptor.script = scriptBlock;
@@ -230,7 +281,9 @@ export function parse(source: string, {
     if (node.nodeName === 'style') {
       // TODO:Check phase 4: style
       if (descriptor.style) {
-        errors.push(new Error('[@pwc/compiler] PWC mustn\'t contain more than one <style> tag.'));
+        const loc = createSourceLocation(source, node.loc);
+        const err = createCompilerError(ErrorCodes.DUPLICATE_STYLE_TAG, loc);
+        errors.push(err);
       } else {
         const styleBlock = createBlock(node, source) as SFCStyleBlock;
         if (!isEmptyString(styleBlock.content)) {
@@ -256,6 +309,7 @@ export function parse(source: string, {
       genMap(descriptor.style);
     }
   }
+
   return {
     descriptor,
     errors,
