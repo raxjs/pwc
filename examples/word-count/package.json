@@ -11,8 +11,8 @@
     "build": "ice-pkg build"
   },
   "devDependencies": {
-    "@ice/pkg": "^1.0.0-rc.3",
-    "@ice/pkg-plugin-docusaurus": "^1.0.0-rc.3",
+    "@ice/pkg": "^1.0.0-rc.4",
+    "@ice/pkg-plugin-docusaurus": "^1.0.0-rc.4",
     "build-plugin-pwc": "workspace:*",
     "pwc": "workspace:*",
     "react": "^17.0.0",
