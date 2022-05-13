@@ -36,7 +36,7 @@ describe('Set element attribute/property/event handler', () => {
       },
       {
         name: 'onclick',
-        value: parent1ClickHandler,
+        handler: parent1ClickHandler,
       },
     ];
     const parent1 = document.createElement('div');
@@ -53,7 +53,7 @@ describe('Set element attribute/property/event handler', () => {
       },
       {
         name: 'onclick',
-        value: parent2ClickHandler,
+        handler: parent2ClickHandler,
         capture: true,
       },
     ];
@@ -67,7 +67,7 @@ describe('Set element attribute/property/event handler', () => {
     const childAttrs = [
       {
         name: 'onclick',
-        value: childClickHandler,
+        handler: childClickHandler,
       },
     ];
     const child = document.createElement('div');
@@ -130,7 +130,7 @@ describe('Set element attribute/property/event handler', () => {
     const attrs = [
       {
         name: 'onclick',
-        value: mockClickHandler,
+        handler: mockClickHandler,
         capture: true,
       }
     ];

@@ -17,10 +17,10 @@ export function compileScript(descriptor: SFCDescriptor): SFCScriptCompileResult
   // With template block
   const hasTemplate = !!descriptor.template;
   if (hasTemplate) {
-    const { templateString, values } = compileTemplate(descriptor);
+    const { templateString, templateData } = compileTemplate(descriptor);
     transformScript(ast, {
       templateString,
-      values,
+      templateData,
     });
   } else {
     transformScript(ast, { templateString: null });

@@ -25,6 +25,7 @@ const multipleKindsOfUsingBindingsComponent = `
     attr3="{{this.data3.arr1[0]}}"
     attr4="{{this['data-five']}}"
     @click="{{this.#fn}}"
+    onevent="{{this.#fn}}"
     @input="{{this.methods.fn2}}"
   >
     <div>{{ this.#data1 }}</div>
@@ -63,7 +64,11 @@ describe('compileScript', () => {
     const result = compileScript(descriptor);
 
     expect(result.content).toContain(`get template() {
-    return [\"\\n  <p><!--?pwc_t--></p>\\n\", [this.#text]];
+    return {
+      templateString: \"\\n  <p><!--?pwc_t--></p>\\n\",
+      templateData: [this.#text],
+      template: true
+    };
   }`);
   });
 
@@ -105,27 +110,34 @@ export default class CustomElement extends HTMLElement {
   };
 
   get template() {
-    return ["\\n  <!--?pwc_p--><div>\\n    <div><!--?pwc_t--></div>\\n    <div><!--?pwc_t--></div>\\n    <div><!--?pwc_t--></div>\\n    <div><!--?pwc_t--></div>\\n    <div><!--?pwc_t--></div>\\n  </div>\\n", [[{
-      name: "attr1",
-      value: this.#data1
-    }, {
-      name: "attr2",
-      value: this.#data2.name1
-    }, {
-      name: "attr3",
-      value: this.data3.arr1[0]
-    }, {
-      name: "attr4",
-      value: this['data-five']
-    }, {
-      name: "onclick",
-      value: this.#fn,
-      capture: false
-    }, {
-      name: "oninput",
-      value: this.methods.fn2,
-      capture: false
-    }], this.#data1, this.#data2.name1, this.data3.arr1[0], this.data4.obj1.name2, this['data-five']]];
+    return {
+      templateString: "\\n  <!--?pwc_p--><div>\\n    <div><!--?pwc_t--></div>\\n    <div><!--?pwc_t--></div>\\n    <div><!--?pwc_t--></div>\\n    <div><!--?pwc_t--></div>\\n    <div><!--?pwc_t--></div>\\n  </div>\\n",
+      templateData: [[{
+        name: "attr1",
+        value: this.#data1
+      }, {
+        name: "attr2",
+        value: this.#data2.name1
+      }, {
+        name: "attr3",
+        value: this.data3.arr1[0]
+      }, {
+        name: "attr4",
+        value: this['data-five']
+      }, {
+        name: "onclick",
+        handler: this.#fn,
+        capture: false
+      }, {
+        name: "onevent",
+        value: this.#fn
+      }, {
+        name: "oninput",
+        handler: this.methods.fn2,
+        capture: false
+      }], this.#data1, this.#data2.name1, this.data3.arr1[0], this.data4.obj1.name2, this['data-five']],
+      template: true
+    };
   }
 
 }`);
