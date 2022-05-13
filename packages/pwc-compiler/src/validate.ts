@@ -1,12 +1,12 @@
 import type { File } from '@babel/types';
-import * as t from '@babel/types';
+import t from '@babel/types';
 import babelTraverse from '@babel/traverse';
-import type { ElementNode } from './parse';
-import { type CompilerError, createCompilerError, ErrorCodes } from './errors';
+import type { ElementNode } from './parse.js';
+import { type CompilerError, createCompilerError, ErrorCodes } from './errors.js';
 
 export function validateScript(ast: File, source: string): CompilerError[] {
   const errors: CompilerError[] = [];
-  babelTraverse(ast, {
+  babelTraverse.default(ast, {
     // TODO: script validation
     Program(path) {
       const { node } = path;

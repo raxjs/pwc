@@ -1,5 +1,5 @@
 import type { File } from '@babel/types';
-import * as t from '@babel/types';
+import t from '@babel/types';
 import babelTraverse from '@babel/traverse';
 
 interface injectImportPWCDescriptor {
@@ -20,7 +20,7 @@ function createImportSpecifier(importedName) {
 
 export default function autoInjectImportPWC(ast: File, importDescriptor: injectImportPWCDescriptor): void {
   const importSpecifiers = Object.keys(importDescriptor).filter(specifier => importDescriptor[specifier]);
-  babelTraverse(ast, {
+  babelTraverse.default(ast, {
     Program(path) {
       let hasImportPWC = false;
       path.traverse({

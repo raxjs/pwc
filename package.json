@@ -9,7 +9,7 @@
     "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx ./",
     "lint:fix": "npm run lint -- --fix",
     "lint:diff": "esno ./scripts/lint-diff.ts",
-    "test": "jest --forceExit --ci",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --forceExit --ci",
     "test:watch": "jest --watch",
     "start-bench-server": "ws -c lws.config.js --static.maxage 1 -d ./benchmarks",
     "benchmark": "esno ./scripts/benchmarks/index.ts",

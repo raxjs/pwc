@@ -1,4 +1,4 @@
-import { parse, compileScript } from '../../src';
+import { parse, compileScript } from '../../esm';
 import { useReactiveComponent, useReactiveWithAutoAddReactiveComponent, reactiveHasBeenReactiveDecoratedManuallyComponent } from './components';
 
 

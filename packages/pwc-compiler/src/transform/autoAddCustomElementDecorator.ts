@@ -1,7 +1,7 @@
 import type { File } from '@babel/types';
-import * as t from '@babel/types';
+import t from '@babel/types';
 import babelTraverse from '@babel/traverse';
-import { toDash } from '../utils';
+import { toDash } from '../utils/index.js';
 
 const CUSTOM_ELEMENT_DECORATOR = '__customElement';
 
@@ -12,7 +12,7 @@ function createCallExpressionDecorator(decorator: string, argument) {
 
 export default function autoAddCustomElementDecorator(ast: File): boolean {
   let shouldAutoAddCustomElementDecorator = true;
-  babelTraverse(ast, {
+  babelTraverse.default(ast, {
     // Add @__customElement('custom-component') for class
     ExportDefaultDeclaration(path) {
       const { node } = path;

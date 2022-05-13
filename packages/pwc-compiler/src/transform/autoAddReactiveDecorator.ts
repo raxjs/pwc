@@ -1,9 +1,9 @@
 import type { File } from '@babel/types';
-import * as t from '@babel/types';
+import t from '@babel/types';
 import babelTraverse from '@babel/traverse';
 import * as babelParser from '@babel/parser';
-import type { ValueDescriptor } from '../compileTemplate';
-import { isEventName } from '../utils';
+import type { ValueDescriptor } from '../compileTemplate.js';
+import { isEventName } from '../utils/index.js';
 
 export const REACTIVE_DECORATOR = '__reactive';
 
@@ -84,7 +84,7 @@ export default function autoAddReactiveDecorator(ast: File, values: ValueDescrip
   let hasReactiveVariableInTemplate = false;
 
   const classPropertyUsedInTemplate = extractClassPropertyUsedInTemplate(values);
-  babelTraverse(ast, {
+  babelTraverse.default(ast, {
     // Add @reactive for class fields
     ClassProperty(path) {
       const { node } = path;
