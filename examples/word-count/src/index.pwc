@@ -36,8 +36,12 @@
 
     connectedCallback() {
       super.connectedCallback();
-      this.articleNode = document.getElementById('article');
-      this.count = countWords(this.articleNode);
+      // FIXME:
+      setTimeout(() => {
+        this.articleNode = document.getElementById('article');
+        this.count = countWords(this.articleNode);
+      }, 0);
+
     }
 
     onInput = (event) => {

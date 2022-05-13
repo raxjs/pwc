@@ -17,3 +17,14 @@ export enum NodeType {
   TEMPLATE = 'TEMPLATE',
   TEMPLATES = 'TEMPLATES',
 }
+
+export const TemplateString = 'templateString';
+export const TemplateData = 'templateData';
+export const TemplateFlag = 'template';
+
+export enum NodeType {
+  ATTRIBUTE = 'ATTRIBUTE',
+  TEXT = 'TEXT',
+  TEMPLATE = 'TEMPLATE',
+  TEMPLATES = 'TEMPLATES',
+}

@@ -1,4 +1,4 @@
-import { parse } from '../src';
+import { parse } from '../esm';
 
 describe('compiler:parse', () => {
   describe('source map', () => {

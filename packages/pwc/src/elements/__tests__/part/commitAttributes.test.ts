@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals'
 import { commitAttributes } from '../../part';
 import '../../native/HTMLElement';
 
