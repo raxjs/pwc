@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import '../native/HTMLElement';
 import { reactive, customElement } from '../../decorators';
 import { nextTick } from '../sheduler';

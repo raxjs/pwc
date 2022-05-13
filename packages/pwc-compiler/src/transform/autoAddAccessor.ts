@@ -1,7 +1,7 @@
 import type { File } from '@babel/types';
-import * as t from '@babel/types';
+import t from '@babel/types';
 import babelTraverse from '@babel/traverse';
-import { REACTIVE_DECORATOR } from './autoAddReactiveDecorator';
+import { REACTIVE_DECORATOR } from './autoAddReactiveDecorator.js';
 
 function isIncludeReactiveDecorator(decorators: Array<t.Decorator>): boolean {
   return decorators.some(
@@ -16,7 +16,7 @@ function createClassAccessorPropertyFromClassProperty(node: t.ClassProperty | t.
 }
 
 export default function autoAddDecorator(ast: File): void {
-  babelTraverse(ast, {
+  babelTraverse.default(ast, {
     ClassProperty(path) {
       const { node } = path;
       // replace ClassProperty with ClassAccessorProperty

@@ -4,7 +4,7 @@ export default defineConfig({
   sourceMaps: 'inline',
 
   transform: {
-    formats: ['cjs', 'es2017', 'esm'],
+    formats: ['esm', 'es2017'],
     excludes: ['**/__tests__/**'],
   },
 });

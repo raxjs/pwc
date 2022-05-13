@@ -1,6 +1,6 @@
 import * as parse5 from 'parse5';
-import type { SFCDescriptor, ElementNode } from './parse';
-import { dfs, isEventNameInTemplate, isBindings, isMemberExpression, getEventInfo, BINDING_REGEXP, INTERPOLATION_REGEXP } from './utils';
+import type { SFCDescriptor, ElementNode } from './parse.js';
+import { dfs, isEventNameInTemplate, isBindings, isMemberExpression, getEventInfo, BINDING_REGEXP, INTERPOLATION_REGEXP } from './utils/index.js';
 
 export interface NormalAttributeDescriptor {
   name: string;

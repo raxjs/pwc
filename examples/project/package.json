@@ -1,21 +1,21 @@
 {
-  "name": "project",
+  "name": "pwc-example-project",
   "version": "0.0.0",
+  "module": "./esm/index.js",
+  "exports": {
+    "es2017": "./es2017/index.js",
+    "import": "./esm/index.js"
+  },
   "scripts": {
-    "start": "rollup -c -w",
-    "build": "rollup -c",
-    "serve": "sirv public --no-clear"
+    "start": "ice-pkg start",
+    "build": "ice-pkg build"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^21.0.2",
-    "@rollup/plugin-node-resolve": "^13.1.3",
-    "@rollup/plugin-replace": "^4.0.0",
+    "@ice/pkg": "^1.0.0-rc.4",
+    "@ice/pkg-plugin-docusaurus": "^1.0.0-rc.4",
+    "build-plugin-pwc": "workspace:*",
     "pwc": "workspace:*",
-    "rollup": "^2.69.0",
-    "rollup-plugin-css-only": "^3.1.0",
-    "rollup-plugin-livereload": "^2.0.5",
-    "rollup-plugin-pwc": "workspace:*",
-    "rollup-plugin-sourcemaps": "^0.6.3",
-    "sirv-cli": "^2.0.2"
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0"
   }
 }

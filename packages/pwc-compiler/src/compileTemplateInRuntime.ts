@@ -1,6 +1,6 @@
 import { parseFragment } from 'parse5';
-import { compileTemplateAST } from './compileTemplate';
-import type { CompileTemplateResult } from './compileTemplate';
+import { compileTemplateAST } from './compileTemplate.js';
+import type { CompileTemplateResult } from './compileTemplate.js';
 
 interface CompileTemplateInRuntimeResult {
   templateString: CompileTemplateResult['templateString'];

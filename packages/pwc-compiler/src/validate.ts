@@ -1,10 +1,10 @@
 import type { File } from '@babel/types';
-import * as t from '@babel/types';
+import t from '@babel/types';
 import babelTraverse from '@babel/traverse';
-import type { ElementNode } from './parse';
+import type { ElementNode } from './parse.js';
 export function validateScript(ast: File) {
   const errors = [];
-  babelTraverse(ast, {
+  babelTraverse.default(ast, {
     // TODO: script validation
     Program(path) {
       const { node } = path;

@@ -10,7 +10,7 @@
 <script>
 import ChildComponent from './components/child.pwc';
 
-export default class CustomComponent extends HTMLElement {
+export default class NestComponent extends HTMLElement {
   #data = {
     count: 0
   };

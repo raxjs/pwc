@@ -3,7 +3,7 @@ import * as babelParser from '@babel/parser';
 import type { File } from '@babel/types';
 import type { RawSourceMap } from 'source-map';
 import { SourceMapGenerator } from 'source-map';
-import { validateScript, validateTemplate } from './validate';
+import { validateScript, validateTemplate } from './validate.js';
 
 export interface SFCBlock {
   type: string;
