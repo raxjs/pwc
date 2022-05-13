@@ -1,9 +1,9 @@
 import { jest } from '@jest/globals'
-import { commitAttributes } from '../commitAttributes';
-import '../native/HTMLElement';
+import { commitAttributes } from '../../part';
+import '../../native/HTMLElement';
 
-describe('Set element attribute/property/event handler', () => {
-  it('should set attribute at built-in element', () => {
+describe('Set/Update/Remove element attribute/property/event handler', () => {
+  it('should set/update/remove attribute at built-in element', () => {
     const attrs = [
       {
         name: 'data-index',
@@ -20,6 +20,30 @@ describe('Set element attribute/property/event handler', () => {
     expect(div.dataset.index).toEqual('1');
     expect(div.getAttribute('class')).toEqual('container');
     expect(div.classList.contains('container')).toBeTruthy();
+
+    const currentAttrs = [
+      // update
+      {
+        name: 'data-index',
+        value: 2
+      },
+      // add
+      {
+        name: 'id',
+        value: 'demo'
+      }
+      // remove class
+    ];
+    commitAttributes(div, [attrs, currentAttrs]);
+
+    expect(div.getAttribute('data-index')).toEqual('2');
+    expect(div.dataset.index).toEqual('2');
+
+    expect(div.getAttribute('class')).toBe(null);
+    expect(div.classList.length).toBe(0);
+
+    expect(div.getAttribute('id')).toEqual('demo');
+    expect(div.id).toEqual('demo');
   });
 
   it('should set attribute and event handler at built-in element', () => {
@@ -90,9 +114,10 @@ describe('Set element attribute/property/event handler', () => {
     expect(childClickHandler).toBeCalledTimes(2);
   });
 
-  it('should set attribute and property at custom element', () => {
+  it('should set/update/remove attribute and property at custom element', () => {
     class CustomElement extends HTMLElement {
       description = 'default description';
+      number = 0;
     }
 
     window.customElements.define('custom-element', CustomElement);
@@ -109,6 +134,10 @@ describe('Set element attribute/property/event handler', () => {
         value: 'container',
       },
       {
+        name: 'title',
+        value: 'This is a title'
+      },
+      {
         name: 'description',
         value: 'This is custom element',
       },
@@ -121,25 +150,86 @@ describe('Set element attribute/property/event handler', () => {
     expect(customElement.getAttribute('class')).toEqual('container');
     expect(customElement.classList.contains('container')).toBeTruthy();
     // @ts-ignore
+    expect(customElement.title).toEqual('This is a title');
+    // @ts-ignore
     expect(customElement.description).toEqual('This is custom element');
+
+    const currentAttrs = [
+      // update attribute
+      {
+        name: 'data-index',
+        value: 2
+      },
+      // add attribute
+      {
+        name: 'id',
+        value: 'demo'
+      },
+      // remove attribute
+      // update property
+      {
+        name: 'title',
+        value: 'Title Changed'
+      },
+      // add property
+      {
+        name: 'number',
+        value: 1
+      }
+      // remove property
+    ];
+
+    commitAttributes(customElement, [attrs, currentAttrs]);
+
+    expect(customElement.getAttribute('data-index')).toEqual('2');
+    expect(customElement.dataset.index).toEqual('2');
+
+    expect(customElement.getAttribute('class')).toBe(null);
+    expect(customElement.classList.length).toBe(0);
+
+    expect(customElement.getAttribute('id')).toEqual('demo');
+    expect(customElement.id).toEqual('demo');
+
+    // @ts-ignore
+    expect(customElement.title).toEqual('Title Changed');
+    // @ts-ignore
+    expect(customElement.number).toBe(1);
+    // @ts-ignore
+    expect(customElement.description).toBe(undefined);
   });
 
-  it('should only add event listener once with component update', () => {
-    const mockClickHandler = jest.fn();
+  it('should add/update/remove event listener at element', () => {
+    const mockClickHandler1 = jest.fn();
     const div = document.createElement('div');
     const attrs = [
       {
         name: 'onclick',
-        handler: mockClickHandler,
+        handler: mockClickHandler1,
         capture: true,
       }
     ];
-    commitAttributes(div, attrs, { isInitial: true });
-    div.click();
-    expect(mockClickHandler).toBeCalledTimes(1);
     commitAttributes(div, attrs);
     div.click();
-    expect(mockClickHandler).toBeCalledTimes(2);
+    expect(mockClickHandler1).toBeCalledTimes(1);
+    
+    const mockClickHandler2 = jest.fn();
+    const changedAttrs = [
+      {
+        name: 'onclick',
+        handler: mockClickHandler2,
+        capture: true,
+      }
+    ];
+    commitAttributes(div, [attrs, changedAttrs]);
+    div.click();
+    expect(mockClickHandler1).toBeCalledTimes(1);
+    expect(mockClickHandler2).toBeCalledTimes(1);
+
+    const removeAttrs = [];
+    commitAttributes(div, [changedAttrs, removeAttrs]);
+    div.click();
+    expect(mockClickHandler1).toBeCalledTimes(1);
+    expect(mockClickHandler2).toBeCalledTimes(1);
   });
 
   it('Svg elements should be set as attributes', () => {
@@ -147,10 +237,21 @@ describe('Set element attribute/property/event handler', () => {
     const attrs = [{
       name: 'width',
       value: '200'
+    }, {
+      name: 'height',
+      value: '200'
     }];
 
-    commitAttributes(svg, attrs, { isInitial: true });
-
+    commitAttributes(svg, attrs);
     expect(svg.getAttribute('width')).toEqual('200');
+
+    const currentAttrs = [{
+      name: 'height',
+      value: '200'
+    }];
+
+    commitAttributes(svg, [attrs, currentAttrs]);
+    expect(svg.getAttribute('width')).toBe(null);
+    expect(svg.getAttribute('height')).toEqual('200');
   });
 });

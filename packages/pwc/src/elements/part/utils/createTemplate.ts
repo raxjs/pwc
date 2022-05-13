@@ -1,4 +1,4 @@
-import type { TemplateStringType } from '../type';
+import type { TemplateStringType } from '../../../type';
 
 export function createTemplate(tplStr: TemplateStringType): Node {
   const template = document.createElement('template');

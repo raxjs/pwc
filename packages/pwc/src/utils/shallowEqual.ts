@@ -24,7 +24,7 @@ export function shallowEqual(valueA: any, valueB: any) {
     for (let index = 0; index < valueA.length; index++) {
       const itemA = valueA[index];
       const itemB = valueB[index];
-      if (isEvent(itemA.name)) {
+      if (isEvent(itemA)) {
         continue;
       }
       if (!is(itemA.value, itemB.value)) {
