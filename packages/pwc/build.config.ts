@@ -1,7 +1,7 @@
 import { defineConfig } from '@ice/pkg';
 
 export default defineConfig({
-  sourceMaps: 'inline',
+  sourceMaps: false,
 
   transform: {
     excludes: ['**/__tests__/**'],

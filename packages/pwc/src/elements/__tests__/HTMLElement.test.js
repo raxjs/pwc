@@ -442,7 +442,7 @@ describe('render multiple kinds template', () => {
     document.body.appendChild(el2);
 
     expect(el2.innerHTML).toEqual(
-      '<span>1<!--?pwc_t--></span><span>3<!--?pwc_t--></span><span>2<!--?pwc_t--></span><!--?pwc_t-->',
+      '<span>1<!--?pwc_t--></span><span>3<!--?pwc_t--></span><span>2<!--?pwc_t--></span><!--?pwc_t--><!--?pwc_t-->',
     );
 
     @customElement('hybrid-list')
@@ -492,7 +492,7 @@ describe('render multiple kinds template', () => {
                 inside list: 2<!--?pwc_t-->
               </div><!--?pwc_p--><div class=\"item3\">
                 inside list: 3<!--?pwc_t-->
-              </div><!--?pwc_p--><div class=\"item4\">item4<!--?pwc_t--></div><!--?pwc_t--><!--?pwc_t-->`);
+              </div><!--?pwc_t--><!--?pwc_p--><div class=\"item4\">item4<!--?pwc_t--></div><!--?pwc_t--><!--?pwc_t-->`);
     const item3 = document.getElementsByClassName('item3')[0];
     item3.click();
     await nextTick();

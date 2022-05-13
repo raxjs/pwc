@@ -1,5 +1,5 @@
-import type { Fn } from '../type';
-import { isFalsy, isTemplate } from '../utils';
+import type { Fn } from '../../../type';
+import { isArray, isFalsy, isTemplate } from '../../../utils';
 
 interface ManagerActions {
   falsyAction: Fn;
@@ -18,7 +18,7 @@ export function elementTemplateManager(elementTemplate, {
     falsyAction();
   } else if (isTemplate(elementTemplate)) {
     pwcElementTemplateAction();
-  } else if (arrayAction) {
+  } else if (isArray(elementTemplate)) {
     arrayAction();
   } else {
     textAction();

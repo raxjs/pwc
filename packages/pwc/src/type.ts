@@ -1,17 +1,15 @@
-import { NodeType } from './constants';
-
 export interface PWCElement extends Element {
   connectedCallback(): void;
   disconnectedCallback(): void;
   attributeChangedCallback(name: string, oldValue: any, newValue: any): void;
   adoptedCallback(): void;
   _requestUpdate(): void;
+  _getChangedProperties(): Set<string>;
   prototype: PWCElement;
   new(): PWCElement;
 }
 
 export type RootElement = PWCElement | ShadowRoot;
-
 
 export interface NormalAttribute {
   name: string;
@@ -57,19 +55,3 @@ export type ReflectProperties = Map<string, {
   initialValue: unknown;
 }>;
 
-export interface ReactiveNode {
-  reactiveNodes?: ReactiveNode[];
-  commitValue: (value: any) => void;
-}
-
-export type ReactiveNodeValue = string | Attributes | PWCElementTemplate[] | PWCElementTemplate;
-
-interface ReactiveNodeCtor {
-  new(
-    commentNode: Comment,
-    rootElement: PWCElement,
-    initialValue?: ReactiveNodeValue,
-  ): ReactiveNode;
-}
-
-export type ReactiveNodeMapType = Record<NodeType, ReactiveNodeCtor>;
