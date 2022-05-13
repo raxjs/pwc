@@ -170,7 +170,7 @@ export function commitAttributes(element: Element, attrs: Attributes | [Attribut
   }
 
   const {
-    isAttributeChanged = returnTrue
+    isAttributeChanged = returnTrue,
   } = opt || {};
 
   const [prevAttrs, currentAttrs] = attrs as [Attributes, Attributes];
