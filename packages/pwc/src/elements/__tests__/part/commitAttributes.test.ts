@@ -255,3 +255,4 @@ describe('Set/Update/Remove element attribute/property/event handler', () => {
     expect(svg.getAttribute('height')).toEqual('200');
   });
 });
+

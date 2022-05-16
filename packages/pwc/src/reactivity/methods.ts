@@ -6,10 +6,10 @@ export function toRaw<T>(observed: T): T {
 }
 
 // get the propNames which the reactive obj created from
-export function getProperties(observed): Set<string> | undefined {
-  return observed && observed[ReactiveFlags.PROPERTY] ? observed[ReactiveFlags.PROPERTY] : undefined;
+export function getProperties(observed): Set<string> {
+  return observed && observed[ReactiveFlags.PROPERTY] ? observed[ReactiveFlags.PROPERTY] : new Set();
 }
 
 export function isReactive(observed): boolean {
-  return observed && observed[ReactiveFlags.IS_REACTIVE];
+  return !!(observed && observed[ReactiveFlags.IS_REACTIVE]);
 }

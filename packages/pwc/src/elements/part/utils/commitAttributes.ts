@@ -1,6 +1,6 @@
-import { isEvent } from '../../../utils/isEvent';
+import { toRaw } from '../../../reactivity/methods';
 import type { Attribute, Attributes, NormalAttribute, PWCElement } from '../../../type';
-import { is, isArray, toRaw } from '../../../utils';
+import { is, isArray, isEvent } from '../../../utils';
 
 type IsAttributeChanged = (attr: NormalAttribute) => boolean;
 
@@ -8,7 +8,7 @@ type Options = {
   isInitial?: boolean;
   rootElement?: PWCElement;
   isSVG?: boolean;
-  isAttributeChanged: IsAttributeChanged;
+  isAttributeChanged?: IsAttributeChanged;
 };
 
 type Handler = (...args: any[]) => any;
@@ -29,7 +29,7 @@ function getHandler(handler: Handler, rootElement?: PWCElement): Handler {
 }
 
 function isAttributes(attrs: Attributes | [Attributes, Attributes]): boolean {
-  return attrs.length === 0 || !isArray(attrs[0]);
+  return !isArray(attrs[0]);
 }
 
 
@@ -53,7 +53,7 @@ function diffAttribute(prevAttr: Attribute, currentAttr: Attribute, isAttributeC
     return DiffResult.RESET;
   }
   if (!isEvent(currentAttr)) {
-    if (is(prevAttr, currentAttr) && !isAttributeChanged(currentAttr)) {
+    if (is(prevAttr.value, currentAttr.value) && !isAttributeChanged(currentAttr)) {
       return DiffResult.SAME;
     }
     return DiffResult.CHANGED;
@@ -163,10 +163,18 @@ function removeAttributes(element: Element, attrs: Attributes, opt?: Options) {
   }
 }
 
-export function commitAttributes(element: Element, attrs: Attributes | [Attributes, Attributes], opt?: Options) {
+// Commit attributes, return a boolean, means if updated
+export function commitAttributes(
+  element: Element,
+  attrs: Attributes | [Attributes, Attributes],
+  opt?: Options
+): boolean {
+  if (attrs.length === 0) {
+    return false;
+  }
   if (isAttributes(attrs)) {
     setAttributes(element, attrs as Attributes, opt);
-    return;
+    return attrs.length > 0;
   }
 
   const {
@@ -181,4 +189,5 @@ export function commitAttributes(element: Element, attrs: Attributes | [Attribut
 
   removeAttributes(element, removed, opt);
   setAttributes(element, changed, opt);
+  return changed.length + removed.length > 0;
 }

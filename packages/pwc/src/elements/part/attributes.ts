@@ -1,7 +1,21 @@
 import { Attributes, NormalAttribute, PWCElement } from '../../type';
 import { commitAttributes } from './utils/commitAttributes';
 import { BasePart } from './base';
-import { getProperties } from '../../utils';
+import { getProperties } from '../../reactivity/methods';
+
+export function genIsAttributeChanged(changedProperties: Set<string>) {
+  return function(attr: NormalAttribute): boolean {
+    const { value } = attr;
+    const properties = getProperties(value);
+
+    for (let prop of properties) {
+      if (changedProperties.has(prop)) {
+        return true;
+      }
+    }
+    return false;
+  };
+}
 
 export class AttributesPart extends BasePart {
   #el: Element;
@@ -28,30 +42,20 @@ export class AttributesPart extends BasePart {
   }
 
   commitValue([prev, current]: [Attributes, Attributes]) {
-    this.commitAttributes([prev, current]);
+    const updated = this.commitAttributes([prev, current]);
 
     // Any updating should trigger the child components's update method
-    if (this.#elIsCustom && (this.#el as PWCElement)._requestUpdate) {
+    if (this.#elIsCustom && (this.#el as PWCElement)._requestUpdate && updated) {
       (this.#el as PWCElement)._requestUpdate();
     }
   }
 
-  commitAttributes(value: Attributes | [Attributes, Attributes], isInitial = false) {
+  commitAttributes(value: Attributes | [Attributes, Attributes], isInitial = false): boolean {
     const changedProperties = this.rootElement._getChangedProperties();
 
-    function isAttributeChanged(attr: NormalAttribute): boolean {
-      const { value } = attr;
-      const properties = getProperties(value);
+    const isAttributeChanged = genIsAttributeChanged(changedProperties);
 
-      for (let prop of properties) {
-        if (changedProperties.has(prop)) {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    commitAttributes(this.#el, value, {
+    return commitAttributes(this.#el, value, {
       isInitial,
       isSVG: this.#elIsSvg,
       rootElement: this.rootElement,

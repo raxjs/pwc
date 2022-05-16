@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import { getProperties, toRaw } from '../../../utils';
 import { createReactive } from '../../createReactive';
 
 describe('createReactive', () => {
@@ -41,23 +40,5 @@ describe('createReactive', () => {
     // new item changed
     reactived[2].foo = 3;
     expect(mockCallback.mock.calls.length).toBe(4);
-  });
-
-  it('toRaw', () => {
-    const mockCallback = jest.fn(() => {});
-    const source = { foo: 1 };
-    const reactived = createReactive(source, propName, mockCallback);
-
-    const raw = toRaw(reactived);
-    expect(raw).toBe(source);
-  });
-
-  it('getProperties', () => {
-    const mockCallback = jest.fn(() => {});
-    const source = { obj: { foo: 1 } };
-    const reactived = createReactive(source, propName, mockCallback);
-
-    expect(getProperties(reactived)).toEqual(new Set([propName]));
-    expect(getProperties(reactived.obj)).toEqual(new Set([propName]));
   });
 });

@@ -156,7 +156,8 @@ describe('Render HTMLElement', () => {
 
     const container = document.getElementById('reactive-container');
     container.click();
-
+    // @ts-ignore
+    expect(element._getChangedProperties()).toEqual(new Set(['#data', '#text', '#className']));
     await nextTick();
     expect(element.innerHTML).toEqual(
       '<!--?pwc_p--><div id="reactive-container" class="green">hello?<!--?pwc_t--> - jack!<!--?pwc_t--></div><!--?pwc_t-->',
@@ -264,32 +265,48 @@ describe('Render nested components', () => {
 
   it('any reactive data should trigger the update of child components', async () => {
     const parentBtn = document.getElementById('parent-btn');
-    const childElement = document.getElementById('child-container');
-    expect(childElement.innerHTML).toEqual(
+    const childContainer = document.getElementById('child-container');
+    expect(childContainer.innerHTML).toEqual(
       '\n      <!--?pwc_p--><div>Hello<!--?pwc_t--> - World<!--?pwc_t--> - <!--?pwc_t--></div>\n    ',
     );
     expect(mockChildFn).toBeCalledTimes(1);
 
+    const parentElement = element;
+    const childElement = document.getElementsByTagName('child-element')[0];
+    // @ts-ignore
+    expect(parentElement._getChangedProperties()).toEqual(new Set());
+    // @ts-ignore
+    expect(childElement._getChangedProperties()).toEqual(new Set());
+
     // primity type
     parentBtn.click();
+    // @ts-ignore
+    expect(parentElement._getChangedProperties()).toEqual(new Set(['#title']));
+
     await nextTick();
-    expect(childElement.innerHTML).toEqual(
+    expect(childContainer.innerHTML).toEqual(
       '\n      <!--?pwc_p--><div>Hello!<!--?pwc_t--> - World<!--?pwc_t--> - <!--?pwc_t--></div>\n    ',
     );
     expect(mockChildFn).toBeCalledTimes(2);
 
     // object type
     parentBtn.click();
+    // @ts-ignore
+    expect(parentElement._getChangedProperties()).toEqual(new Set(['#data']));
+
     await nextTick();
-    expect(childElement.innerHTML).toEqual(
+    expect(childContainer.innerHTML).toEqual(
       '\n      <!--?pwc_p--><div>Hello!<!--?pwc_t--> - World!<!--?pwc_t--> - <!--?pwc_t--></div>\n    ',
     );
     expect(mockChildFn).toBeCalledTimes(3);
 
     // array type
     parentBtn.click();
+    // @ts-ignore
+    expect(parentElement._getChangedProperties()).toEqual(new Set(['#items']));
+
     await nextTick();
-    expect(childElement.innerHTML).toEqual(
+    expect(childContainer.innerHTML).toEqual(
       '\n      <!--?pwc_p--><div>Hello!<!--?pwc_t--> - World!<!--?pwc_t--> - 2<!--?pwc_t--></div>\n    ',
     );
     expect(mockChildFn).toBeCalledTimes(4);
@@ -322,6 +339,65 @@ describe('Render nested components', () => {
       '\n      <!--?pwc_p--><div>Hello<!--?pwc_t--> - Child Element<!--?pwc_t--> - 2<!--?pwc_t--></div>\n    ',
     );
     expect(mockChildFn).toBeCalledTimes(6);
+  });
+
+  it('keep track of changed properties', async () => {
+    const mockFn1 = jest.fn();
+    const mockFn2 = jest.fn();
+    @customElement('child-element-1')
+    class ChildElement1 extends HTMLElement {
+      @reactive
+      accessor data = {}
+      get template() {
+        return mockFn1();
+      }
+    }
+  
+    @customElement('child-element-2')
+    class ChildElement2 extends HTMLElement {
+      @reactive
+      accessor data = {}
+      get template() {
+        return mockFn2();
+      }
+    }
+  
+  
+    @customElement('track-element')
+    class ParentElement extends HTMLElement {
+      @reactive
+      accessor #data1 = { foo: 1 }
+  
+      @reactive
+      accessor #data2 = { foo: 2};
+  
+      handleClick() {
+        this.#data2.foo = 3;
+      }
+  
+      get template() {
+        return html`
+          <div id="track-btn" @click=${this.handleClick}>Click</div>
+          <child-element-1 data=${this.#data1}></child-element-1>
+          <child-element-2 data=${this.#data2}></child-element-2>
+        `
+      }
+    }
+  
+    const element = document.createElement('track-element');
+    document.body.append(element);
+    const btn = document.getElementById('track-btn');
+
+    expect(mockFn1).toBeCalledTimes(1);
+    expect(mockFn2).toBeCalledTimes(1);
+  
+    btn.click();
+    // @ts-ignore
+    expect(element._getChangedProperties()).toEqual(new Set(['#data2']));
+
+    await nextTick();
+    expect(mockFn1).toBeCalledTimes(1);
+    expect(mockFn2).toBeCalledTimes(2);
   });
 });
 
@@ -585,3 +661,5 @@ describe('render with rax', () => {
     );
   });
 });
+
+

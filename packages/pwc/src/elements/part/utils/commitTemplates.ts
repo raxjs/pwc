@@ -45,7 +45,7 @@ export function commitTemplates(
   [prev, current]: [PWCElementTemplate, PWCElementTemplate],
   dynamicNode: DynamicNode,
   rootElement: PWCElement,
-) {
+): boolean {
   const {
     templateString: prevTemplateString,
     templateData: prevTemplateData,
@@ -116,4 +116,6 @@ export function commitTemplates(
   // Passing valus
   dynamicNode.part = part;
   dynamicNode.children = children;
+
+  return true;
 }

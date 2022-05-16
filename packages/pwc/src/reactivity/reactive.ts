@@ -13,7 +13,7 @@ interface ReactiveType {
 }
 
 export class Reactive implements ReactiveType {
-  changedProperties: Set<string> = new Set();
+  #changedProperties: Set<string> = new Set();
 
   static getKey(key: string): string {
     return `#_${key}`;
@@ -26,7 +26,7 @@ export class Reactive implements ReactiveType {
   }
 
   requestUpdate(prop: string) {
-    this.changedProperties.add(prop);
+    this.#changedProperties.add(prop);
     this.#element?._requestUpdate();
   }
 
@@ -49,7 +49,17 @@ export class Reactive implements ReactiveType {
 
     if (forceUpdate) {
       this.requestUpdate(prop);
+    } else {
+      this.#changedProperties.add(prop);
     }
+  }
+
+  getChangedProperties() {
+    return this.#changedProperties;
+  }
+
+  clearChangedProperties() {
+    this.#changedProperties.clear();
   }
 
   #setReactiveValue(prop: string, value: unknown) {

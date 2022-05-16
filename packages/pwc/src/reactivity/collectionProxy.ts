@@ -1,7 +1,8 @@
 import { ReactiveFlags } from '../constants';
-import { hasOwnProperty, isObject, toRaw, isMap } from '../utils';
+import { hasOwnProperty, isObject, isMap } from '../utils';
 import { toReactive } from './createReactive';
 import { forwardTracks, getPropertyNames, runHandlers } from './track';
+import { toRaw } from './methods';
 
 export type CollectionTypes = IterableCollections | WeakCollections;
 
@@ -205,6 +206,9 @@ export function createCollectionProxy(target: any) {
       }
       if (key === ReactiveFlags.RAW) {
         return target;
+      }
+      if (key === ReactiveFlags.IS_REACTIVE) {
+        return true;
       }
 
       if (hasOwnProperty(instrumentations, key) && key in target) {

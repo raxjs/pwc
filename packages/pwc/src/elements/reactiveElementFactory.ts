@@ -40,6 +40,7 @@ export default (Definition: PWCElement) => {
         this.appendChild(commentNode);
         this.#dynamicPart = new TemplatePart(commentNode, this, this.#currentTemplate as PWCElementTemplate);
         this.#initialized = true;
+        this.#reactive.clearChangedProperties();
       }
     }
     disconnectedCallback() {}
@@ -56,6 +57,7 @@ export default (Definition: PWCElement) => {
       // The root reactive node must be TemplateNode
       this.#dynamicPart.commitValue([this.#currentTemplate, newPWCElementTemplate]);
       this.#currentTemplate = newPWCElementTemplate;
+      this.#reactive.clearChangedProperties();
     }
 
     _requestUpdate(): void {
@@ -85,7 +87,7 @@ export default (Definition: PWCElement) => {
     }
 
     _getChangedProperties(): Set<string> {
-      return this.#reactive.changedProperties;
+      return this.#reactive.getChangedProperties();
     }
   };
 };

@@ -1,6 +1,7 @@
 import { ReactiveFlags } from '../constants';
-import { hasOwnProperty, isArray, isObject, toRaw } from '../utils';
+import { hasOwnProperty, isArray, isObject } from '../utils';
 import { toReactive } from './createReactive';
+import { toRaw } from './methods';
 import { forwardTracks, getPropertyNames, runHandlers } from './track';
 
 function get(
@@ -13,6 +14,9 @@ function get(
   }
   if (key === ReactiveFlags.RAW) {
     return target;
+  }
+  if (key === ReactiveFlags.IS_REACTIVE) {
+    return true;
   }
   const result = Reflect.get(target, key, receiver);
   if (isObject(result)) {

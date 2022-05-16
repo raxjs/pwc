@@ -1,4 +1,5 @@
-import { isObject, toRaw, toRawType } from '../utils';
+import { isObject, toRawType } from '../utils';
+import { toRaw } from './methods';
 import { createBaseProxy } from './baseProxy';
 import { createCollectionProxy } from './collectionProxy';
 import { keepTrack } from './track';
