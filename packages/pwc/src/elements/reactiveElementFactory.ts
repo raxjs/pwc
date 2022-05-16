@@ -1,9 +1,8 @@
-import type { ElementTemplate, PWCElement, ReflectProperties, RootElement, ReactiveNode, PWCElementTemplate } from '../type';
+import type { ElementTemplate, PWCElement, ReflectProperties, RootElement, PWCElementTemplate } from '../type';
 import { Reactive } from '../reactivity/reactive';
-import { TemplateNode, TemplatesNode } from './reactiveNode';
-import { generateUid, isArray } from '../utils';
+import { TemplatePart, formatElementTemplate } from './part';
+import { generateUid } from '../utils';
 import { enqueueJob } from './sheduler';
-import { formatElementTemplate } from './formatElementTemplate';
 import { TEXT_COMMENT_DATA } from '../constants';
 
 export default (Definition: PWCElement) => {
@@ -14,9 +13,9 @@ export default (Definition: PWCElement) => {
     // The root element
     #root: RootElement;
     // Template info
-    #currentTemplate: ElementTemplate | ElementTemplate[];
-    // Reactive nodes
-    #reactiveNode: ReactiveNode;
+    #currentTemplate: PWCElementTemplate;
+    //
+    #dynamicPart: TemplatePart;
     // Reactive instance
     #reactive: Reactive = new Reactive(this);
     // Reflect properties
@@ -34,19 +33,14 @@ export default (Definition: PWCElement) => {
           // @ts-ignore
           this.__init_task__();
         }
-        let currentTemplate = this.template;
+        this.#currentTemplate = formatElementTemplate(this.template);
         this.#root = this.shadowRoot || this;
         // This pwc element root base comment node
         const commentNode = document.createComment(TEXT_COMMENT_DATA);
         this.appendChild(commentNode);
-        if (isArray(currentTemplate)) {
-          this.#reactiveNode = new TemplatesNode(commentNode, this, currentTemplate as PWCElementTemplate[]);
-        } else {
-          currentTemplate = formatElementTemplate(currentTemplate);
-          this.#reactiveNode = new TemplateNode(commentNode, this, currentTemplate as PWCElementTemplate);
-        }
-        this.#currentTemplate = currentTemplate;
+        this.#dynamicPart = new TemplatePart(commentNode, this, this.#currentTemplate as PWCElementTemplate);
         this.#initialized = true;
+        this.#reactive.clearChangedProperties();
       }
     }
     disconnectedCallback() {}
@@ -59,11 +53,11 @@ export default (Definition: PWCElement) => {
     }
 
     #performUpdate() {
-      const nextElementTemplate = this.template;
-      const newPWCElementTemplate = formatElementTemplate(nextElementTemplate);
+      const newPWCElementTemplate = formatElementTemplate(this.template);
       // The root reactive node must be TemplateNode
-      this.#reactiveNode.commitValue([this.#currentTemplate, newPWCElementTemplate]);
+      this.#dynamicPart.commitValue([this.#currentTemplate, newPWCElementTemplate]);
       this.#currentTemplate = newPWCElementTemplate;
+      this.#reactive.clearChangedProperties();
     }
 
     _requestUpdate(): void {
@@ -90,6 +84,10 @@ export default (Definition: PWCElement) => {
 
     _getReflectProperties() {
       return this.#reflectProperties;
+    }
+
+    _getChangedProperties(): Set<string> {
+      return this.#reactive.getChangedProperties();
     }
   };
 };

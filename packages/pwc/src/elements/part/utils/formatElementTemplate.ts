@@ -1,5 +1,5 @@
-import { TemplateData, TemplateString } from '../constants';
-import { ElementTemplate, PWCElementTemplate } from '../type';
+import { TemplateData, TemplateString, TEXT_COMMENT_DATA } from '../../../constants';
+import { ElementTemplate, PWCElementTemplate } from '../../../type';
 import { elementTemplateManager } from './elementTemplateManager';
 
 export function formatElementTemplate(elementTemplate: ElementTemplate): PWCElementTemplate {
@@ -17,6 +17,10 @@ export function formatElementTemplate(elementTemplate: ElementTemplate): PWCElem
     },
     textAction() {
       templateString = elementTemplate;
+    },
+    arrayAction() {
+      templateString = `<!--${TEXT_COMMENT_DATA}-->`;
+      templateData = [elementTemplate];
     },
   });
 

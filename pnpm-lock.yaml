@@ -81,6 +81,19 @@ importers:
       vite: 2.9.9
       vite-plugin-babel: 1.0.0_@babel+core@7.17.10+vite@2.9.9
 
+  examples/condition:
+    specifiers:
+      pwc: workspace:*
+      rollup: ^2.0.0
+      vite: ^2.7.2
+      vite-plugin-babel: ^1.0.0
+    dependencies:
+      pwc: link:../../packages/pwc
+    devDependencies:
+      rollup: 2.72.1
+      vite: 2.9.9
+      vite-plugin-babel: 1.0.0_@babel+core@7.17.10+vite@2.9.9
+
   examples/edit-word:
     specifiers:
       '@ice/pkg': ^1.0.0-rc.4

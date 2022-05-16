@@ -1,5 +1,5 @@
+import { toRaw } from '../methods';
 import { Reactive } from '../reactive';
-import { toRaw } from '../../utils';
 
 class MockReactiveElement {
   #initialized = false;

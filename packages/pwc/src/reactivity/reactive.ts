@@ -1,5 +1,5 @@
 import { isArray, isPlainObject, isPrivate, shallowClone } from '../utils';
-import { getProxyHandler } from './handler';
+import { createReactive } from './createReactive';
 
 interface ReactiveType {
   initValue: (prop: string, value: unknown) => void;
@@ -9,22 +9,24 @@ interface ReactiveType {
   getValue: (prop: string) => unknown;
 
   // If the reactive property changes, it  will request a update
-  requestUpdate: () => void;
+  requestUpdate: (prop: string) => void;
 }
 
 export class Reactive implements ReactiveType {
+  #changedProperties: Set<string> = new Set();
+
   static getKey(key: string): string {
     return `#_${key}`;
   }
 
   #element: any;
-  #proxyHandler = getProxyHandler(this.requestUpdate.bind(this));
 
   constructor(elementInstance) {
     this.#element = elementInstance;
   }
 
-  requestUpdate() {
+  requestUpdate(prop: string) {
+    this.#changedProperties.add(prop);
     this.#element?._requestUpdate();
   }
 
@@ -46,8 +48,18 @@ export class Reactive implements ReactiveType {
     }
 
     if (forceUpdate) {
-      this.requestUpdate();
+      this.requestUpdate(prop);
+    } else {
+      this.#changedProperties.add(prop);
     }
+  }
+
+  getChangedProperties() {
+    return this.#changedProperties;
+  }
+
+  clearChangedProperties() {
+    this.#changedProperties.clear();
   }
 
   #setReactiveValue(prop: string, value: unknown) {
@@ -65,6 +77,6 @@ export class Reactive implements ReactiveType {
 
   #createReactiveProperty(prop: string, initialValue: any) {
     const key = Reactive.getKey(prop);
-    this.#element[key] = new Proxy(initialValue, this.#proxyHandler);
+    this.#element[key] = createReactive(initialValue, prop, this.requestUpdate.bind(this, prop));
   }
 }

@@ -1,7 +1,14 @@
 module.exports = {
   coverageDirectory: './coverage/',
   collectCoverage: true,
-  collectCoverageFrom: ['packages/pwc/src/**/*.{js,ts}', 'packages/pwc-compiler/esm/**/*.{js,ts}', '!packages/**/*.d.ts', '!packages/**/type.ts', '!packages/*/src/index.{js,ts}'],
+  collectCoverageFrom: [
+    'packages/pwc/src/**/*.{js,ts}',
+    'packages/pwc-compiler/esm/**/*.{js,ts}',
+    '!packages/**/*.d.ts',
+    '!packages/**/type.ts',
+    '!packages/*/src/index.{js,ts}',
+    '!packages/*/src/utils/*.{js,ts}',
+  ],
   coveragePathIgnorePatterns: ['<rootDir>/node_modules/'],
   roots: ['<rootDir>/packages'],
   testPathIgnorePatterns: ['/node_modules/', '/cjs/', '/esm/', '/es2017/', '/dist/', '.d.ts'],

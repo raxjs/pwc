@@ -17,18 +17,18 @@ class CustomElement extends HTMLElement {
   }
 
   get template() {
-    return html`<div @click=${this.onClick}>
-      ${html`${this.#list.map((item, index) => {
-        if (item === 'item 2') {
-          return null;
-        }
-        if (item === 'item 3') {
-          return [1, 2, 3].map((insideItem) => {
-            return html`<div @click=${() => this.handleItemClick(index)}>inside list: ${insideItem}</div>`;
-          });
-        }
-        return html`<div @click=${() => this.handleItemClick(index)}>${item}</div>`;
-      })}`}
-    </div>`;
+    return html`<div @click=${this.handleToggle}>
+        ${html`${this.#list.map((item, index) => {
+          if (item === 'item 2') {
+            return null;
+          }
+          if (item === 'item 3') {
+            return [1, 2, 3].map((insideItem) => {
+              return html`<div @click=${() => this.handleItemClick(index)}>inside list: ${insideItem}</div>`;
+            });
+          }
+          return html`<div @click=${() => this.handleItemClick(index)}>${item}</div>`;
+        })}`}
+      </div>`;
   }
 }
