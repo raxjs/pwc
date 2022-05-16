@@ -2,7 +2,8 @@ import { reactive, customElement, attribute, html } from 'pwc';
 
 @customElement('child-element')
 class Child extends HTMLElement {
-  name = 'Child';
+  @reactive
+  accessor data = {};
 
   @reactive
   @attribute('data-class-name')
@@ -18,8 +19,13 @@ class Child extends HTMLElement {
   }
 
   get template() {
+<<<<<<< HEAD
     return html`<div id="container">
       Child ${this.name}
+=======
+    return html`<div>
+      Child ${this.data.name}
+>>>>>>> 5044d8f (feat: collection proxy)
       <div>parent class name is ${this.className}</div>
     </div>`;
   }
@@ -55,7 +61,11 @@ class CustomElement extends HTMLElement {
   get template() {
     return html`<div class=${this.#className} @click=${this.onClick}>
       ${this.#text} - ${this.#data.name}
+<<<<<<< HEAD
       <child-element name=${this.#data.name} checked=${true} data-class-name=${this.#className} />
+=======
+      <child-element data=${this.#data} checked=${true} data-class-name=${this.className} />
+>>>>>>> 5044d8f (feat: collection proxy)
     </div>`;
   }
 }
