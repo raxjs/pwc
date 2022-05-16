@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import { createReactive } from '../../createReactive';
 
 describe('createReactive/WeakMap', () => {

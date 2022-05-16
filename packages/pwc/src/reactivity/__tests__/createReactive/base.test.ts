@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import { getProperties, toRaw } from '../../../utils';
 import { createReactive } from '../../createReactive';
 
