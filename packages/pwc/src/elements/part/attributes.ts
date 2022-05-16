@@ -4,7 +4,7 @@ import { BasePart } from './base';
 import { getProperties } from '../../reactivity/methods';
 
 export function genIsAttributeChanged(changedProperties: Set<string>) {
-  return function(attr: NormalAttribute): boolean {
+  return function (attr: NormalAttribute): boolean {
     const { value } = attr;
     const properties = getProperties(value);
 

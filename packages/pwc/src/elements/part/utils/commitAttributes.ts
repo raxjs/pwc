@@ -167,7 +167,7 @@ function removeAttributes(element: Element, attrs: Attributes, opt?: Options) {
 export function commitAttributes(
   element: Element,
   attrs: Attributes | [Attributes, Attributes],
-  opt?: Options
+  opt?: Options,
 ): boolean {
   if (attrs.length === 0) {
     return false;

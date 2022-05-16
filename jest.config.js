@@ -7,7 +7,7 @@ module.exports = {
     '!packages/**/*.d.ts',
     '!packages/**/type.ts',
     '!packages/*/src/index.{js,ts}',
-    '!packages/*/src/utils/*.{js,ts}'
+    '!packages/*/src/utils/*.{js,ts}',
   ],
   coveragePathIgnorePatterns: ['<rootDir>/node_modules/'],
   roots: ['<rootDir>/packages'],
