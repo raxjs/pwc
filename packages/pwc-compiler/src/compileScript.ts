@@ -1,4 +1,5 @@
 import generate from '@babel/generator';
+import { join } from 'path';
 import rfdc from 'rfdc';
 import type { SFCDescriptor, SFCScriptBlock } from './parse.js';
 import { compileTemplate } from './compileTemplate.js';
@@ -8,9 +9,11 @@ const deepClone = rfdc();
 
 export interface SFCScriptCompileResult extends SFCScriptBlock {
   filename: string;
+  sourceRoot: string;
 }
 
 export function compileScript(descriptor: SFCDescriptor): SFCScriptCompileResult {
+  const rootContext = process.cwd();
   const { script, filename } = descriptor;
   const ast = deepClone(descriptor.script.ast);
 
@@ -26,8 +29,11 @@ export function compileScript(descriptor: SFCDescriptor): SFCScriptCompileResult
     transformScript(ast, { templateString: null });
   }
 
+  const sourceRoot = join(rootContext, 'src');
   const { code, map } = generate.default(ast, {
-    sourceMaps: false,
+    sourceMaps: true,
+    sourceRoot,
+    sourceFileName: filename,
     decoratorsBeforeExport: true,
   });
 
@@ -35,6 +41,7 @@ export function compileScript(descriptor: SFCDescriptor): SFCScriptCompileResult
   return {
     ...script,
     filename,
+    sourceRoot,
     content: code,
     map,
   };
